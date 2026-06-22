@@ -1,12 +1,16 @@
 const { createClient } = require("@supabase/supabase-js");
 
-const supabaseUrl = process.env.SUPABASE_URL;
-const supabaseKey = process.env.SUPABASE_SERVICE_KEY;
+let client = null;
 
-if (!supabaseUrl || !supabaseKey) {
-  console.warn("Supabase credentials missing — uploads will fail");
+function getSupabase() {
+  if (client) return client;
+  const supabaseUrl = process.env.SUPABASE_URL;
+  const supabaseKey = process.env.SUPABASE_SERVICE_KEY;
+  if (!supabaseUrl || !supabaseKey) {
+    throw new Error("Supabase credentials not configured");
+  }
+  client = createClient(supabaseUrl, supabaseKey);
+  return client;
 }
 
-const supabase = createClient(supabaseUrl, supabaseKey);
-
-module.exports = supabase;
+module.exports = getSupabase;

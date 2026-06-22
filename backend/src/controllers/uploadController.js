@@ -1,6 +1,6 @@
 const multer = require("multer");
 const path = require("path");
-const supabase = require("../lib/supabase");
+const getSupabase = require("../lib/supabase");
 
 const BUCKET = "athletix-uploads";
 
@@ -21,6 +21,7 @@ exports.upload = multer({
 });
 
 async function ensureBucket() {
+  const supabase = getSupabase();
   const { data: buckets } = await supabase.storage.listBuckets();
   if (!buckets?.find((b) => b.name === BUCKET)) {
     await supabase.storage.createBucket(BUCKET, { public: true });
@@ -28,6 +29,7 @@ async function ensureBucket() {
 }
 
 async function uploadToSupabase(file) {
+  const supabase = getSupabase();
   const ext = path.extname(file.originalname);
   const filename = `${Date.now()}-${Math.round(Math.random() * 1e9)}${ext}`;
   const { data, error } = await supabase.storage
