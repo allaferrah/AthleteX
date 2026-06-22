@@ -848,7 +848,10 @@ function ServicesTab() {
                         ))}
                       </div>
                     )}
-                    <input value={editForm.imageUrl || ""} onChange={(e) => setEditForm({ ...editForm, imageUrl: e.target.value })} className="input-field text-sm" placeholder="Image URL" />
+                    <div className="flex gap-2">
+                      <input value={editForm.imageUrl || ""} onChange={(e) => setEditForm({ ...editForm, imageUrl: e.target.value })} className="input-field text-sm flex-1" placeholder="Image URL" />
+                      <UploadButton onUpload={(url) => setEditForm({ ...editForm, imageUrl: url })} label="Upload" />
+                    </div>
                     {editForm.imageUrl && (
                       <div className="w-20 h-14 rounded-lg overflow-hidden border border-white/5 relative">
                         <Image src={editForm.imageUrl} alt="" fill className="object-cover" />
@@ -884,8 +887,8 @@ function ServicesTab() {
                       <p className="text-xs text-slate-500 mt-0.5 line-clamp-2">{s.description}</p>
                       <div className="flex items-center justify-between mt-3 pt-3 border-t border-white/[0.03]">
                         <span className="font-bold text-emerald-400">{fDZD(s.price)}</span>
-                        <button onClick={() => startEdit(s)} className="text-[10px] text-slate-500 hover:text-emerald-400 transition-colors flex items-center gap-1">
-                          <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
+                        <button onClick={() => startEdit(s)} className="text-xs bg-white/[0.06] hover:bg-emerald-500/20 hover:text-emerald-400 border border-white/5 hover:border-emerald-500/30 px-3 py-1.5 rounded-lg transition-all flex items-center gap-1.5 font-medium">
+                          <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
                           Edit
                         </button>
                       </div>

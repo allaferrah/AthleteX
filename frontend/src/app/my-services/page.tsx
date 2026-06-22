@@ -296,7 +296,23 @@ export default function MyServices() {
                         ))}
                       </div>
                     )}
-                    <input value={editForm.imageUrl || ""} onChange={(e) => setEditForm({ ...editForm, imageUrl: e.target.value })} className="input-field" placeholder="Image URL" />
+                    <div className="flex gap-2">
+                      <input value={editForm.imageUrl || ""} onChange={(e) => setEditForm({ ...editForm, imageUrl: e.target.value })} className="input-field flex-1" placeholder="Image URL" />
+                      <button type="button" onClick={() => {
+                        const input = document.createElement("input");
+                        input.type = "file";
+                        input.accept = "image/*";
+                        input.onchange = async (e: any) => {
+                          const file = e.target?.files?.[0];
+                          if (!file) return;
+                          try {
+                            const res = await uploadAPI.uploadFile(file);
+                            setEditForm({ ...editForm, imageUrl: res.url });
+                          } catch {}
+                        };
+                        input.click();
+                      }} className="btn-ghost !py-1.5 !px-3 text-xs">Browse</button>
+                    </div>
                     {editForm.imageUrl && <Image src={editForm.imageUrl} alt="" width={80} height={56} className="w-20 h-14 rounded-lg object-cover border border-white/5" />}
                     <div className="flex gap-3">
                       <button onClick={() => handleEditSave(svc.id)} disabled={savingEdit} className="btn-primary disabled:opacity-50">
