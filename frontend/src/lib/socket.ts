@@ -4,9 +4,11 @@ import { io, Socket } from "socket.io-client";
 
 let socket: Socket | null = null;
 
+const SOCKET_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+
 export function connectSocket(token: string): Socket {
   if (socket?.connected) return socket;
-  socket = io("http://localhost:5000", {
+  socket = io(SOCKET_URL, {
     auth: { token },
     transports: ["websocket", "polling"],
   });
