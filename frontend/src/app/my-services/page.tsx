@@ -42,6 +42,9 @@ export default function MyServices() {
   const [saving, setSaving] = useState(false);
   const [msg, setMsg] = useState("");
   const [sports, setSports] = useState<{ id: string; name: string; nameAr: string; icon: string; description: string; sortOrder: number; _count?: { services: number } }[]>([]);
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editForm, setEditForm] = useState<Record<string, any>>({});
+  const [savingEdit, setSavingEdit] = useState(false);
 
   useEffect(() => {
     if (!isLoggedIn() || user?.role !== "EXPERT") {
@@ -83,6 +86,38 @@ export default function MyServices() {
       await serviceAPI.delete(id);
       loadServices();
     } catch {}
+  };
+
+  const startEdit = (s: MyService) => {
+    setEditingId(s.id);
+    setEditForm({
+      title: s.title,
+      description: s.description,
+      price: s.price,
+      imageUrl: s.imageUrl || "",
+      category: s.category || "NUTRITION",
+      sportId: s.sportId || "",
+    });
+  };
+
+  const cancelEdit = () => {
+    setEditingId(null);
+    setEditForm({});
+  };
+
+  const handleEditSave = async (id: string) => {
+    setSavingEdit(true);
+    try {
+      await serviceAPI.update(id, editForm);
+      setMsg("Service updated!");
+      setEditingId(null);
+      setEditForm({});
+      loadServices();
+    } catch (err: unknown) {
+      setMsg((err as Error).message);
+    } finally {
+      setSavingEdit(false);
+    }
   };
 
   const categoryColor = (cat: string) =>
@@ -238,6 +273,41 @@ export default function MyServices() {
         <div className="grid md:grid-cols-2 gap-6 animate-fade-up-d2">
           {services.map((svc) => {
             const cc = categoryColor(svc.category);
+            if (editingId === svc.id) {
+              return (
+                <div key={svc.id} className="glass p-6 border border-emerald-500/30">
+                  <h3 className="text-lg font-bold text-white mb-4">✏️ Edit Service</h3>
+                  <div className="flex flex-col gap-4">
+                    <input value={editForm.title || ""} onChange={(e) => setEditForm({ ...editForm, title: e.target.value })} className="input-field" placeholder="Title" required />
+                    <textarea value={editForm.description || ""} onChange={(e) => setEditForm({ ...editForm, description: e.target.value })} className="input-field min-h-[100px] resize-none" placeholder="Description" required />
+                    <div className="grid grid-cols-2 gap-4">
+                      <input type="number" value={editForm.price || ""} onChange={(e) => setEditForm({ ...editForm, price: e.target.value })} className="input-field" placeholder="Price" required />
+                      <div className="grid grid-cols-2 gap-2">
+                        <button type="button" onClick={() => setEditForm({ ...editForm, category: "NUTRITION", sportId: "" })} className={`p-2 rounded-xl text-xs font-semibold border ${editForm.category === "NUTRITION" ? "border-emerald-500 bg-emerald-500/10 text-emerald-400" : "border-white/5 text-slate-400"}`}>🥗 Nutrition</button>
+                        <button type="button" onClick={() => setEditForm({ ...editForm, category: "SPORTS", sportId: "" })} className={`p-2 rounded-xl text-xs font-semibold border ${editForm.category === "SPORTS" ? "border-amber-500 bg-amber-500/10 text-amber-400" : "border-white/5 text-slate-400"}`}>🏋️ Sports</button>
+                      </div>
+                    </div>
+                    {editForm.category === "SPORTS" && (
+                      <div className="flex flex-wrap gap-1.5">
+                        {sports.map((sp) => (
+                          <button key={sp.id} type="button" onClick={() => setEditForm({ ...editForm, sportId: editForm.sportId === sp.id ? "" : sp.id })}
+                            className={`text-xs px-3 py-1.5 rounded-lg border ${editForm.sportId === sp.id ? "border-amber-500 bg-amber-500/20 text-amber-400" : "border-white/5 text-slate-400"}`}
+                          >{sp.icon} {locale === "ar" ? sp.nameAr : sp.name}</button>
+                        ))}
+                      </div>
+                    )}
+                    <input value={editForm.imageUrl || ""} onChange={(e) => setEditForm({ ...editForm, imageUrl: e.target.value })} className="input-field" placeholder="Image URL" />
+                    {editForm.imageUrl && <Image src={editForm.imageUrl} alt="" width={80} height={56} className="w-20 h-14 rounded-lg object-cover border border-white/5" />}
+                    <div className="flex gap-3">
+                      <button onClick={() => handleEditSave(svc.id)} disabled={savingEdit} className="btn-primary disabled:opacity-50">
+                        {savingEdit ? "Saving..." : "Save Changes"}
+                      </button>
+                      <button onClick={cancelEdit} className="btn-ghost">Cancel</button>
+                    </div>
+                  </div>
+                </div>
+              );
+            }
             return (
               <div key={svc.id} className={`glass overflow-hidden border border-transparent ${cc.hover} transition-all duration-300 group`}>
                 {/* Image header */}
@@ -255,7 +325,10 @@ export default function MyServices() {
                       <span className="badge text-xs bg-white/10 text-white/80">{svc.sport.icon} {locale === "ar" ? svc.sport.nameAr : svc.sport.name}</span>
                     )}
                   </div>
-                  <div className="absolute top-4 right-4">
+                  <div className="absolute top-4 right-4 flex gap-2">
+                    <button onClick={() => startEdit(svc)} className="w-8 h-8 rounded-full bg-black/40 backdrop-blur-sm flex items-center justify-center text-xs text-emerald-400 hover:bg-emerald-500/30 transition-all opacity-0 group-hover:opacity-100">
+                      ✏️
+                    </button>
                     <button onClick={() => handleDelete(svc.id)} className="w-8 h-8 rounded-full bg-black/40 backdrop-blur-sm flex items-center justify-center text-xs text-red-400 hover:bg-red-500/30 transition-all opacity-0 group-hover:opacity-100">
                       ✕
                     </button>

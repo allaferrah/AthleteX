@@ -634,11 +634,50 @@ function ServicesTab() {
   const [services, setServices] = useState<any[]>([]);
   const [msg, setMsg] = useState("");
   const [msgType, setMsgType] = useState<"success" | "error">("success");
+  const [sports, setSports] = useState<any[]>([]);
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editForm, setEditForm] = useState<Record<string, any>>({});
+  const [savingEdit, setSavingEdit] = useState(false);
 
-  useEffect(() => { loadServices(); }, []);
+  useEffect(() => { loadServices(); sportCategoryAPI.getAll().then(setSports).catch(() => {}); }, []);
 
   const loadServices = async () => {
     try { const all = await serviceAPI.getAll(); setServices(all); } catch {}
+  };
+
+  const startEdit = (s: any) => {
+    setEditingId(s.id);
+    setEditForm({
+      title: s.title,
+      description: s.description,
+      price: s.price,
+      imageUrl: s.imageUrl || "",
+      category: s.category || "NUTRITION",
+      sportId: s.sportId || "",
+    });
+  };
+
+  const cancelEdit = () => {
+    setEditingId(null);
+    setEditForm({});
+  };
+
+  const handleEditSave = async (id: string) => {
+    setSavingEdit(true);
+    setMsg("");
+    try {
+      await serviceAPI.update(id, editForm);
+      setMsg(t("services.createdSuccess"));
+      setMsgType("success");
+      setEditingId(null);
+      setEditForm({});
+      loadServices();
+    } catch (err: unknown) {
+      setMsg((err as Error).message);
+      setMsgType("error");
+    } finally {
+      setSavingEdit(false);
+    }
   };
 
   const handleCreate = async (e: React.FormEvent) => {
@@ -787,32 +826,73 @@ function ServicesTab() {
         ) : (
           <div className="grid md:grid-cols-2 gap-5">
             {services.map((s: any) => (
-              <div key={s.id} className="group glass-sm p-5 rounded-xl border border-white/[0.03] hover:border-emerald-500/20 hover:bg-white/[0.03] transition-all duration-500">
-                <div className="flex items-start gap-4">
-                  {s.imageUrl ? (
-                    <div className="w-16 h-16 rounded-xl overflow-hidden flex-shrink-0 border border-white/5 relative">
-                      <Image src={s.imageUrl} alt="" fill className="object-cover transition-transform duration-500 group-hover:scale-110" />
+              editingId === s.id ? (
+                <div key={s.id} className="glass-sm p-5 rounded-xl border border-emerald-500/30">
+                  <h4 className="text-sm font-bold text-white mb-4">✏️ Edit Service</h4>
+                  <div className="flex flex-col gap-3">
+                    <input value={editForm.title || ""} onChange={(e) => setEditForm({ ...editForm, title: e.target.value })} className="input-field text-sm" placeholder="Title" />
+                    <textarea value={editForm.description || ""} onChange={(e) => setEditForm({ ...editForm, description: e.target.value })} className="input-field text-sm min-h-[80px] resize-none" placeholder="Description" />
+                    <div className="grid grid-cols-2 gap-3">
+                      <input type="number" value={editForm.price || ""} onChange={(e) => setEditForm({ ...editForm, price: e.target.value })} className="input-field text-sm" placeholder="Price" />
+                      <div className="flex gap-1">
+                        <button type="button" onClick={() => setEditForm({ ...editForm, category: "NUTRITION", sportId: "" })} className={`flex-1 rounded-lg text-xs font-semibold border ${editForm.category === "NUTRITION" ? "border-emerald-500 bg-emerald-500/10 text-emerald-400" : "border-white/5 text-slate-400"}`}>🥗 Nutrition</button>
+                        <button type="button" onClick={() => setEditForm({ ...editForm, category: "SPORTS", sportId: "" })} className={`flex-1 rounded-lg text-xs font-semibold border ${editForm.category === "SPORTS" ? "border-amber-500 bg-amber-500/10 text-amber-400" : "border-white/5 text-slate-400"}`}>🏋️ Sports</button>
+                      </div>
                     </div>
-                  ) : (
-                    <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-emerald-500/10 to-cyan-500/10 flex items-center justify-center text-2xl flex-shrink-0 border border-white/5">
-                      🏷️
-                    </div>
-                  )}
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 mb-1">
-                      <h3 className="font-bold text-white truncate group-hover:text-emerald-300 transition-colors">{s.title}</h3>
-                      <span className={`badge text-[10px] flex-shrink-0 ${s.category === "SPORTS" ? "bg-amber-500/20 text-amber-400" : "bg-emerald-500/20 text-emerald-400"}`}>
-                        {s.category === "SPORTS" ? "🏋️" : "🥗"}
-                      </span>
-                    </div>
-                    <p className="text-xs text-slate-500 mt-0.5 line-clamp-2">{s.description}</p>
-                    <div className="flex items-center justify-between mt-3 pt-3 border-t border-white/[0.03]">
-                      <span className="font-bold text-emerald-400">{fDZD(s.price)}</span>
-                      <span className="text-[10px] text-slate-600">{new Date(s.createdAt).toLocaleDateString()}</span>
+                    {editForm.category === "SPORTS" && (
+                      <div className="flex flex-wrap gap-1">
+                        {sports.map((sp: any) => (
+                          <button key={sp.id} type="button" onClick={() => setEditForm({ ...editForm, sportId: editForm.sportId === sp.id ? "" : sp.id })}
+                            className={`text-[10px] px-2 py-1 rounded-lg border ${editForm.sportId === sp.id ? "border-amber-500 bg-amber-500/20 text-amber-400" : "border-white/5 text-slate-400"}`}
+                          >{sp.icon} {sp.name}</button>
+                        ))}
+                      </div>
+                    )}
+                    <input value={editForm.imageUrl || ""} onChange={(e) => setEditForm({ ...editForm, imageUrl: e.target.value })} className="input-field text-sm" placeholder="Image URL" />
+                    {editForm.imageUrl && (
+                      <div className="w-20 h-14 rounded-lg overflow-hidden border border-white/5 relative">
+                        <Image src={editForm.imageUrl} alt="" fill className="object-cover" />
+                      </div>
+                    )}
+                    <div className="flex gap-2 mt-1">
+                      <button onClick={() => handleEditSave(s.id)} disabled={savingEdit} className="btn-primary !py-1.5 !px-4 text-xs disabled:opacity-50">
+                        {savingEdit ? "Saving..." : "Save"}
+                      </button>
+                      <button onClick={cancelEdit} className="btn-ghost !py-1.5 !px-4 text-xs">Cancel</button>
                     </div>
                   </div>
                 </div>
-              </div>
+              ) : (
+                <div key={s.id} className="group glass-sm p-5 rounded-xl border border-white/[0.03] hover:border-emerald-500/20 hover:bg-white/[0.03] transition-all duration-500">
+                  <div className="flex items-start gap-4">
+                    {s.imageUrl ? (
+                      <div className="w-16 h-16 rounded-xl overflow-hidden flex-shrink-0 border border-white/5 relative">
+                        <Image src={s.imageUrl} alt="" fill className="object-cover transition-transform duration-500 group-hover:scale-110" />
+                      </div>
+                    ) : (
+                      <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-emerald-500/10 to-cyan-500/10 flex items-center justify-center text-2xl flex-shrink-0 border border-white/5">
+                        🏷️
+                      </div>
+                    )}
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 mb-1">
+                        <h3 className="font-bold text-white truncate group-hover:text-emerald-300 transition-colors">{s.title}</h3>
+                        <span className={`badge text-[10px] flex-shrink-0 ${s.category === "SPORTS" ? "bg-amber-500/20 text-amber-400" : "bg-emerald-500/20 text-emerald-400"}`}>
+                          {s.category === "SPORTS" ? "🏋️" : "🥗"}
+                        </span>
+                      </div>
+                      <p className="text-xs text-slate-500 mt-0.5 line-clamp-2">{s.description}</p>
+                      <div className="flex items-center justify-between mt-3 pt-3 border-t border-white/[0.03]">
+                        <span className="font-bold text-emerald-400">{fDZD(s.price)}</span>
+                        <button onClick={() => startEdit(s)} className="text-[10px] text-slate-500 hover:text-emerald-400 transition-colors flex items-center gap-1">
+                          <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
+                          Edit
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )
             ))}
           </div>
         )}

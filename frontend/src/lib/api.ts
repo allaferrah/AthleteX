@@ -58,6 +58,8 @@ export const serviceAPI = {
   },
   getById: (id: string) => apiFetch(`/services/${id}`),
   getMyServices: () => apiFetch("/services/me"),
+  update: (id: string, data: Record<string, unknown>) =>
+    apiFetch(`/services/${id}`, { method: "PUT", body: JSON.stringify(data) }),
   delete: (id: string) => apiFetch(`/services/${id}`, { method: "DELETE" }),
   create: (title: string, description: string, price: number, imageUrl?: string, category?: string, sportId?: string) =>
     apiFetch("/services", { method: "POST", body: JSON.stringify({ title, description, price, imageUrl, category, sportId }) }),

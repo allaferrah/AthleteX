@@ -102,6 +102,38 @@ exports.getMyServices = async (req, res) => {
   }
 };
 
+exports.updateService = async (req, res) => {
+  try {
+    const service = await prisma.service.findUnique({ where: { id: req.params.id } });
+    if (!service) return res.status(404).json({ message: "Service not found" });
+    if (service.expertId !== req.user.userId && req.user.role !== "ADMIN") {
+      return res.status(403).json({ message: "Not authorized" });
+    }
+
+    const { title, description, price, imageUrl, category, sportId } = req.body;
+    const updated = await prisma.service.update({
+      where: { id: req.params.id },
+      data: {
+        ...(title !== undefined && { title }),
+        ...(description !== undefined && { description }),
+        ...(price !== undefined && { price: Number(price) }),
+        ...(imageUrl !== undefined && { imageUrl }),
+        ...(category !== undefined && { category }),
+        ...(sportId !== undefined && { sportId: sportId || null }),
+      },
+      include: {
+        expert: {
+          select: { email: true, profile: { select: { fullName: true, photoUrl: true, specialization: true } } },
+        },
+        sport: true,
+      },
+    });
+    res.json({ message: "Service updated successfully", service: updated });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
 exports.deleteService = async (req, res) => {
   try {
     const service = await prisma.service.findUnique({ where: { id: req.params.id } });
