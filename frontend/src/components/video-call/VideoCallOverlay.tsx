@@ -35,8 +35,10 @@ export default function VideoCallOverlay({
   }, [localStream]);
 
   useEffect(() => {
-    if (remoteRef.current && remoteStream)
+    if (remoteRef.current && remoteStream) {
       remoteRef.current.srcObject = remoteStream;
+      remoteRef.current.play().catch(() => {});
+    }
   }, [remoteStream]);
 
   const fmt = (s: number) => {

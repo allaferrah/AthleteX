@@ -28,6 +28,9 @@ const paymentRoutes = require("./routes/paymentRoutes");
 const reviewRoutes = require("./routes/reviewRoutes");
 const reportRoutes = require("./routes/reportRoutes");
 const sportCategoryRoutes = require("./routes/sportCategoryRoutes");
+const turnRoutes = require("./routes/turnRoutes");
+
+app.use("/api", turnRoutes);
 
 app.use("/auth", authRoutes);
 app.use("/services", serviceRoutes);

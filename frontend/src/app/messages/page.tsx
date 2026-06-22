@@ -13,7 +13,9 @@ import { connectSocket, getSocket, disconnectSocket } from "@/lib/socket";
 import {
   createPeerConnection, startLocalStream, stopLocalStream,
   createOffer, createAnswer, setRemoteDescription, addIceCandidate,
+  fetchTurnCredentials,
 } from "@/lib/webrtc";
+import { useCallSound } from "@/lib/useCallSound";
 import VideoCallOverlay from "@/components/video-call/VideoCallOverlay";
 import IncomingCallModal from "@/components/video-call/IncomingCallModal";
 
@@ -79,6 +81,9 @@ export default function MessagesPage() {
   const [callMuted, setCallMuted] = useState(false);
   const [callCameraOn, setCallCameraOn] = useState(true);
   const [callLogId, setCallLogId] = useState<string | null>(null);
+  const [callError, setCallError] = useState<string | null>(null);
+  const [socketError, setSocketError] = useState<string | null>(null);
+  const { playRingtone, stopRingtone } = useCallSound();
   const peerRef = useRef<RTCPeerConnection | null>(null);
   const localStreamRef = useRef<MediaStream | null>(null);
   const durationRef = useRef<NodeJS.Timeout | null>(null);
@@ -88,7 +93,7 @@ export default function MessagesPage() {
     if (localStreamRef.current) { stopLocalStream(localStreamRef.current); localStreamRef.current = null; }
     if (durationRef.current) { clearInterval(durationRef.current); durationRef.current = null; }
     setLocalStream(null); setRemoteStream(null); setCallDuration(0);
-    setIncomingCall(null); setCallLogId(null);
+    setIncomingCall(null); setCallLogId(null); setCallError(null);
   }, []);
 
   // ─── Socket Setup ───────────────────────────────────────────────────
@@ -96,7 +101,8 @@ export default function MessagesPage() {
     if (!isLoggedIn()) return;
     const token = getToken();
     if (!token) return;
-    const socket = connectSocket(token);
+    setSocketError(null);
+    const socket = connectSocket(token, (msg) => setSocketError(msg));
 
     socket.on("user:online", ({ userId: id }: { userId: string }) => {
       if (id === selectedPartner) setPartnerOnline(true);
@@ -107,9 +113,11 @@ export default function MessagesPage() {
 
     socket.on("call:incoming", (data: { from: string; callerName: string; callerPhoto: string | null; callLogId: string; offer: any }) => {
       setIncomingCall(data);
+      playRingtone();
     });
 
     socket.on("call:accepted", async ({ callLogId: id, answer, from }: { callLogId: string; answer: any; from: string }) => {
+      stopRingtone();
       setCallLogId(id); setCallState("connected");
       const pc = peerRef.current;
       if (pc && answer) {
@@ -117,12 +125,14 @@ export default function MessagesPage() {
       }
     });
 
-    socket.on("call:rejected", () => { cleanupCall(); setCallState("idle"); });
+    socket.on("call:rejected", () => { stopRingtone(); cleanupCall(); setCallState("idle"); });
     socket.on("call:timeout", () => {
+      stopRingtone();
       if (selectedPartner) setMissedCalls((prev) => new Set(prev).add(selectedPartner));
       cleanupCall(); setCallState("idle");
     });
     socket.on("call:missed", () => {
+      stopRingtone();
       if (selectedPartner) setMissedCalls((prev) => new Set(prev).add(selectedPartner));
       cleanupCall(); setCallState("idle");
     });
@@ -135,6 +145,7 @@ export default function MessagesPage() {
     });
 
     socket.on("call:ended", () => {
+      stopRingtone();
       cleanupCall(); setCallState("ended");
       setTimeout(() => setCallState("idle"), 2500);
     });
@@ -212,7 +223,9 @@ export default function MessagesPage() {
 
   const handleStartCall = async () => {
     if (!selectedPartner) return;
+    setCallError(null);
     try {
+      await fetchTurnCredentials();
       const stream = await startLocalStream();
       localStreamRef.current = stream;
       setLocalStream(stream);
@@ -224,6 +237,10 @@ export default function MessagesPage() {
           const socket = getSocket();
           if (socket) socket.emit("call:ice-candidate", { to: selectedPartner, candidate });
         },
+        () => {
+          setCallError("Connection lost. Check your network and try a different connection.");
+          cleanupCall(); setCallState("idle");
+        },
       );
       peerRef.current = pc;
 
@@ -233,18 +250,28 @@ export default function MessagesPage() {
       const socket = getSocket();
       if (!socket) { cleanupCall(); return; }
       socket.emit("call:offer", { calleeId: selectedPartner, offer });
+      console.log("📞 Call offer sent to", selectedPartner);
 
       durationRef.current = setInterval(() => {
         setCallDuration((d) => d + 1);
       }, 1000);
-    } catch {
+    } catch (err) {
+      console.error("❌ Call start failed:", err);
+      setCallError(err instanceof DOMException && err.name === "NotAllowedError"
+        ? "Camera/microphone permission denied. Allow access in browser settings."
+        : err instanceof DOMException && err.name === "NotFoundError"
+        ? "No camera or microphone found. Connect a device and try again."
+        : "Failed to start call. Try again.");
       cleanupCall(); setCallState("idle");
     }
   };
 
   const handleAcceptCall = async () => {
     if (!incomingCall) return;
+    setCallError(null);
+    stopRingtone();
     try {
+      await fetchTurnCredentials();
       const stream = await startLocalStream();
       localStreamRef.current = stream;
       setLocalStream(stream);
@@ -257,6 +284,57 @@ export default function MessagesPage() {
           const socket = getSocket();
           if (socket) socket.emit("call:ice-candidate", { to: incomingCall.from, candidate });
         },
+        () => {
+          setCallError("Connection lost. Check your network and try a different connection.");
+          cleanupCall(); setCallState("idle");
+        },
+      );
+      peerRef.current = pc;
+
+      stream.getTracks().forEach((t) => pc.addTrack(t, stream));
+
+      if (incomingCall.offer) {
+        await setRemoteDescription(pc, incomingCall.offer);
+        const answer = await createAnswer(pc);
+        console.log("📞 Call answer created for", incomingCall.from);
+
+        const socket = getSocket();
+        if (socket) {
+          socket.emit("call:accept", { callLogId: incomingCall.callLogId, calleeId: incomingCall.from, answer });
+        }
+      }
+
+      durationRef.current = setInterval(() => { setCallDuration((d) => d + 1); }, 1000);
+    } catch (err) {
+      console.error("❌ Call accept failed:", err);
+      setCallError(err instanceof DOMException && err.name === "NotAllowedError"
+        ? "Camera/microphone permission denied. Allow access in browser settings."
+        : err instanceof DOMException && err.name === "NotFoundError"
+        ? "No camera or microphone found. Connect a device and try again."
+        : "Failed to answer call. Try again.");
+      cleanupCall(); setCallState("idle");
+    }
+  };
+
+  const handleAcceptCall = async () => {
+    if (!incomingCall) return;
+    setCallError(null);
+    stopRingtone();
+    try {
+      await fetchTurnCredentials();
+      const stream = await startLocalStream();
+      localStreamRef.current = stream;
+      setLocalStream(stream);
+      setCallState("connected");
+      setCallLogId(incomingCall.callLogId);
+
+      const pc = createPeerConnection(
+        (remote) => { setRemoteStream(remote); },
+        (candidate) => {
+          const socket = getSocket();
+          if (socket) socket.emit("call:ice-candidate", { to: incomingCall.from, candidate });
+        },
+        () => { setCallError("Could not establish connection. Try a different network."); },
       );
       peerRef.current = pc;
 
@@ -284,6 +362,7 @@ export default function MessagesPage() {
 
   const handleRejectCall = () => {
     if (!incomingCall) return;
+    stopRingtone();
     const socket = getSocket();
     if (socket) socket.emit("call:reject", { callLogId: incomingCall.callLogId, calleeId: incomingCall.from });
     setIncomingCall(null);
@@ -359,6 +438,16 @@ export default function MessagesPage() {
   return (
     <div>
       {/* ─── Video Call Overlay ──────────────────────────────────────── */}
+      {socketError && (
+        <div className="fixed top-0 left-0 right-0 z-[200] bg-red-600/90 text-white px-4 py-3 text-sm text-center font-medium">
+          {socketError}
+        </div>
+      )}
+      {callError && (
+        <div className="fixed top-20 left-1/2 -translate-x-1/2 z-[110] bg-red-500/20 border border-red-500/30 text-red-400 px-6 py-3 rounded-xl text-sm font-medium animate-fade-in backdrop-blur-sm max-w-md text-center">
+          {callError}
+        </div>
+      )}
       {localStream && callState === "connected" && (
         <VideoCallOverlay
           localStream={localStream}
@@ -369,14 +458,20 @@ export default function MessagesPage() {
           muted={callMuted}
           cameraOn={callCameraOn}
           onToggleMute={() => {
-            setCallMuted((m) => !m);
-            if (localStreamRef.current)
-              localStreamRef.current.getAudioTracks().forEach((t) => { t.enabled = callMuted; });
+            setCallMuted((prev) => {
+              const next = !prev;
+              if (localStreamRef.current)
+                localStreamRef.current.getAudioTracks().forEach((t) => { t.enabled = !next; });
+              return next;
+            });
           }}
           onToggleCamera={() => {
-            setCallCameraOn((c) => !c);
-            if (localStreamRef.current)
-              localStreamRef.current.getVideoTracks().forEach((t) => { t.enabled = callCameraOn; });
+            setCallCameraOn((prev) => {
+              const next = !prev;
+              if (localStreamRef.current)
+                localStreamRef.current.getVideoTracks().forEach((t) => { t.enabled = next; });
+              return next;
+            });
           }}
           onEndCall={handleEndCall}
         />
