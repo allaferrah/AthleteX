@@ -4,7 +4,7 @@ import { io, Socket } from "socket.io-client";
 
 let socket: Socket | null = null;
 
-const SOCKET_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+const SOCKET_URL = process.env.NEXT_PUBLIC_API_URL || "https://athletix-backend.onrender.com";
 
 export function connectSocket(
   token: string,
@@ -13,15 +13,18 @@ export function connectSocket(
   if (socket?.connected) return socket;
   socket = io(SOCKET_URL, {
     auth: { token },
-    transports: ["websocket"],
-    reconnectionAttempts: 5,
-    reconnectionDelay: 1000,
-    timeout: 10000,
+    transports: ["websocket", "polling"],
+    reconnectionAttempts: 10,
+    reconnectionDelay: 2000,
+    timeout: 20000,
   });
 
   socket.on("connect_error", (err) => {
     console.error("🔌 Socket connect_error:", err.message);
-    if (onError) onError(`Connection error: ${err.message}. Check that the backend is running.`);
+    if (err.message === "websocket error") {
+      console.log("🔌 WebSocket failed, falling back to polling");
+    }
+    if (onError) onError(`Connection error: ${err.message}. Make sure the backend is running.`);
   });
 
   socket.on("connect", () => {

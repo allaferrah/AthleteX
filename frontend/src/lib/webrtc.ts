@@ -22,7 +22,7 @@ const FREE_TURN: RTCIceServer[] = [
 
 export async function fetchTurnCredentials(): Promise<RTCConfiguration | null> {
   try {
-    const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+    const baseUrl = process.env.NEXT_PUBLIC_API_URL || "https://athletix-backend.onrender.com";
     const res = await fetch(`${baseUrl}/api/turn-credentials`);
     if (!res.ok) return null;
     const data = await res.json();
