@@ -11,6 +11,7 @@ import { useLocale } from "@/i18n/LocaleContext";
 export default function Navbar() {
   const [user, setUser] = useState<{ email: string; role: string } | null>(null);
   const [profilePhoto, setProfilePhoto] = useState<string | null>(null);
+  const [fullName, setFullName] = useState<string | null>(null);
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const pathname = usePathname();
@@ -20,12 +21,18 @@ export default function Navbar() {
     if (isLoggedIn()) {
       const u = getUser();
       setUser(u);
-      const cached = localStorage.getItem("profile_photo");
-      if (cached) setProfilePhoto(cached);
+      const cachedPhoto = localStorage.getItem("profile_photo");
+      const cachedName = localStorage.getItem("profile_name");
+      if (cachedPhoto) setProfilePhoto(cachedPhoto);
+      if (cachedName) setFullName(cachedName);
       profileAPI.getMyProfile().then((p) => {
         if (p?.photoUrl) {
           setProfilePhoto(p.photoUrl);
           localStorage.setItem("profile_photo", p.photoUrl);
+        }
+        if (p?.fullName) {
+          setFullName(p.fullName);
+          localStorage.setItem("profile_name", p.fullName);
         }
       }).catch(() => {});
     }
@@ -121,7 +128,7 @@ export default function Navbar() {
                 </div>
               )}
               <div className="flex flex-col items-start leading-none">
-                <span className="text-[11px] font-semibold text-slate-200 max-w-[100px] truncate">{user.email.split('@')[0]}</span>
+                <span className="text-[11px] font-semibold text-slate-200 max-w-[100px] truncate">{fullName || user.email.split('@')[0]}</span>
                 <span className="text-[8px] font-extrabold text-emerald-400 tracking-wider uppercase mt-0.5">{user.role}</span>
               </div>
             </div>
