@@ -1,0 +1,213 @@
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum Role {
+  USER
+  EXPERT
+  ADMIN
+}
+
+enum Category {
+  SPORTS
+  NUTRITION
+}
+
+enum CallStatus {
+  COMPLETED
+  MISSED
+  REJECTED
+  CANCELLED
+}
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  password  String
+  role      Role     @default(USER)
+  balance        Float   @default(0)
+  oneStarCount   Int     @default(0)
+  averageRating  Float   @default(0)
+  totalReviews   Int     @default(0)
+  isSuspended         Boolean @default(false)
+  aiGenerationsUsed   Int     @default(0)
+  aiGenerationsLimit  Int     @default(3)
+  aiCreditBalance     Int     @default(0)
+  createdAt           DateTime @default(now())
+
+  profile  Profile?
+  services Service[] @relation("UserServices")
+  orders   Order[]   @relation("UserOrders")
+  reviews  Review[]  @relation("UserReviews")
+  sentMessages     Message[] @relation("SentMessages")
+  receivedMessages Message[] @relation("ReceivedMessages")
+  aiPlans          AIPlan[]  @relation("UserAIPlans")
+  transactionsFrom Transaction[] @relation("FromUser")
+  transactionsTo   Transaction[] @relation("ToUser")
+  reportsMade      Report[]      @relation("ReportedBy")
+  reportsReceived  Report[]      @relation("ReportedExpert")
+  callLogsAsCaller  CallLog[] @relation("CallerLogs")
+  callLogsAsCallee  CallLog[] @relation("CalleeLogs")
+}
+
+model Profile {
+  id               String   @id @default(uuid())
+  userId           String   @unique
+  fullName         String?
+  bio              String?
+  specialization   String?
+  phone            String?
+  photoUrl         String?
+  portfolioPhotos  String[] @default([])
+  achievements     String[] @default([])
+  certifications   String[] @default([])
+  yearsExperience  Int?
+  weight           Float?
+  height           Float?
+  goal             String?
+
+  user User @relation(fields: [userId], references: [id])
+}
+
+model SportCategory {
+  id            String    @id @default(uuid())
+  name          String    @unique
+  nameAr        String
+  icon          String
+  imageUrl      String?
+  description   String
+  descriptionAr String
+  sortOrder     Int       @default(0)
+  createdAt     DateTime  @default(now())
+  services      Service[]
+}
+
+model Service {
+  id          String        @id @default(uuid())
+  title       String
+  description String
+  price       Float
+  imageUrl    String?
+  category    Category?     @default(NUTRITION)
+  sportId     String?
+  expertId    String
+  createdAt   DateTime      @default(now())
+
+  expert  User            @relation("UserServices", fields: [expertId], references: [id])
+  sport   SportCategory?  @relation(fields: [sportId], references: [id])
+  orders  Order[]
+  reviews Review[]
+}
+
+model Order {
+  id             String   @id @default(uuid())
+  userId         String
+  serviceId      String
+  status         String   @default("pending")
+  amount         Float?
+  paymentStatus  String   @default("PENDING")
+  createdAt      DateTime @default(now())
+
+  user    User    @relation("UserOrders", fields: [userId], references: [id])
+  service Service @relation(fields: [serviceId], references: [id])
+  transactions Transaction[]
+  reviews      Review[]
+}
+
+model Transaction {
+  id          String   @id @default(uuid())
+  amount      Float
+  type        String   // DEPOSIT, HOLD, RELEASE, REFUND
+  status      String   @default("COMPLETED")
+  orderId     String?
+  fromUserId  String
+  toUserId    String
+  description String?
+  createdAt   DateTime @default(now())
+
+  order Order?  @relation(fields: [orderId], references: [id])
+  from  User    @relation("FromUser", fields: [fromUserId], references: [id])
+  to    User    @relation("ToUser", fields: [toUserId], references: [id])
+}
+
+model Review {
+  id        String  @id @default(uuid())
+  rating    Int
+  comment   String
+  userId    String
+  serviceId String
+  orderId   String?
+
+  user    User    @relation("UserReviews", fields: [userId], references: [id])
+  service Service @relation(fields: [serviceId], references: [id])
+  order   Order?  @relation(fields: [orderId], references: [id])
+}
+
+model Message {
+  id         String   @id @default(uuid())
+  senderId   String
+  receiverId String
+  content    String
+  imageUrl   String?
+  read       Boolean  @default(false)
+  createdAt  DateTime @default(now())
+
+  sender   User @relation("SentMessages", fields: [senderId], references: [id])
+  receiver User @relation("ReceivedMessages", fields: [receiverId], references: [id])
+}
+
+model AIPlan {
+  id            String    @id @default(uuid())
+  userId        String
+  title         String?
+  calories      Int
+  mealPlan      String
+  workoutPlan   String?
+  workoutPlace  String?
+  data          Json?
+  scheduledDate DateTime?
+  isActive      Boolean   @default(false)
+  createdAt     DateTime  @default(now())
+
+  user User @relation("UserAIPlans", fields: [userId], references: [id])
+}
+
+model Report {
+  id          String   @id @default(uuid())
+  reason      String
+  description String?
+  status      String   @default("PENDING")
+  createdAt   DateTime @default(now())
+
+  reporterId      String
+  reportedExpertId String
+
+  reporter      User @relation("ReportedBy", fields: [reporterId], references: [id])
+  reportedExpert User @relation("ReportedExpert", fields: [reportedExpertId], references: [id])
+}
+
+model CallLog {
+  id          String     @id @default(uuid())
+  callerId    String
+  calleeId    String
+  status      CallStatus
+  duration    Int?
+  createdAt   DateTime   @default(now())
+  answeredAt  DateTime?
+
+  caller  User @relation("CallerLogs", fields: [callerId], references: [id])
+  callee  User @relation("CalleeLogs", fields: [calleeId], references: [id])
+}
+
+model AIConfig {
+  id              String   @id @default("default")
+  creditPrice     Int      @default(500)
+  freeGenerations Int      @default(3)
+  updatedAt       DateTime @default(now()) @updatedAt
+}
