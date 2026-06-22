@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect, useCallback } from "react";
+import { useState, useRef, useEffect } from "react";
 
 type Phase = "idle" | "playing" | "result";
 
@@ -19,13 +19,15 @@ function getRating(score: number) {
 export default function PrecisionTap({ t }: { t: (k: string) => string }) {
   const [phase, setPhase] = useState<Phase>("idle");
   const [position, setPosition] = useState(50);
-  const [direction, setDirection] = useState(1);
   const [scores, setScores] = useState<number[]>([]);
   const [lastScore, setLastScore] = useState<number | null>(null);
   const [round, setRound] = useState(0);
   const [flashColor, setFlashColor] = useState<string | null>(null);
-  const animRef = useRef(0);
+
+  const posRef = useRef(50);
+  const dirRef = useRef(1);
   const speedRef = useRef(1.5);
+  const animRef = useRef(0);
 
   const STORAGE_KEY = "precision_best";
   const [best, setBest] = useState<number>(() => {
@@ -33,23 +35,24 @@ export default function PrecisionTap({ t }: { t: (k: string) => string }) {
     return Number(localStorage.getItem(STORAGE_KEY)) || 0;
   });
 
-  const animate = useCallback(() => {
-    setPosition((prev) => {
-      let next = prev + direction * speedRef.current;
-      if (next >= 93) { next = 93; setDirection(-1); }
-      if (next <= 7) { next = 7; setDirection(1); }
-      return next;
-    });
-    animRef.current = requestAnimationFrame(animate);
-  }, [direction]);
-
   useEffect(() => {
-    if (phase === "playing") {
-      speedRef.current = 1.5 + round * 0.3;
-      animRef.current = requestAnimationFrame(animate);
-    }
+    if (phase !== "playing") return;
+    speedRef.current = 1.5 + round * 0.3;
+    posRef.current = 50;
+    dirRef.current = 1;
+    setPosition(50);
+
+    const loop = () => {
+      let next = posRef.current + dirRef.current * speedRef.current;
+      if (next >= 93) { next = 93; dirRef.current = -1; }
+      if (next <= 7) { next = 7; dirRef.current = 1; }
+      posRef.current = next;
+      setPosition(next);
+      animRef.current = requestAnimationFrame(loop);
+    };
+    animRef.current = requestAnimationFrame(loop);
     return () => cancelAnimationFrame(animRef.current);
-  }, [phase, round, animate]);
+  }, [phase, round]);
 
   const handleTap = () => {
     if (phase === "idle") {
@@ -90,14 +93,12 @@ export default function PrecisionTap({ t }: { t: (k: string) => string }) {
   const avg = scores.length > 0 ? Math.round(scores.reduce((a, b) => a + b, 0) / scores.length) : 0;
   const totalRounds = 8;
 
-  const needleRotation = ((position - 50) / 50) * 90;
-
   return (
     <div className="flex flex-col items-center gap-6">
       <p className="text-gray-400 text-center max-w-md text-sm">{t("games.precisionInstructions")}</p>
 
       <div
-        className="glass-sm p-6 sm:p-8 w-full max-w-sm flex flex-col items-center gap-5 transition-all duration-300"
+        className="glass-sm p-6 sm:p-8 w-full max-w-sm flex flex-col items-center gap-5"
         style={flashColor ? { boxShadow: `0 0 0 2px ${flashColor === "emerald" ? "rgba(16,185,129,0.3)" : flashColor === "yellow" ? "rgba(234,179,8,0.3)" : flashColor === "red" ? "rgba(239,68,68,0.3)" : flashColor === "orange" ? "rgba(249,115,22,0.3)" : flashColor === "blue" ? "rgba(59,130,246,0.3)" : "rgba(16,185,129,0.3)"}` } : {}}
       >
         <div className="flex items-center gap-2 text-xs text-gray-500 uppercase tracking-widest">
@@ -119,7 +120,7 @@ export default function PrecisionTap({ t }: { t: (k: string) => string }) {
             />
 
             <div
-              className="absolute top-0 bottom-0 w-2.5 -ml-1 rounded-full transition-all duration-75"
+              className="absolute top-0 bottom-0 w-2.5 -ml-1 rounded-full"
               style={{
                 left: `calc(${position}% - 4px)`,
                 background: `linear-gradient(180deg, #f0f4ff, ${position > 35 && position < 65 ? "#22c55e" : "#ef4444"})`,
@@ -170,7 +171,7 @@ export default function PrecisionTap({ t }: { t: (k: string) => string }) {
               <div key={i} className="flex-1 flex flex-col items-center gap-0.5">
                 <span className="text-[9px] text-gray-500">{s}</span>
                 <div
-                  className="w-full rounded-t transition-all"
+                  className="w-full rounded-t"
                   style={{
                     height: `${Math.max(15, s * 0.6)}%`,
                     background: `linear-gradient(180deg, ${s >= 80 ? "#22c55e" : s >= 50 ? "#eab308" : "#ef4444"}, transparent)`,
