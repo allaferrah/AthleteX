@@ -7,7 +7,7 @@ const BUCKET = "athletix-uploads";
 const storage = multer.memoryStorage();
 
 const fileFilter = (req, file, cb) => {
-  const allowed = /jpeg|jpg|png|gif|webp|svg/;
+  const allowed = /jpeg|jpg|png|gif|webp|svg|heic|heif/;
   const extOk = allowed.test(path.extname(file.originalname).toLowerCase());
   const mimeOk = allowed.test(file.mimetype.split("/")[1]);
   if (extOk && mimeOk) cb(null, true);
@@ -17,7 +17,7 @@ const fileFilter = (req, file, cb) => {
 exports.upload = multer({
   storage,
   fileFilter,
-  limits: { fileSize: 5 * 1024 * 1024 },
+  limits: { fileSize: 20 * 1024 * 1024 },
 });
 
 async function ensureBucket() {

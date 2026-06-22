@@ -39,6 +39,7 @@ export default function MessagesPage() {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [newMessage, setNewMessage] = useState("");
   const [sending, setSending] = useState(false);
+  const [uploadError, setUploadError] = useState("");
   const [loadingConvos, setLoadingConvos] = useState(true);
   const [loadingMsgs, setLoadingMsgs] = useState(false);
   const [partnerPhoto, setPartnerPhoto] = useState<string | null>(null);
@@ -600,6 +601,11 @@ export default function MessagesPage() {
 
                 {/* Input */}
                 <div className="p-4 border-t border-white/5">
+                  {uploadError && (
+                    <div className="mb-2 p-2 bg-red-500/10 border border-red-500/20 text-red-400 text-xs rounded-lg flex items-center gap-2">
+                      <span>⚠️</span> {uploadError}
+                    </div>
+                  )}
                   <div className="flex gap-2 items-center">
                     <button type="button" onClick={() => document.getElementById("chat-image-input")?.click()} className="btn-ghost !p-2.5 !rounded-full flex-shrink-0" title={t("chat.sendPhoto")}>
                       <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -610,12 +616,16 @@ export default function MessagesPage() {
                       onChange={async (e) => {
                         const file = e.target.files?.[0];
                         if (!file) return;
+                        setUploadError(""); setSending(true);
                         try {
                           const res = await uploadAPI.uploadFile(file);
                           await messageAPI.sendMessage(selectedPartner!, "", res.url);
                           const data = await messageAPI.getMessages(selectedPartner!);
                           setMessages(data); loadConversations();
-                        } catch {}
+                        } catch (err: any) {
+                          setUploadError(err?.message || "Upload failed. Try a smaller photo.");
+                        }
+                        setSending(false);
                         e.target.value = "";
                       }}
                     />
