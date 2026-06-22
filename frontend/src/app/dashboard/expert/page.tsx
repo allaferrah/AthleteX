@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, useRef, useCallback } from "react";
-import { serviceAPI, profileAPI, messageAPI, uploadAPI, orderAPI, paymentAPI } from "@/lib/api";
+import { serviceAPI, profileAPI, messageAPI, uploadAPI, orderAPI, paymentAPI, sportCategoryAPI } from "@/lib/api";
 import { getUser, isLoggedIn, getToken } from "@/lib/auth";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
