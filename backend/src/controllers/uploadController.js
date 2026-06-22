@@ -1,16 +1,10 @@
 const multer = require("multer");
 const path = require("path");
+const supabase = require("../lib/supabase");
 
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, path.join(__dirname, "../../uploads"));
-  },
-  filename: (req, file, cb) => {
-    const unique = Date.now() + "-" + Math.round(Math.random() * 1e9);
-    const ext = path.extname(file.originalname);
-    cb(null, unique + ext);
-  },
-});
+const BUCKET = "athletix-uploads";
+
+const storage = multer.memoryStorage();
 
 const fileFilter = (req, file, cb) => {
   const allowed = /jpeg|jpg|png|gif|webp|svg/;
@@ -26,24 +20,47 @@ exports.upload = multer({
   limits: { fileSize: 5 * 1024 * 1024 },
 });
 
-exports.uploadFile = (req, res) => {
+async function ensureBucket() {
+  const { data: buckets } = await supabase.storage.listBuckets();
+  if (!buckets?.find((b) => b.name === BUCKET)) {
+    await supabase.storage.createBucket(BUCKET, { public: true });
+  }
+}
+
+async function uploadToSupabase(file) {
+  const ext = path.extname(file.originalname);
+  const filename = `${Date.now()}-${Math.round(Math.random() * 1e9)}${ext}`;
+  const { data, error } = await supabase.storage
+    .from(BUCKET)
+    .upload(filename, file.buffer, {
+      contentType: file.mimetype,
+      upsert: false,
+    });
+  if (error) throw error;
+  const { data: { publicUrl } } = supabase.storage
+    .from(BUCKET)
+    .getPublicUrl(filename);
+  return { url: publicUrl, filename };
+}
+
+exports.uploadFile = async (req, res) => {
   try {
     if (!req.file) return res.status(400).json({ message: "No file uploaded" });
-    const url = `http://localhost:5000/uploads/${req.file.filename}`;
-    res.json({ url, filename: req.file.filename });
+    await ensureBucket();
+    const result = await uploadToSupabase(req.file);
+    res.json(result);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 };
 
-exports.uploadMultiple = (req, res) => {
+exports.uploadMultiple = async (req, res) => {
   try {
     if (!req.files || req.files.length === 0)
       return res.status(400).json({ message: "No files uploaded" });
-    const urls = req.files.map(
-      (f) => `http://localhost:5000/uploads/${f.filename}`
-    );
-    res.json({ urls });
+    await ensureBucket();
+    const results = await Promise.all(req.files.map(uploadToSupabase));
+    res.json({ urls: results.map((r) => r.url) });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
