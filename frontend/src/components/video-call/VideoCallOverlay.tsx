@@ -49,12 +49,13 @@ export default function VideoCallOverlay({
 
   return (
     <div className="fixed inset-0 z-[100] bg-black flex flex-col">
-      <div className="relative flex-1 bg-black">
+      <div className="relative flex-1 bg-black min-h-0">
         <video
           ref={remoteRef}
           autoPlay
           playsInline
-          className="absolute inset-0 w-full h-full object-cover"
+          muted={false}
+          className="absolute inset-0 w-full h-full object-cover bg-black"
         />
 
         {!remoteStream && (
