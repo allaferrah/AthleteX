@@ -13,8 +13,9 @@ import { connectSocket, getSocket, disconnectSocket } from "@/lib/socket";
 import {
   createPeerConnection, startLocalStream, stopLocalStream,
   createOffer, createAnswer, setRemoteDescription, addIceCandidate,
-  fetchTurnCredentials,
+  fetchTurnCredentials, waitForDeviceRelease, cleanupAudioSink,
 } from "@/lib/webrtc";
+import type { CreatePcCallbacks } from "@/lib/webrtc";
 import { useCallSound } from "@/lib/useCallSound";
 import VideoCallOverlay from "@/components/video-call/VideoCallOverlay";
 import IncomingCallModal from "@/components/video-call/IncomingCallModal";
@@ -87,13 +88,17 @@ export default function MessagesPage() {
   const peerRef = useRef<RTCPeerConnection | null>(null);
   const localStreamRef = useRef<MediaStream | null>(null);
   const durationRef = useRef<NodeJS.Timeout | null>(null);
+  const isCallActiveRef = useRef(false);
 
   const cleanupCall = useCallback(() => {
     if (peerRef.current) { peerRef.current.close(); peerRef.current = null; }
     if (localStreamRef.current) { stopLocalStream(localStreamRef.current); localStreamRef.current = null; }
     if (durationRef.current) { clearInterval(durationRef.current); durationRef.current = null; }
+    cleanupAudioSink();
+    isCallActiveRef.current = false;
     setLocalStream(null); setRemoteStream(null); setCallDuration(0);
     setIncomingCall(null); setCallLogId(null); setCallError(null);
+    waitForDeviceRelease();
   }, []);
 
   // ─── Socket Setup ───────────────────────────────────────────────────
@@ -222,26 +227,29 @@ export default function MessagesPage() {
   // ─── Video Call Actions ─────────────────────────────────────────────
 
   const handleStartCall = async () => {
-    if (!selectedPartner) return;
+    if (!selectedPartner || isCallActiveRef.current) return;
+    isCallActiveRef.current = true;
     setCallError(null);
     try {
       await fetchTurnCredentials();
+      await waitForDeviceRelease();
       const stream = await startLocalStream();
       localStreamRef.current = stream;
       setLocalStream(stream);
       setCallState("calling");
 
-      const pc = createPeerConnection(
-        (remote) => { setRemoteStream(remote); },
-        (candidate) => {
+      const cb: CreatePcCallbacks = {
+        onRemoteStream: (remote) => { setRemoteStream(remote); },
+        onIceCandidate: (candidate) => {
           const socket = getSocket();
           if (socket) socket.emit("call:ice-candidate", { to: selectedPartner, candidate });
         },
-        () => {
+        onIceFailed: () => {
           setCallError("Connection lost. Check your network and try a different connection.");
           cleanupCall(); setCallState("idle");
         },
-      );
+      };
+      const pc = createPeerConnection(cb);
       peerRef.current = pc;
 
       stream.getTracks().forEach((t) => pc.addTrack(t, stream));
@@ -267,28 +275,31 @@ export default function MessagesPage() {
   };
 
   const handleAcceptCall = async () => {
-    if (!incomingCall) return;
+    if (!incomingCall || isCallActiveRef.current) return;
+    isCallActiveRef.current = true;
     setCallError(null);
     stopRingtone();
     try {
       await fetchTurnCredentials();
+      await waitForDeviceRelease();
       const stream = await startLocalStream();
       localStreamRef.current = stream;
       setLocalStream(stream);
       setCallState("connected");
       setCallLogId(incomingCall.callLogId);
 
-      const pc = createPeerConnection(
-        (remote) => { setRemoteStream(remote); },
-        (candidate) => {
+      const cb: CreatePcCallbacks = {
+        onRemoteStream: (remote) => { setRemoteStream(remote); },
+        onIceCandidate: (candidate) => {
           const socket = getSocket();
           if (socket) socket.emit("call:ice-candidate", { to: incomingCall.from, candidate });
         },
-        () => {
+        onIceFailed: () => {
           setCallError("Connection lost. Check your network and try a different connection.");
           cleanupCall(); setCallState("idle");
         },
-      );
+      };
+      const pc = createPeerConnection(cb);
       peerRef.current = pc;
 
       stream.getTracks().forEach((t) => pc.addTrack(t, stream));

@@ -20,6 +20,18 @@ const FREE_TURN: RTCIceServer[] = [
   },
 ];
 
+let audioSink: HTMLAudioElement | null = null;
+
+function ensureAudioSink(): HTMLAudioElement {
+  if (!audioSink) {
+    audioSink = document.createElement("audio");
+    audioSink.setAttribute("playsinline", "");
+    audioSink.style.display = "none";
+    document.body.appendChild(audioSink);
+  }
+  return audioSink;
+}
+
 export async function fetchTurnCredentials(): Promise<RTCConfiguration | null> {
   try {
     const baseUrl = process.env.NEXT_PUBLIC_API_URL || "https://athletix-backend.onrender.com";
@@ -41,28 +53,34 @@ function getIceServers(): RTCConfiguration {
   return { iceServers: FREE_TURN };
 }
 
-export function createPeerConnection(
-  onRemoteStream: (stream: MediaStream) => void,
-  onIceCandidate: (candidate: RTCIceCandidate) => void,
-  onIceFailed?: () => void,
-): RTCPeerConnection {
+export interface CreatePcCallbacks {
+  onRemoteStream: (stream: MediaStream) => void;
+  onIceCandidate: (candidate: RTCIceCandidate) => void;
+  onIceFailed?: () => void;
+}
+
+export function createPeerConnection(cb: CreatePcCallbacks): RTCPeerConnection {
   const pc = new RTCPeerConnection(getIceServers());
 
   pc.ontrack = (event) => {
     console.log("📹 ontrack — kind:", event.track?.kind, "streams:", event.streams?.length);
-    if (event.streams[0]) onRemoteStream(event.streams[0]);
+    if (event.track.kind === "audio" && event.streams[0]) {
+      const el = ensureAudioSink();
+      el.srcObject = event.streams[0];
+      el.play().catch((e) => console.warn("🔇 audio play failed:", e.message));
+    }
+    if (event.track.kind === "video" && event.streams[0]) {
+      cb.onRemoteStream(event.streams[0]);
+    }
   };
 
   pc.onicecandidate = (event) => {
-    if (event.candidate) onIceCandidate(event.candidate);
+    if (event.candidate) cb.onIceCandidate(event.candidate);
   };
 
   pc.oniceconnectionstatechange = () => {
     console.log("🧊 ICE connection state:", pc.iceConnectionState);
-    if (pc.iceConnectionState === "failed") {
-      console.error("❌ ICE connection failed — no media will flow");
-      if (onIceFailed) onIceFailed();
-    }
+    if (pc.iceConnectionState === "failed" && cb.onIceFailed) cb.onIceFailed();
   };
 
   pc.onicegatheringstatechange = () => {
@@ -75,7 +93,7 @@ export function createPeerConnection(
 
   pc.onconnectionstatechange = () => {
     console.log("🔗 Connection state:", pc.connectionState);
-    if (pc.connectionState === "failed" && onIceFailed) onIceFailed();
+    if (pc.connectionState === "failed" && cb.onIceFailed) cb.onIceFailed();
   };
 
   return pc;
@@ -92,6 +110,16 @@ export async function startLocalStream(): Promise<MediaStream> {
 
 export function stopLocalStream(stream: MediaStream) {
   stream.getTracks().forEach((t) => t.stop());
+}
+
+export async function waitForDeviceRelease(): Promise<void> {
+  return new Promise((r) => setTimeout(r, 300));
+}
+
+export function cleanupAudioSink() {
+  if (audioSink) {
+    audioSink.srcObject = null;
+  }
 }
 
 export async function createOffer(pc: RTCPeerConnection): Promise<RTCSessionDescriptionInit> {
