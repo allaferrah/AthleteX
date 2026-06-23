@@ -331,50 +331,6 @@ export default function MessagesPage() {
     }
   };
 
-  const handleAcceptCall = async () => {
-    if (!incomingCall) return;
-    setCallError(null);
-    stopRingtone();
-    try {
-      await fetchTurnCredentials();
-      const stream = await startLocalStream();
-      localStreamRef.current = stream;
-      setLocalStream(stream);
-      setCallState("connected");
-      setCallLogId(incomingCall.callLogId);
-
-      const pc = createPeerConnection(
-        (remote) => { setRemoteStream(remote); },
-        (candidate) => {
-          const socket = getSocket();
-          if (socket) socket.emit("call:ice-candidate", { to: incomingCall.from, candidate });
-        },
-        () => { setCallError("Could not establish connection. Try a different network."); },
-      );
-      peerRef.current = pc;
-
-      stream.getTracks().forEach((t) => pc.addTrack(t, stream));
-
-      if (incomingCall.offer) {
-        await setRemoteDescription(pc, incomingCall.offer);
-        const answer = await createAnswer(pc);
-
-        const socket = getSocket();
-        if (socket) {
-          socket.emit("call:accept", { callLogId: incomingCall.callLogId, calleeId: incomingCall.from, answer });
-        }
-      }
-
-      setIncomingCall(null);
-
-      durationRef.current = setInterval(() => {
-        setCallDuration((d) => d + 1);
-      }, 1000);
-    } catch {
-      cleanupCall(); setCallState("idle");
-    }
-  };
-
   const handleRejectCall = () => {
     if (!incomingCall) return;
     stopRingtone();
