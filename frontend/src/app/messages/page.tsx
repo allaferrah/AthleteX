@@ -14,6 +14,7 @@ import {
   createPeerConnection, startLocalStream, stopLocalStream,
   createOffer, createAnswer, setRemoteDescription, addIceCandidate,
   fetchTurnCredentials, waitForDeviceRelease, cleanupAudioSink,
+  ensureAudioSink,
 } from "@/lib/webrtc";
 import type { CreatePcCallbacks } from "@/lib/webrtc";
 import { useCallSound } from "@/lib/useCallSound";
@@ -230,6 +231,7 @@ export default function MessagesPage() {
     if (!selectedPartner || isCallActiveRef.current) return;
     isCallActiveRef.current = true;
     setCallError(null);
+    ensureAudioSink();
     try {
       await fetchTurnCredentials();
       await waitForDeviceRelease();
@@ -279,6 +281,7 @@ export default function MessagesPage() {
     isCallActiveRef.current = true;
     setCallError(null);
     stopRingtone();
+    ensureAudioSink();
     try {
       await fetchTurnCredentials();
       await waitForDeviceRelease();

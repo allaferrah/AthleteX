@@ -22,12 +22,16 @@ const FREE_TURN: RTCIceServer[] = [
 
 let audioSink: HTMLAudioElement | null = null;
 
-function ensureAudioSink(): HTMLAudioElement {
+export function ensureAudioSink(): HTMLAudioElement {
   if (!audioSink) {
     audioSink = document.createElement("audio");
     audioSink.setAttribute("playsinline", "");
+    audioSink.muted = false;
     audioSink.style.display = "none";
     document.body.appendChild(audioSink);
+  }
+  if (audioSink.paused) {
+    audioSink.play().catch(() => {});
   }
   return audioSink;
 }
