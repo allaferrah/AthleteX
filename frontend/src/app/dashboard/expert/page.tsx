@@ -17,6 +17,7 @@ import {
 } from "@/lib/webrtc";
 import type { CreatePcCallbacks } from "@/lib/webrtc";
 import { useCallSound } from "@/lib/useCallSound";
+import { normalizeUrl } from "@/lib/url";
 import VideoCallOverlay from "@/components/video-call/VideoCallOverlay";
 import IncomingCallModal from "@/components/video-call/IncomingCallModal";
 
@@ -313,7 +314,7 @@ function ProfileTab() {
                 <div className="relative group">
                   <div className="w-28 h-28 rounded-2xl overflow-hidden ring-4 ring-emerald-500/30 shadow-2xl shadow-black/80 transition-transform duration-300 group-hover:scale-[1.02] bg-[#050a18] relative">
                     {photoUrl ? (
-                      <Image src={photoUrl} alt="Profile" fill className="object-cover" />
+                      <Image src={normalizeUrl(photoUrl) || ""} alt="Profile" fill className="object-cover" />
                     ) : (
                       <div className="w-full h-full bg-gradient-to-br from-orange-400 to-rose-500 flex items-center justify-center text-4xl font-black text-white">
                         {fullName?.[0]?.toUpperCase() || "E"}
@@ -504,7 +505,7 @@ function ProfileTab() {
           <label className="block text-xs font-semibold text-slate-400 mb-2 uppercase tracking-wider">{t("profile.profilePhoto")}</label>
           <div className="flex items-center gap-4">
             {photoUrl ? (
-              <Image src={photoUrl} alt="Preview" width={64} height={64} className="w-16 h-16 rounded-xl object-cover border-2 border-emerald-500/20 shadow-lg" />
+              <Image src={normalizeUrl(photoUrl) || ""} alt="Preview" width={64} height={64} className="w-16 h-16 rounded-xl object-cover border-2 border-emerald-500/20 shadow-lg" />
             ) : (
               <div className="w-16 h-16 rounded-xl bg-slate-700/50 flex items-center justify-center text-slate-500 text-sm border border-white/5">{t("profile.noPhoto")}</div>
             )}
@@ -1393,7 +1394,7 @@ function ChatTab() {
           localStream={localStream}
           remoteStream={remoteStream}
           partnerName={incomingCall ? incomingCall.callerName : selectedPartnerEmail}
-          partnerPhoto={incomingCall ? incomingCall.callerPhoto : null}
+          partnerPhoto={incomingCall ? normalizeUrl(incomingCall.callerPhoto) : null}
           duration={callDuration}
           muted={callMuted}
           cameraOn={callCameraOn}
@@ -1443,7 +1444,7 @@ function ChatTab() {
       {incomingCall && (
         <IncomingCallModal
           callerName={incomingCall.callerName}
-          callerPhoto={incomingCall.callerPhoto}
+          callerPhoto={normalizeUrl(incomingCall.callerPhoto)}
           onAccept={handleAcceptCall}
           onReject={handleRejectCall}
         />

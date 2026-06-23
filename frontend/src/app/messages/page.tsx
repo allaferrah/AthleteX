@@ -18,6 +18,7 @@ import {
 } from "@/lib/webrtc";
 import type { CreatePcCallbacks } from "@/lib/webrtc";
 import { useCallSound } from "@/lib/useCallSound";
+import { normalizeUrl } from "@/lib/url";
 import VideoCallOverlay from "@/components/video-call/VideoCallOverlay";
 import IncomingCallModal from "@/components/video-call/IncomingCallModal";
 
@@ -467,7 +468,7 @@ export default function MessagesPage() {
           localStream={localStream}
           remoteStream={remoteStream}
           partnerName={incomingCall ? incomingCall.callerName : selectedPartnerEmail}
-          partnerPhoto={incomingCall ? incomingCall.callerPhoto : partnerPhoto}
+          partnerPhoto={incomingCall ? normalizeUrl(incomingCall.callerPhoto) : normalizeUrl(partnerPhoto)}
           duration={callDuration}
           muted={callMuted}
           cameraOn={callCameraOn}
@@ -523,7 +524,7 @@ export default function MessagesPage() {
       {incomingCall && (
         <IncomingCallModal
           callerName={incomingCall.callerName}
-          callerPhoto={incomingCall.callerPhoto}
+          callerPhoto={normalizeUrl(incomingCall.callerPhoto)}
           onAccept={handleAcceptCall}
           onReject={handleRejectCall}
         />
@@ -600,7 +601,7 @@ export default function MessagesPage() {
                     <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
                   </button>
                   {partnerPhoto ? (
-                    <Image src={partnerPhoto} alt="" width={36} height={36} className="w-9 h-9 rounded-full object-cover border border-emerald-500/30" />
+                    <Image src={normalizeUrl(partnerPhoto) || ""} alt="" width={36} height={36} className="w-9 h-9 rounded-full object-cover border border-emerald-500/30" />
                   ) : (
                     <div className="w-9 h-9 rounded-full bg-gradient-to-br from-emerald-500 to-cyan-500 flex items-center justify-center text-xs font-bold text-black flex-shrink-0">
                       {selectedPartnerEmail[0].toUpperCase()}
