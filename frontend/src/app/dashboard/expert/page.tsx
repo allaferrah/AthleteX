@@ -1075,7 +1075,6 @@ function ChatTab() {
     isCallActiveRef.current = false;
     setLocalStream(null); setRemoteStream(null); setCallDuration(0);
     setIncomingCall(null); setCallLogId(null); setCallError(null);
-    waitForDeviceRelease();
   }, []);
 
   // ─── Socket Setup ───────────────────────────────────────────────────

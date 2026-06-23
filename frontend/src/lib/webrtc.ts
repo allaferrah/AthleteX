@@ -99,21 +99,31 @@ export function createPeerConnection(cb: CreatePcCallbacks): RTCPeerConnection {
   return pc;
 }
 
-export async function startLocalStream(): Promise<MediaStream> {
-  const stream = await navigator.mediaDevices.getUserMedia({
-    video: { width: { ideal: 640 }, height: { ideal: 480 }, facingMode: "user" },
-    audio: { echoCancellation: true, noiseSuppression: true },
-  });
-  console.log("📷 Local stream tracks:", stream.getTracks().map((t) => `${t.kind}:${t.enabled}`));
-  return stream;
-}
-
 export function stopLocalStream(stream: MediaStream) {
   stream.getTracks().forEach((t) => t.stop());
 }
 
 export async function waitForDeviceRelease(): Promise<void> {
-  return new Promise((r) => setTimeout(r, 300));
+  return new Promise((r) => setTimeout(r, 800));
+}
+
+export async function startLocalStream(): Promise<MediaStream> {
+  let lastErr: unknown;
+  for (let attempt = 0; attempt < 3; attempt++) {
+    if (attempt > 0) await new Promise((r) => setTimeout(r, 500));
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: { width: { ideal: 640 }, height: { ideal: 480 }, facingMode: "user" },
+        audio: { echoCancellation: true, noiseSuppression: true },
+      });
+      console.log("📷 Local stream tracks:", stream.getTracks().map((t) => `${t.kind}:${t.enabled}`));
+      return stream;
+    } catch (err) {
+      console.warn(`📷 getUserMedia attempt ${attempt + 1} failed:`, err);
+      lastErr = err;
+    }
+  }
+  throw lastErr;
 }
 
 export function cleanupAudioSink() {
