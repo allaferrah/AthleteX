@@ -13,7 +13,8 @@ import {
   createPeerConnection, startLocalStream, stopLocalStream,
   createOffer, createAnswer, setRemoteDescription, addIceCandidate,
   fetchTurnCredentials, waitForDeviceRelease, cleanupAudioSink,
-  ensureAudioSink, addLocalTracks,
+  ensureAudioSink, addLocalTracks, attemptIceRestart, resetIceRestartAttempts,
+  playMediaElement,
 } from "@/lib/webrtc";
 import type { CreatePcCallbacks } from "@/lib/webrtc";
 import { useCallSound } from "@/lib/useCallSound";
@@ -1069,6 +1070,8 @@ function ChatTab() {
   const localStreamRef = useRef<MediaStream | null>(null);
   const durationRef = useRef<NodeJS.Timeout | null>(null);
   const isCallActiveRef = useRef(false);
+  const callStateRef = useRef(callState);
+  useEffect(() => { callStateRef.current = callState; }, [callState]);
   const pendingCandidatesRef = useRef<RTCIceCandidateInit[]>([]);
 
   const flushPendingCandidates = useCallback(async () => {
@@ -1106,7 +1109,22 @@ function ChatTab() {
       if (id === selectedPartner) setPartnerOnline(false);
     });
 
-    socket.on("call:incoming", (data: { from: string; callerName: string; callerPhoto: string | null; callLogId: string; offer: any }) => {
+    socket.on("call:incoming", async (data: { from: string; callerName: string; callerPhoto: string | null; callLogId: string; offer: any }) => {
+      const pc = peerRef.current;
+      if (pc && callStateRef.current === "connected") {
+        if (data.offer) {
+          try {
+            await setRemoteDescription(pc, data.offer);
+            await flushPendingCandidates();
+            const answer = await createAnswer(pc);
+            const socket = getSocket();
+            if (socket) socket.emit("call:accept", { callLogId: data.callLogId, calleeId: data.from, answer });
+          } catch (err) {
+            console.error("ICE restart offer handling failed:", err);
+          }
+        }
+        return;
+      }
       setIncomingCall(data);
       playRingtone();
     });
@@ -1163,6 +1181,7 @@ function ChatTab() {
     if (!selectedPartner || isCallActiveRef.current) return;
     isCallActiveRef.current = true;
     setCallError(null);
+    resetIceRestartAttempts();
     ensureAudioSink();
     try {
       await fetchTurnCredentials();
@@ -1183,6 +1202,18 @@ function ChatTab() {
           cleanupCall(); setCallState("idle");
         },
         onIceStateChange: (state) => setIceConnState(state),
+        onDisconnected: async () => {
+          const pc = peerRef.current;
+          if (!pc) return;
+          const newOffer = await attemptIceRestart(pc);
+          if (newOffer) {
+            const socket = getSocket();
+            if (socket) socket.emit("call:offer", { calleeId: selectedPartner, offer: newOffer });
+          } else {
+            setCallError("Connection lost. Check your network and try a different connection.");
+            cleanupCall(); setCallState("idle");
+          }
+        },
       };
       const pc = createPeerConnection(cb);
       peerRef.current = pc;
@@ -1213,6 +1244,7 @@ function ChatTab() {
     if (!incomingCall || isCallActiveRef.current) return;
     isCallActiveRef.current = true;
     setCallError(null);
+    resetIceRestartAttempts();
     stopRingtone();
     ensureAudioSink();
     try {
@@ -1235,6 +1267,18 @@ function ChatTab() {
           cleanupCall(); setCallState("idle");
         },
         onIceStateChange: (state) => setIceConnState(state),
+        onDisconnected: async () => {
+          const pc = peerRef.current;
+          if (!pc) return;
+          const newOffer = await attemptIceRestart(pc);
+          if (newOffer) {
+            const socket = getSocket();
+            if (socket) socket.emit("call:offer", { calleeId: incomingCall.from, offer: newOffer });
+          } else {
+            setCallError("Connection lost. Check your network and try a different connection.");
+            cleanupCall(); setCallState("idle");
+          }
+        },
       };
       const pc = createPeerConnection(cb);
       peerRef.current = pc;

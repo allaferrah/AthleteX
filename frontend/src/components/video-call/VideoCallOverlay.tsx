@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useCallback } from "react";
 
 interface Props {
   localStream: MediaStream;
@@ -31,6 +31,19 @@ export default function VideoCallOverlay({
 }: Props) {
   const localRef = useRef<HTMLVideoElement>(null);
   const remoteRef = useRef<HTMLVideoElement>(null);
+  const playRetryRef = useRef<NodeJS.Timeout | null>(null);
+
+  const retryPlay = useCallback((el: HTMLVideoElement) => {
+    let attempts = 0;
+    const tryPlay = () => {
+      if (attempts >= 5) return;
+      attempts++;
+      el.play().catch(() => {
+        playRetryRef.current = setTimeout(tryPlay, 500);
+      });
+    };
+    tryPlay();
+  }, []);
 
   useEffect(() => {
     if (localRef.current) localRef.current.srcObject = localStream;
@@ -39,9 +52,12 @@ export default function VideoCallOverlay({
   useEffect(() => {
     if (remoteRef.current && remoteStream) {
       remoteRef.current.srcObject = remoteStream;
-      remoteRef.current.play().catch(() => {});
+      retryPlay(remoteRef.current);
     }
-  }, [remoteStream]);
+    return () => {
+      if (playRetryRef.current) clearTimeout(playRetryRef.current);
+    };
+  }, [remoteStream, retryPlay]);
 
   const fmt = (s: number) => {
     const m = Math.floor(s / 60);
@@ -49,20 +65,24 @@ export default function VideoCallOverlay({
     return `${String(m).padStart(2, "0")}:${String(sec).padStart(2, "0")}`;
   };
 
+  const isConnected = iceState === "connected" || iceState === "completed";
+
   return (
     <div className="fixed inset-0 z-[100] bg-black flex flex-col">
       <div className="relative flex-1 bg-black min-h-0">
-        <video
-          ref={remoteRef}
-          autoPlay
-          playsInline
-          muted
-          className="absolute inset-0 w-full h-full object-cover bg-black"
-        />
+        {remoteStream && (
+          <video
+            ref={remoteRef}
+            autoPlay
+            playsInline
+            muted
+            className="absolute inset-0 w-full h-full object-cover bg-black"
+          />
+        )}
 
-        {(!remoteStream || (iceState !== "connected" && iceState !== "completed")) && (
+        {!remoteStream && (
           <div className="absolute inset-0 flex flex-col items-center justify-center gap-3">
-            {(iceState === "checking" || iceState === "new") && (
+            {!isConnected && (
               <div className="flex items-center gap-2 text-emerald-400 text-sm animate-pulse">
                 <span className="w-2 h-2 rounded-full bg-emerald-500" />
                 Connecting…
@@ -82,6 +102,12 @@ export default function VideoCallOverlay({
             <p className="text-gray-400 text-sm">
               {partnerName}
             </p>
+          </div>
+        )}
+
+        {remoteStream && !isConnected && (
+          <div className="absolute top-16 left-1/2 -translate-x-1/2 bg-black/60 px-3 py-1 rounded-full text-emerald-400 text-xs animate-pulse z-10">
+            Reconnecting…
           </div>
         )}
 
@@ -117,9 +143,9 @@ export default function VideoCallOverlay({
           }`}
         >
           {muted ? (
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="1" y1="1" x2="23" y2="23"/><path d="M9 9v3a3 3 0 0 0 5.12 2.12M15 9.34V4a3 3 0 0 0-5.94-.6"/><path d="M17 16.95A7 7 0 0 1 5 12v-2m14 0v2a7 7 0 0 1-.11 1.23"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="1" y1="1" x2="23" y2="23"/><path d="M9 9v3a3 3 0 0 0 5.12 2.12M15 9.34V4a3 3 0 0 0-5.94-.6"/><path d="M17 16.95A7 7 0 0 1 5 12v-2m14 0v2a7 7 0 0 1-.11 1.23"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="19" x2="16" y2="23"/></svg>
           ) : (
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="19" x2="16" y2="23"/></svg>
           )}
         </button>
 
