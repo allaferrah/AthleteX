@@ -69,12 +69,13 @@ export function createPeerConnection(cb: CreatePcCallbacks): RTCPeerConnection {
 
   pc.ontrack = (event) => {
     console.log("📹 ontrack — kind:", event.track?.kind, "streams:", event.streams?.length);
-    if (event.track.kind === "audio" && event.streams[0]) {
+    const stream = event.streams[0] || new MediaStream([event.track]);
+    if (event.track.kind === "audio") {
       const el = ensureAudioSink();
-      el.srcObject = event.streams[0];
+      el.srcObject = stream;
     }
-    if (event.track.kind === "video" && event.streams[0]) {
-      cb.onRemoteStream(event.streams[0]);
+    if (event.track.kind === "video") {
+      cb.onRemoteStream(stream);
     }
   };
 
@@ -141,18 +142,9 @@ export function cleanupAudioSink() {
 }
 
 export function addLocalTracks(pc: RTCPeerConnection, stream: MediaStream) {
-  const audioTrack = stream.getAudioTracks()[0];
-  const videoTrack = stream.getVideoTracks()[0];
-  if (audioTrack) {
-    pc.addTransceiver(audioTrack, { direction: "sendrecv" });
-  } else {
-    pc.addTransceiver("audio", { direction: "recvonly" });
-  }
-  if (videoTrack) {
-    pc.addTransceiver(videoTrack, { direction: "sendrecv" });
-  } else {
-    pc.addTransceiver("video", { direction: "recvonly" });
-  }
+  stream.getTracks().forEach((track) => {
+    pc.addTrack(track, stream);
+  });
 }
 
 export async function createOffer(pc: RTCPeerConnection): Promise<RTCSessionDescriptionInit> {

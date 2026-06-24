@@ -78,6 +78,7 @@ export default function MessagesPage() {
   // ─── Video Call State ───────────────────────────────────────────────
   const [callState, setCallState] = useState<"idle" | "calling" | "connected" | "ended">("idle");
   const [incomingCall, setIncomingCall] = useState<{ from: string; callerName: string; callerPhoto: string | null; callLogId: string; offer?: any } | null>(null);
+  const [callPartner, setCallPartner] = useState<{ id: string; name: string; photo: string | null } | null>(null);
   const [localStream, setLocalStream] = useState<MediaStream | null>(null);
   const [remoteStream, setRemoteStream] = useState<MediaStream | null>(null);
   const [callDuration, setCallDuration] = useState(0);
@@ -112,6 +113,7 @@ export default function MessagesPage() {
     isCallActiveRef.current = false;
     setLocalStream(null); setRemoteStream(null); setCallDuration(0);
     setIncomingCall(null); setCallLogId(null); setCallError(null); setIceConnState("new");
+    setCallPartner(null);
     waitForDeviceRelease();
   }, []);
 
@@ -256,6 +258,11 @@ export default function MessagesPage() {
       localStreamRef.current = stream;
       setLocalStream(stream);
       setCallState("calling");
+      setCallPartner({
+        id: selectedPartner,
+        name: selectedPartnerEmail,
+        photo: partnerPhoto,
+      });
 
       const cb: CreatePcCallbacks = {
         onRemoteStream: (remote) => { setRemoteStream(remote); },
@@ -308,6 +315,11 @@ export default function MessagesPage() {
       setLocalStream(stream);
       setCallState("connected");
       setCallLogId(incomingCall.callLogId);
+      setCallPartner({
+        id: incomingCall.from,
+        name: incomingCall.callerName,
+        photo: incomingCall.callerPhoto,
+      });
 
       const cb: CreatePcCallbacks = {
         onRemoteStream: (remote) => { setRemoteStream(remote); },
@@ -361,8 +373,9 @@ export default function MessagesPage() {
 
   const handleEndCall = () => {
     const socket = getSocket();
-    if (socket && selectedPartner && callState === "connected") {
-      socket.emit("call:end", { to: selectedPartner, callLogId, duration: callDuration });
+    const partnerId = callPartner?.id || selectedPartner;
+    if (socket && partnerId && callState === "connected") {
+      socket.emit("call:end", { to: partnerId, callLogId, duration: callDuration });
     }
     if (incomingCall) {
       const socket = getSocket();
@@ -443,8 +456,8 @@ export default function MessagesPage() {
         <VideoCallOverlay
           localStream={localStream}
           remoteStream={remoteStream}
-          partnerName={incomingCall ? incomingCall.callerName : selectedPartnerEmail}
-          partnerPhoto={incomingCall ? normalizeUrl(incomingCall.callerPhoto) : normalizeUrl(partnerPhoto)}
+          partnerName={callPartner ? callPartner.name : ""}
+          partnerPhoto={callPartner ? normalizeUrl(callPartner.photo) : null}
           duration={callDuration}
           muted={callMuted}
           cameraOn={callCameraOn}
