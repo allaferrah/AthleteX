@@ -60,9 +60,9 @@ export default function VideoCallOverlay({
           className="absolute inset-0 w-full h-full object-cover bg-black"
         />
 
-        {!remoteStream && (
+        {(!remoteStream || (iceState !== "connected" && iceState !== "completed")) && (
           <div className="absolute inset-0 flex flex-col items-center justify-center gap-3">
-            {iceState === "checking" && (
+            {(iceState === "checking" || iceState === "new") && (
               <div className="flex items-center gap-2 text-emerald-400 text-sm animate-pulse">
                 <span className="w-2 h-2 rounded-full bg-emerald-500" />
                 Connecting…

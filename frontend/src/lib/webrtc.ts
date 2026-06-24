@@ -69,13 +69,12 @@ export function createPeerConnection(cb: CreatePcCallbacks): RTCPeerConnection {
 
   pc.ontrack = (event) => {
     console.log("📹 ontrack — kind:", event.track?.kind, "streams:", event.streams?.length);
-    const stream = event.streams[0] || new MediaStream([event.track]);
     if (event.track.kind === "audio") {
       const el = ensureAudioSink();
-      el.srcObject = stream;
+      el.srcObject = new MediaStream([event.track]);
     }
     if (event.track.kind === "video") {
-      cb.onRemoteStream(stream);
+      cb.onRemoteStream(new MediaStream([event.track]));
     }
   };
 
