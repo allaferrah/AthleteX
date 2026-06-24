@@ -13,7 +13,7 @@ import {
   createPeerConnection, startLocalStream, stopLocalStream,
   createOffer, createAnswer, setRemoteDescription, addIceCandidate,
   fetchTurnCredentials, waitForDeviceRelease, cleanupAudioSink,
-  ensureAudioSink,
+  ensureAudioSink, addLocalTracks,
 } from "@/lib/webrtc";
 import type { CreatePcCallbacks } from "@/lib/webrtc";
 import { useCallSound } from "@/lib/useCallSound";
@@ -1187,7 +1187,7 @@ function ChatTab() {
       const pc = createPeerConnection(cb);
       peerRef.current = pc;
 
-      stream.getTracks().forEach((t) => pc.addTrack(t, stream));
+      addLocalTracks(pc, stream);
       const offer = await createOffer(pc);
 
       const socket = getSocket();
@@ -1239,7 +1239,7 @@ function ChatTab() {
       const pc = createPeerConnection(cb);
       peerRef.current = pc;
 
-      stream.getTracks().forEach((t) => pc.addTrack(t, stream));
+      addLocalTracks(pc, stream);
 
       if (incomingCall.offer) {
         await setRemoteDescription(pc, incomingCall.offer);

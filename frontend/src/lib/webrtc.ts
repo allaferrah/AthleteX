@@ -140,8 +140,23 @@ export function cleanupAudioSink() {
   }
 }
 
+export function addLocalTracks(pc: RTCPeerConnection, stream: MediaStream) {
+  const audioTrack = stream.getAudioTracks()[0];
+  const videoTrack = stream.getVideoTracks()[0];
+  if (audioTrack) {
+    pc.addTransceiver(audioTrack, { direction: "sendrecv" });
+  } else {
+    pc.addTransceiver("audio", { direction: "recvonly" });
+  }
+  if (videoTrack) {
+    pc.addTransceiver(videoTrack, { direction: "sendrecv" });
+  } else {
+    pc.addTransceiver("video", { direction: "recvonly" });
+  }
+}
+
 export async function createOffer(pc: RTCPeerConnection): Promise<RTCSessionDescriptionInit> {
-  const offer = await pc.createOffer({ offerToReceiveAudio: true, offerToReceiveVideo: true });
+  const offer = await pc.createOffer();
   await pc.setLocalDescription(offer);
   return offer;
 }
