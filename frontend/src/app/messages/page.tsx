@@ -91,6 +91,17 @@ export default function MessagesPage() {
   const localStreamRef = useRef<MediaStream | null>(null);
   const durationRef = useRef<NodeJS.Timeout | null>(null);
   const isCallActiveRef = useRef(false);
+  const pendingCandidatesRef = useRef<RTCIceCandidateInit[]>([]);
+
+  const flushPendingCandidates = useCallback(async () => {
+    const pc = peerRef.current;
+    if (!pc || !pc.remoteDescription || pendingCandidatesRef.current.length === 0) return;
+    const batch = pendingCandidatesRef.current;
+    pendingCandidatesRef.current = [];
+    for (const c of batch) {
+      try { await pc.addIceCandidate(new RTCIceCandidate(c)); } catch {}
+    }
+  }, []);
 
   const cleanupCall = useCallback(() => {
     if (peerRef.current) { peerRef.current.close(); peerRef.current = null; }
@@ -129,6 +140,7 @@ export default function MessagesPage() {
       const pc = peerRef.current;
       if (pc && answer) {
         try { await setRemoteDescription(pc, answer); } catch {}
+        await flushPendingCandidates();
       }
     });
 
@@ -146,8 +158,11 @@ export default function MessagesPage() {
 
     socket.on("call:ice-candidate", async ({ from: _, candidate }: { from: string; candidate: any }) => {
       const pc = peerRef.current;
-      if (pc && candidate) {
+      if (!pc || !candidate) return;
+      if (pc.remoteDescription) {
         try { await addIceCandidate(pc, candidate); } catch {}
+      } else {
+        pendingCandidatesRef.current.push(candidate);
       }
     });
 
@@ -310,6 +325,7 @@ export default function MessagesPage() {
 
       if (incomingCall.offer) {
         await setRemoteDescription(pc, incomingCall.offer);
+        await flushPendingCandidates();
         const answer = await createAnswer(pc);
         console.log("📞 Call answer created for", incomingCall.from);
 
@@ -319,6 +335,7 @@ export default function MessagesPage() {
         }
       }
 
+      setIncomingCall(null);
       durationRef.current = setInterval(() => { setCallDuration((d) => d + 1); }, 1000);
     } catch (err) {
       console.error("❌ Call accept failed:", err);

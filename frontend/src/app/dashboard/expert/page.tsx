@@ -1068,6 +1068,17 @@ function ChatTab() {
   const localStreamRef = useRef<MediaStream | null>(null);
   const durationRef = useRef<NodeJS.Timeout | null>(null);
   const isCallActiveRef = useRef(false);
+  const pendingCandidatesRef = useRef<RTCIceCandidateInit[]>([]);
+
+  const flushPendingCandidates = useCallback(async () => {
+    const pc = peerRef.current;
+    if (!pc || !pc.remoteDescription || pendingCandidatesRef.current.length === 0) return;
+    const batch = pendingCandidatesRef.current;
+    pendingCandidatesRef.current = [];
+    for (const c of batch) {
+      try { await pc.addIceCandidate(new RTCIceCandidate(c)); } catch {}
+    }
+  }, []);
 
   const cleanupCall = useCallback(() => {
     if (peerRef.current) { peerRef.current.close(); peerRef.current = null; }
@@ -1105,6 +1116,7 @@ function ChatTab() {
       const pc = peerRef.current;
       if (pc && answer) {
         try { await setRemoteDescription(pc, answer); } catch {}
+        await flushPendingCandidates();
       }
     });
 
@@ -1122,8 +1134,11 @@ function ChatTab() {
 
     socket.on("call:ice-candidate", async ({ from: _, candidate }: { from: string; candidate: any }) => {
       const pc = peerRef.current;
-      if (pc && candidate) {
+      if (!pc || !candidate) return;
+      if (pc.remoteDescription) {
         try { await addIceCandidate(pc, candidate); } catch {}
+      } else {
+        pendingCandidatesRef.current.push(candidate);
       }
     });
 
@@ -1225,6 +1240,7 @@ function ChatTab() {
 
       if (incomingCall.offer) {
         await setRemoteDescription(pc, incomingCall.offer);
+        await flushPendingCandidates();
         const answer = await createAnswer(pc);
         console.log("📞 Call answer created for", incomingCall.from);
 
@@ -1234,6 +1250,7 @@ function ChatTab() {
         }
       }
 
+      setIncomingCall(null);
       durationRef.current = setInterval(() => { setCallDuration((d) => d + 1); }, 1000);
     } catch (err) {
       console.error("❌ Call accept failed:", err);
@@ -1242,50 +1259,6 @@ function ChatTab() {
         : err instanceof DOMException && err.name === "NotFoundError"
         ? "No camera or microphone found. Connect a device and try again."
         : "Failed to answer call. Try again.");
-      cleanupCall(); setCallState("idle");
-    }
-  };
-
-  const handleAcceptCall = async () => {
-    if (!incomingCall) return;
-    setCallError(null);
-    stopRingtone();
-    try {
-      await fetchTurnCredentials();
-      const stream = await startLocalStream();
-      localStreamRef.current = stream;
-      setLocalStream(stream);
-      setCallState("connected");
-      setCallLogId(incomingCall.callLogId);
-
-      const pc = createPeerConnection(
-        (remote) => { setRemoteStream(remote); },
-        (candidate) => {
-          const socket = getSocket();
-          if (socket) socket.emit("call:ice-candidate", { to: incomingCall.from, candidate });
-        },
-        () => { setCallError("Could not establish connection. Try a different network."); },
-      );
-      peerRef.current = pc;
-
-      stream.getTracks().forEach((t) => pc.addTrack(t, stream));
-
-      if (incomingCall.offer) {
-        await setRemoteDescription(pc, incomingCall.offer);
-        const answer = await createAnswer(pc);
-
-        const socket = getSocket();
-        if (socket) {
-          socket.emit("call:accept", { callLogId: incomingCall.callLogId, calleeId: incomingCall.from, answer });
-        }
-      }
-
-      setIncomingCall(null);
-
-      durationRef.current = setInterval(() => {
-        setCallDuration((d) => d + 1);
-      }, 1000);
-    } catch {
       cleanupCall(); setCallState("idle");
     }
   };
