@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 
 interface Props {
   localStream: MediaStream;
@@ -10,6 +10,7 @@ interface Props {
   duration: number;
   muted: boolean;
   cameraOn: boolean;
+  iceState: string;
   onToggleMute: () => void;
   onToggleCamera: () => void;
   onEndCall: () => void;
@@ -23,6 +24,7 @@ export default function VideoCallOverlay({
   duration,
   muted,
   cameraOn,
+  iceState,
   onToggleMute,
   onToggleCamera,
   onEndCall,
@@ -54,12 +56,18 @@ export default function VideoCallOverlay({
           ref={remoteRef}
           autoPlay
           playsInline
-          muted={false}
+          muted
           className="absolute inset-0 w-full h-full object-cover bg-black"
         />
 
         {!remoteStream && (
-          <div className="absolute inset-0 flex items-center justify-center">
+          <div className="absolute inset-0 flex flex-col items-center justify-center gap-3">
+            {iceState === "checking" && (
+              <div className="flex items-center gap-2 text-emerald-400 text-sm animate-pulse">
+                <span className="w-2 h-2 rounded-full bg-emerald-500" />
+                Connecting…
+              </div>
+            )}
             {partnerPhoto ? (
               <img
                 src={partnerPhoto}
@@ -71,7 +79,7 @@ export default function VideoCallOverlay({
                 {partnerName?.charAt(0)?.toUpperCase() || "?"}
               </div>
             )}
-            <p className="absolute bottom-8 text-gray-400 text-sm">
+            <p className="text-gray-400 text-sm">
               {partnerName}
             </p>
           </div>

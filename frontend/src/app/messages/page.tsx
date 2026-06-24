@@ -86,6 +86,7 @@ export default function MessagesPage() {
   const [callLogId, setCallLogId] = useState<string | null>(null);
   const [callError, setCallError] = useState<string | null>(null);
   const [socketError, setSocketError] = useState<string | null>(null);
+  const [iceConnState, setIceConnState] = useState<string>("new");
   const { playRingtone, stopRingtone } = useCallSound();
   const peerRef = useRef<RTCPeerConnection | null>(null);
   const localStreamRef = useRef<MediaStream | null>(null);
@@ -110,7 +111,7 @@ export default function MessagesPage() {
     cleanupAudioSink();
     isCallActiveRef.current = false;
     setLocalStream(null); setRemoteStream(null); setCallDuration(0);
-    setIncomingCall(null); setCallLogId(null); setCallError(null);
+    setIncomingCall(null); setCallLogId(null); setCallError(null); setIceConnState("new");
     waitForDeviceRelease();
   }, []);
 
@@ -266,6 +267,7 @@ export default function MessagesPage() {
           setCallError("Connection lost. Check your network and try a different connection.");
           cleanupCall(); setCallState("idle");
         },
+        onIceStateChange: (state) => setIceConnState(state),
       };
       const pc = createPeerConnection(cb);
       peerRef.current = pc;
@@ -317,6 +319,7 @@ export default function MessagesPage() {
           setCallError("Connection lost. Check your network and try a different connection.");
           cleanupCall(); setCallState("idle");
         },
+        onIceStateChange: (state) => setIceConnState(state),
       };
       const pc = createPeerConnection(cb);
       peerRef.current = pc;
@@ -445,6 +448,7 @@ export default function MessagesPage() {
           duration={callDuration}
           muted={callMuted}
           cameraOn={callCameraOn}
+          iceState={iceConnState}
           onToggleMute={() => {
             setCallMuted((prev) => {
               const next = !prev;

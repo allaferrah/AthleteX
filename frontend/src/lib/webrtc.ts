@@ -61,6 +61,7 @@ export interface CreatePcCallbacks {
   onRemoteStream: (stream: MediaStream) => void;
   onIceCandidate: (candidate: RTCIceCandidate) => void;
   onIceFailed?: () => void;
+  onIceStateChange?: (state: string) => void;
 }
 
 export function createPeerConnection(cb: CreatePcCallbacks): RTCPeerConnection {
@@ -71,7 +72,6 @@ export function createPeerConnection(cb: CreatePcCallbacks): RTCPeerConnection {
     if (event.track.kind === "audio" && event.streams[0]) {
       const el = ensureAudioSink();
       el.srcObject = event.streams[0];
-      el.play().catch((e) => console.warn("🔇 audio play failed:", e.message));
     }
     if (event.track.kind === "video" && event.streams[0]) {
       cb.onRemoteStream(event.streams[0]);
@@ -83,8 +83,10 @@ export function createPeerConnection(cb: CreatePcCallbacks): RTCPeerConnection {
   };
 
   pc.oniceconnectionstatechange = () => {
-    console.log("🧊 ICE connection state:", pc.iceConnectionState);
-    if (pc.iceConnectionState === "failed" && cb.onIceFailed) cb.onIceFailed();
+    const state = pc.iceConnectionState;
+    console.log("🧊 ICE connection state:", state);
+    cb.onIceStateChange?.(state);
+    if (state === "failed" && cb.onIceFailed) cb.onIceFailed();
   };
 
   pc.onicegatheringstatechange = () => {
@@ -96,8 +98,10 @@ export function createPeerConnection(cb: CreatePcCallbacks): RTCPeerConnection {
   };
 
   pc.onconnectionstatechange = () => {
-    console.log("🔗 Connection state:", pc.connectionState);
-    if (pc.connectionState === "failed" && cb.onIceFailed) cb.onIceFailed();
+    const state = pc.connectionState;
+    console.log("🔗 Connection state:", state);
+    cb.onIceStateChange?.(state);
+    if (state === "failed" && cb.onIceFailed) cb.onIceFailed();
   };
 
   return pc;
