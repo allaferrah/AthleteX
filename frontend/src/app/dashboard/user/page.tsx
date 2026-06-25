@@ -405,7 +405,7 @@ export default function UserDashboard() {
                     <p className="text-sm text-slate-300">{profile.bio}</p>
                   </div>
                 )}
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   {profile?.phone && (
                     <div>
                       <p className="text-xs text-slate-500 uppercase tracking-wider mb-1">Phone</p>
@@ -555,7 +555,7 @@ export default function UserDashboard() {
                       {p.isActive ? "✅" : "📌"} {t("ai.activePlan")}
                     </button>
                     <input type="date" onChange={(e) => handleSchedule(p.id, e.target.value)} disabled={schedulingId === p.id}
-                      className="!py-1 !px-2 text-[11px] rounded-lg bg-white/[0.03] border border-white/5 text-slate-300 w-auto" title={t("ai.schedulePlan")}
+                      className="!py-1 !px-2 text-[11px] rounded-lg bg-white/[0.03] border border-white/5 text-slate-300 w-auto max-w-[130px]" title={t("ai.schedulePlan")}
                     />
                     <button onClick={() => handleDeletePlan(p.id)} disabled={deletingId === p.id}
                       className="!py-1 !px-2 text-[11px] rounded-lg text-red-400 hover:bg-red-500/10 transition disabled:opacity-50 ml-auto"
@@ -597,12 +597,12 @@ export default function UserDashboard() {
                   {walletMsg}
                 </div>
               )}
-              <div className="flex gap-3">
+              <div className="flex flex-col sm:flex-row gap-3">
                 <input type="number" value={depositAmount} onChange={(e) => setDepositAmount(e.target.value)}
-                  className="input-field max-w-xs text-sm" placeholder={t("dashboard.depositAmount")} min="1" step="0.01"
+                  className="input-field w-full sm:max-w-xs text-sm" placeholder={t("dashboard.depositAmount")} min="1" step="0.01"
                   onKeyDown={(e) => { if (e.key === "Enter") handleDeposit(); }} autoComplete="off"
                 />
-                <button onClick={handleDeposit} disabled={depositing || !depositAmount} className="btn-primary disabled:opacity-50 text-xs py-2 px-5 font-bold cursor-pointer">
+                <button onClick={handleDeposit} disabled={depositing || !depositAmount} className="btn-primary disabled:opacity-50 text-xs py-2 px-5 font-bold cursor-pointer w-full sm:w-auto">
                   {depositing ? "..." : t("dashboard.deposit")}
                 </button>
               </div>
@@ -655,30 +655,23 @@ export default function UserDashboard() {
                 const isHeld = order.paymentStatus === "HELD";
                 return (
                   <div key={order.id} className="py-4 group hover:bg-white/5 px-3 rounded-lg transition">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-3 min-w-0">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                      <div className="flex items-start gap-3 min-w-0">
                         {order.service.imageUrl && (
-                          <Image src={order.service.imageUrl} alt="" width={40} height={40} className="w-10 h-10 rounded-lg object-cover border border-white/5 flex-shrink-0" />
+                          <Image src={order.service.imageUrl} alt="" width={40} height={40} className="w-10 h-10 rounded-lg object-cover border border-white/5 flex-shrink-0 mt-0.5" />
                         )}
-                        <div className="min-w-0">
+                        <div className="min-w-0 flex-1">
                           <h3 className="font-semibold text-white group-hover:text-emerald-300 transition truncate">{order.service.title}</h3>
                           <p className="text-xs text-slate-500 mt-1">{fDZD(order.service.price)} • {new Date(order.createdAt).toLocaleDateString()}</p>
                           {expertId && <p className="text-[10px] text-slate-600 mt-0.5">{t("dashboard.withExpert", { name: expertName })}</p>}
                         </div>
                       </div>
-                      <div className="flex items-center gap-2 flex-shrink-0 ml-2">
-                        {expertId && (
-                          <Link href={`/messages?expertId=${expertId}`}
-                            className="btn-ghost !py-1.5 !px-3 text-xs opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity"
-                          >💬 {t("dashboard.chat")}</Link>
-                        )}
-                        <div className="flex items-center gap-1.5">
-                          {paymentStatusBadge(order.paymentStatus)}
-                          <span className={`badge ${statusColor[order.status] || "badge-blue"}`}>{t("dashboard." + order.status)}</span>
-                        </div>
+                      <div className="flex items-center gap-2 flex-shrink-0">
+                        {paymentStatusBadge(order.paymentStatus)}
+                        <span className={`badge ${statusColor[order.status] || "badge-blue"}`}>{t("dashboard." + order.status)}</span>
                       </div>
                     </div>
-                    <div className="flex items-center gap-2 mt-2 pt-2 border-t border-white/5">
+                    <div className="flex flex-wrap items-center gap-2 mt-2 pt-2 border-t border-white/5">
                       {isPending && (
                         <button onClick={() => handlePay(order.id)} disabled={payingId === order.id}
                           className="btn-primary !py-1.5 !px-4 text-xs disabled:opacity-50"
@@ -689,7 +682,7 @@ export default function UserDashboard() {
                           className="btn-primary !py-1.5 !px-4 text-xs bg-gradient-to-r from-emerald-500 to-cyan-500 disabled:opacity-50"
                         >{confirmingId === order.id ? "..." : t("dashboard.confirmDelivery")}</button>
                       )}
-                      {!isPending && !isHeld && expertId && (
+                      {expertId && (
                         <Link href={`/messages?expertId=${expertId}`} className="btn-ghost !py-1.5 !px-3 text-xs">💬 {t("dashboard.chat")}</Link>
                       )}
                     </div>
