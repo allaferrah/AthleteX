@@ -84,7 +84,7 @@ export default function AITab({ searchQuery = "" }: { searchQuery?: string }) {
           <h2 className="text-lg font-bold text-white">{t("admin.aiUsers")} {searchQuery ? <span className="text-sm font-normal text-slate-500">({filteredUsers.length} of {users.length})</span> : null}</h2>
         </div>
         {users.length === 0 ? (
-          <div className="p-12 text-center"><p className="text-slate-400">{t("common.noData")}</p></div>
+          <div className="p-6 sm:p-12 text-center"><p className="text-slate-400">{t("common.noData")}</p></div>
         ) : (
           <div className="overflow-x-auto mt-4">
             <table className="w-full text-left">
@@ -99,7 +99,7 @@ export default function AITab({ searchQuery = "" }: { searchQuery?: string }) {
               </thead>
               <tbody>
                 {filteredUsers.length === 0 ? (
-                  <tr><td colSpan={5} className="p-12 text-center text-slate-500">No results for &apos;{searchQuery}&apos;</td></tr>
+                  <tr><td colSpan={5} className="p-6 sm:p-12 text-center text-slate-500">No results for &apos;{searchQuery}&apos;</td></tr>
                 ) : (
                   filteredUsers.map((u: any) => (
                     <tr key={u.id} className="border-b border-white/[0.03] hover:bg-white/5 transition-colors">

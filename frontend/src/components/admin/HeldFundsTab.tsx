@@ -50,7 +50,7 @@ export default function HeldFundsTab({ searchQuery = "" }: { searchQuery?: strin
       {loading ? (
         <div className="space-y-3">{[...Array(3)].map((_, i) => <div key={i} className="h-16 rounded-xl bg-slate-800/40 animate-pulse" />)}</div>
       ) : orders.length === 0 ? (
-        <div className="glass-card-premium p-12 text-center">
+        <div className="glass-card-premium p-6 sm:p-12 text-center">
           <div className="text-5xl mb-4 opacity-60">🔒</div>
           <p className="text-slate-400">{t("admin.noFunds")}</p>
           <p className="text-slate-500 text-sm mt-1">{t("admin.noFundsDesc")}</p>
@@ -71,7 +71,7 @@ export default function HeldFundsTab({ searchQuery = "" }: { searchQuery?: strin
               </thead>
               <tbody>
                 {filtered.length === 0 ? (
-                  <tr><td colSpan={6} className="p-12 text-center text-slate-500">No results for &apos;{searchQuery}&apos;</td></tr>
+                  <tr><td colSpan={6} className="p-6 sm:p-12 text-center text-slate-500">No results for &apos;{searchQuery}&apos;</td></tr>
                 ) : (
                   filtered.map((order) => (
                     <tr key={order.id} className="border-b border-white/[0.03] hover:bg-white/5 transition-colors">

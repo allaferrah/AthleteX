@@ -89,7 +89,7 @@ export default function UsersTab({ searchQuery = "" }: { searchQuery?: string })
               </thead>
               <tbody>
                 {filtered.length === 0 ? (
-                  <tr><td colSpan={6} className="p-12 text-center text-slate-500">No results for &apos;{searchQuery}&apos;</td></tr>
+                  <tr><td colSpan={6} className="p-6 sm:p-12 text-center text-slate-500">No results for &apos;{searchQuery}&apos;</td></tr>
                 ) : (
                   filtered.map((u: any) => (
                     <tr key={u.id} className="border-b border-white/[0.03] hover:bg-white/5 transition-colors">

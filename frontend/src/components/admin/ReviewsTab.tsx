@@ -43,7 +43,7 @@ export default function ReviewsTab({ searchQuery = "" }: { searchQuery?: string 
       {loading ? (
         <div className="space-y-3">{[...Array(5)].map((_, i) => <div key={i} className="h-16 rounded-xl bg-slate-800/40 animate-pulse" />)}</div>
       ) : reviews.length === 0 ? (
-        <div className="glass-card-premium p-12 text-center"><p className="text-slate-400">No reviews yet.</p></div>
+        <div className="glass-card-premium p-6 sm:p-12 text-center"><p className="text-slate-400">No reviews yet.</p></div>
       ) : (
         <div className="glass-card-premium overflow-hidden">
           <div className="overflow-x-auto">
@@ -59,7 +59,7 @@ export default function ReviewsTab({ searchQuery = "" }: { searchQuery?: string 
               </thead>
               <tbody>
                 {filtered.length === 0 ? (
-                  <tr><td colSpan={5} className="p-12 text-center text-slate-500">No results for &apos;{searchQuery}&apos;</td></tr>
+                  <tr><td colSpan={5} className="p-6 sm:p-12 text-center text-slate-500">No results for &apos;{searchQuery}&apos;</td></tr>
                 ) : (
                   filtered.map((r) => (
                     <tr key={r.id} className="border-b border-white/[0.03] hover:bg-white/5 transition-colors">

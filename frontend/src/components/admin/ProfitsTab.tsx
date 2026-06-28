@@ -51,7 +51,7 @@ export default function ProfitsTab() {
     return <div className="grid grid-cols-2 md:grid-cols-4 gap-4">{[...Array(4)].map((_, i) => <div key={i} className="h-24 rounded-xl bg-slate-800/40 animate-pulse" />)}</div>;
   }
 
-  if (!stats) return <div className="glass p-12 text-center"><p className="text-slate-400">{t("common.error")}</p></div>;
+  if (!stats) return <div className="glass p-6 sm:p-12 text-center"><p className="text-slate-400">{t("common.error")}</p></div>;
 
   const avgFee = stats.platformFeeCount > 0 ? (stats.totalPlatformFees / stats.platformFeeCount) : 0;
 
@@ -76,7 +76,7 @@ export default function ProfitsTab() {
         {chartData.length === 0 ? (
           <p className="text-slate-500 text-sm text-center py-8">{t("admin.noFeesYet")}</p>
         ) : (
-          <ResponsiveContainer width="100%" height={300}>
+          <ResponsiveContainer width="100%" height={200}>
             <BarChart data={chartData} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
               <defs>
                 <linearGradient id="profitGradient" x1="0" y1="0" x2="0" y2="1">
@@ -99,25 +99,25 @@ export default function ProfitsTab() {
           <h2 className="text-lg font-bold text-white">{t("admin.recentFees")}</h2>
         </div>
         {fees.length === 0 ? (
-          <div className="p-12 text-center"><p className="text-slate-400">{t("admin.noFeesYet")}</p></div>
+          <div className="p-6 sm:p-12 text-center"><p className="text-slate-400">{t("admin.noFeesYet")}</p></div>
         ) : (
           <div className="overflow-x-auto mt-4">
             <table className="w-full text-left">
               <thead>
                 <tr className="border-b border-white/5 text-xs text-slate-500 uppercase tracking-wider">
-                  <th className="p-4">{t("admin.joined")}</th>
-                  <th className="p-4">{t("admin.client")}</th>
-                  <th className="p-4">{t("admin.orderAmount")}</th>
-                  <th className="p-4">{t("admin.feeAmount")}</th>
+                  <th className="p-3 sm:p-4">{t("admin.joined")}</th>
+                  <th className="p-3 sm:p-4">{t("admin.client")}</th>
+                  <th className="p-3 sm:p-4">{t("admin.orderAmount")}</th>
+                  <th className="p-3 sm:p-4">{t("admin.feeAmount")}</th>
                 </tr>
               </thead>
               <tbody>
                 {fees.map((f, i) => (
                   <tr key={i} className="border-b border-white/[0.03] hover:bg-white/5 transition-colors">
-                    <td className="p-4 text-sm text-slate-500">{new Date(f.createdAt).toLocaleDateString()}</td>
-                    <td className="p-4 text-sm text-slate-300">{f.from?.profile?.fullName || f.from?.email || "—"}</td>
-                    <td className="p-4 text-sm text-white">{fDZD(f.amount / 0.2)}</td>
-                    <td className="p-4 text-sm font-semibold text-amber-400">{fDZD(f.amount)}</td>
+                    <td className="p-3 sm:p-4 text-sm text-slate-500">{new Date(f.createdAt).toLocaleDateString()}</td>
+                    <td className="p-3 sm:p-4 text-sm text-slate-300 truncate max-w-[100px] sm:max-w-[200px]">{f.from?.profile?.fullName || f.from?.email || "—"}</td>
+                    <td className="p-3 sm:p-4 text-sm text-white">{fDZD(f.amount / 0.2)}</td>
+                    <td className="p-3 sm:p-4 text-sm font-semibold text-amber-400">{fDZD(f.amount)}</td>
                   </tr>
                 ))}
               </tbody>

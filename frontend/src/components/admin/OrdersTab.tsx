@@ -53,7 +53,7 @@ export default function OrdersTab({ searchQuery = "" }: { searchQuery?: string }
       {loading ? (
         <div className="space-y-3">{[...Array(5)].map((_, i) => <div key={i} className="h-16 rounded-xl bg-slate-800/40 animate-pulse" />)}</div>
       ) : orders.length === 0 ? (
-        <div className="glass-card-premium p-12 text-center"><p className="text-slate-400">No orders yet.</p></div>
+        <div className="glass-card-premium p-6 sm:p-12 text-center"><p className="text-slate-400">No orders yet.</p></div>
       ) : (
         <div className="glass-card-premium overflow-hidden">
           <div className="overflow-x-auto">
@@ -72,7 +72,7 @@ export default function OrdersTab({ searchQuery = "" }: { searchQuery?: string }
               </thead>
               <tbody>
                 {filtered.length === 0 ? (
-                  <tr><td colSpan={8} className="p-12 text-center text-slate-500">No results for &apos;{searchQuery}&apos;</td></tr>
+                  <tr><td colSpan={8} className="p-6 sm:p-12 text-center text-slate-500">No results for &apos;{searchQuery}&apos;</td></tr>
                 ) : (
                   filtered.map((o) => (
                     <tr key={o.id} className="border-b border-white/[0.03] hover:bg-white/5 transition-colors">
@@ -88,7 +88,7 @@ export default function OrdersTab({ searchQuery = "" }: { searchQuery?: string }
                           <select value={o.status} onChange={(e) => handleStatusChange(o.id, e.target.value)}
                             className="bg-slate-800 text-xs text-slate-300 border border-white/80 rounded-lg px-2 py-1 outline-none focus:border-emerald-500">
                             <option value="pending">pending</option>
-                            <option value="in_progress">in_progress</option>
+                             <option value="in_progress">Progress</option>
                             <option value="completed">completed</option>
                             <option value="cancelled">cancelled</option>
                           </select>
