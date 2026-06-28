@@ -307,15 +307,15 @@ export default function UserDashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-transparent text-slate-100 relative z-0 selection:bg-emerald-500/30">
+    <div className="min-h-screen bg-transparent text-slate-100 relative z-0 overflow-x-hidden selection:bg-emerald-500/30">
       {/* Decorative cyber backdrop circles */}
       <div className="absolute top-[10%] left-[5%] w-[400px] h-[400px] bg-emerald-500/5 rounded-full blur-[120px] pointer-events-none" />
       <div className="absolute bottom-[10%] right-[5%] w-[400px] h-[400px] bg-purple-500/5 rounded-full blur-[120px] pointer-events-none" />
 
-      <div className="flex flex-col lg:flex-row max-w-[1600px] mx-auto min-h-screen relative gap-6 px-4 lg:px-8 py-8 lg:py-12">
+      <div className="flex flex-col lg:flex-row max-w-[1600px] mx-auto min-h-screen relative gap-6 px-4 lg:px-8 py-8 lg:py-12 pt-24 lg:pt-28 min-w-0">
         
         {/* FLOATING CYBER DOCK (Balanced & Aligned to avoid collisions) */}
-        <nav className="fixed lg:sticky bottom-4 lg:top-28 left-4 right-4 lg:left-0 lg:h-[calc(100vh-140px)] lg:w-24 bg-[#0a0b16]/95 backdrop-blur-3xl border border-white/10 rounded-2xl lg:rounded-[2rem] z-40 flex lg:flex-col items-center justify-between lg:justify-start py-3 px-5 lg:py-8 lg:px-0 shadow-[0_15px_40px_rgba(0,0,0,0.8)] overflow-x-auto lg:overflow-visible gap-2 lg:gap-6 shrink-0">
+        <nav className="fixed lg:sticky bottom-4 lg:top-28 left-4 right-4 lg:left-0 lg:h-[calc(100vh-140px)] lg:w-24 bg-[#0a0b16]/95 backdrop-blur-3xl border border-white/10 rounded-2xl lg:rounded-[2rem] z-40 flex lg:flex-col items-center justify-center lg:justify-start py-3 px-5 lg:py-8 lg:px-0 shadow-[0_15px_40px_rgba(0,0,0,0.8)] overflow-x-auto lg:overflow-visible gap-1 lg:gap-6 shrink-0">
           
           <div className="hidden lg:flex w-12 h-12 rounded-xl bg-gradient-to-br from-emerald-400 to-cyan-500 items-center justify-center text-lg font-black text-black shadow-[0_0_15px_rgba(16,185,129,0.3)] mb-4">
             {user?.email?.[0].toUpperCase() || "U"}
@@ -345,7 +345,7 @@ export default function UserDashboard() {
         </nav>
 
         {/* MAIN CONTENT AREA */}
-        <div className="flex-1 lg:pl-4 pb-24 lg:pb-0 min-w-0">
+        <div className="flex-1 lg:pl-4 pb-32 lg:pb-0 min-w-0">
           
           {/* HEADER DASHBOARD CARD (Polished colors & placement) */}
           <div className="relative mb-8 overflow-hidden rounded-2xl bg-[#0a0b16]/90 backdrop-blur-2xl border border-white/10 p-6 lg:p-8 shadow-[0_12px_40px_rgba(0,0,0,0.6)] animate-fade-up group">
