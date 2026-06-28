@@ -218,11 +218,13 @@ export default function MessagesPage() {
 
   useEffect(() => {
     if (messages.length > 0 && messages.length !== msgCountRef.current) {
-      const timer = setTimeout(() => {
-        messagesEndRef.current?.scrollIntoView({ behavior: "auto" });
-      }, 50);
       msgCountRef.current = messages.length;
-      return () => clearTimeout(timer);
+      const container = messagesContainerRef.current;
+      if (container) {
+        requestAnimationFrame(() => {
+          container.scrollTop = container.scrollHeight;
+        });
+      }
     }
     msgCountRef.current = messages.length;
   }, [messages]);
