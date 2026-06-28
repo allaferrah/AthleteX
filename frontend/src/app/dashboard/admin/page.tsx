@@ -86,7 +86,7 @@ function AdminDashboardInner() {
 
       <div className={`fixed inset-0 bg-black/30 backdrop-blur-sm z-40 ${sidebarOpen ? "block" : "hidden"}`} onClick={() => setSidebarOpen(false)} />
 
-      <div className="dashboard-grid">
+      <div className="dashboard-grid grid-cols-1 lg:grid-cols-[260px_1fr]">
         <aside className={`dashboard-sidebar fixed lg:sticky top-0 left-0 z-50 h-screen overflow-y-auto w-[280px] max-w-[calc(100vw-2rem)] lg:w-auto lg:max-w-none shadow-xl lg:shadow-none ${sidebarOpen ? "block" : "hidden"} lg:block`}>
           <div className="sidebar-logo">
             <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-emerald-400 to-cyan-500 flex items-center justify-center shadow-lg shadow-emerald-500/20 overflow-hidden">
