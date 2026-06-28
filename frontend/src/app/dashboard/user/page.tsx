@@ -370,9 +370,9 @@ export default function UserDashboard() {
             {/* OVERVIEW TAB */}
             {activeTab === "overview" && (
               <div className="space-y-6">
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                   {/* Hero Bento */}
-                  <div className="lg:col-span-2 relative overflow-hidden rounded-2xl bg-[#0a0b16]/90 backdrop-blur-2xl border border-white/10 p-6 lg:p-8 shadow-[0_12px_40px_rgba(0,0,0,0.6)] group flex flex-col sm:flex-row gap-6 items-center sm:items-start">
+                  <div className="md:col-span-2 relative overflow-hidden rounded-2xl bg-[#0a0b16]/90 backdrop-blur-2xl border border-white/10 p-6 lg:p-8 shadow-[0_12px_40px_rgba(0,0,0,0.6)] group flex flex-col sm:flex-row gap-6 items-center sm:items-start">
                     <div className="absolute top-0 right-0 w-64 h-64 bg-cyan-500/5 blur-[80px] rounded-full pointer-events-none" />
                     <div className="relative shrink-0">
                       <div className="w-28 h-28 lg:w-36 lg:h-36 rounded-xl overflow-hidden border border-white/15 shadow-[0_0_20px_rgba(0,0,0,0.5)] bg-[#050505] relative group-hover:scale-102 transition-transform duration-500">
@@ -394,10 +394,10 @@ export default function UserDashboard() {
                         {fullName}
                       </p>
                       <div className="flex flex-wrap items-center justify-center sm:justify-start gap-3">
-                        <button onClick={() => setActiveTab("profile")} className="px-5 py-2.5 bg-white/5 text-white text-[10px] font-black uppercase tracking-widest rounded-lg hover:bg-emerald-500 hover:text-black border border-white/10 hover:border-emerald-400 transition-all duration-300">
+                        <button onClick={() => setActiveTab("profile")} className="w-full sm:w-auto px-5 py-2.5 bg-white/5 text-white text-[10px] font-black uppercase tracking-widest rounded-lg hover:bg-emerald-500 hover:text-black border border-white/10 hover:border-emerald-400 transition-all duration-300">
                           Edit Profile
                         </button>
-                        <Link href="/ai" className="px-5 py-2.5 bg-emerald-500 text-black text-[10px] font-black uppercase tracking-widest rounded-lg hover:bg-emerald-400 shadow-[0_0_15px_rgba(16,185,129,0.2)] transition-all flex items-center gap-2">
+                        <Link href="/ai" className="w-full sm:w-auto px-5 py-2.5 bg-emerald-500 text-black text-[10px] font-black uppercase tracking-widest rounded-lg hover:bg-emerald-400 shadow-[0_0_15px_rgba(16,185,129,0.2)] transition-all flex items-center gap-2">
                           <span>🦾</span> {t("dashboard.generatePlan")}
                         </Link>
                       </div>

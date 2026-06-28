@@ -90,26 +90,26 @@ export default function Register() {
               <button
                 type="button"
                 onClick={() => setRole("USER")}
-                className={`p-4 rounded-xl text-sm font-semibold transition-all border cursor-pointer ${
+                className={`p-3 sm:p-4 rounded-xl text-xs sm:text-sm font-semibold transition-all border cursor-pointer ${
                   role === "USER"
                     ? "border-emerald-500 bg-emerald-500/10 text-emerald-400"
                     : "border-white/5 bg-white/5 text-slate-400 hover:border-white/80"
                 }`}
               >
                 {t("auth.roleUser")}
-                <span className="block text-[11px] mt-1.5 font-normal opacity-70 font-sans leading-snug">{t("auth.userDesc")}</span>
+                <span className="block text-[10px] sm:text-[11px] mt-1.5 font-normal opacity-70 font-sans leading-snug">{t("auth.userDesc")}</span>
               </button>
               <button
                 type="button"
                 onClick={() => setRole("EXPERT")}
-                className={`p-4 rounded-xl text-sm font-semibold transition-all border cursor-pointer ${
+                className={`p-3 sm:p-4 rounded-xl text-xs sm:text-sm font-semibold transition-all border cursor-pointer ${
                   role === "EXPERT"
                     ? "border-blue-500 bg-blue-500/10 text-blue-400"
                     : "border-white/5 bg-white/5 text-slate-400 hover:border-white/80"
                 }`}
               >
                 {t("auth.roleExpert")}
-                <span className="block text-[11px] mt-1.5 font-normal opacity-70 font-sans leading-snug">{t("auth.expertDesc")}</span>
+                <span className="block text-[10px] sm:text-[11px] mt-1.5 font-normal opacity-70 font-sans leading-snug">{t("auth.expertDesc")}</span>
               </button>
             </div>
           </div>

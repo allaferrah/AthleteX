@@ -1274,12 +1274,12 @@ function ChatTab() {
         />
       )}
 
-      <div className="bg-[#0a0b16]/90 backdrop-blur-2xl rounded-2xl border border-white/10 overflow-hidden shadow-[0_12px_40px_rgba(0,0,0,0.5)] animate-in fade-in h-[700px] relative">
+      <div className="bg-[#0a0b16]/90 backdrop-blur-2xl rounded-2xl border border-white/10 overflow-hidden shadow-[0_12px_40px_rgba(0,0,0,0.5)] animate-in fade-in min-h-[400px] lg:h-[700px] relative">
         <div className="absolute -top-40 -right-40 w-96 h-96 bg-emerald-500/5 blur-[100px] rounded-full pointer-events-none" />
         <div className="flex h-full relative z-10">
           
           {/* Sidebar */}
-          <div className="w-80 border-r border-white/10 bg-black/30 flex flex-col flex-shrink-0">
+          <div className={`${selectedPartner ? "hidden lg:flex" : "flex"} w-full lg:w-80 border-r border-white/10 bg-black/30 flex-col flex-shrink-0`}>
             <div className="p-6 border-b border-white/10">
               <h3 className="text-xs font-black text-white uppercase tracking-widest flex items-center gap-2.5">
                 <span className="w-8 h-8 rounded-lg bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400">💬</span>
@@ -1343,7 +1343,7 @@ function ChatTab() {
           </div>
 
           {/* Main Chat Area */}
-          <div className="flex-1 flex flex-col min-w-0 bg-black/10 relative">
+          <div className={`${!selectedPartner ? "hidden lg:flex" : "flex"} flex-1 flex-col min-w-0 bg-black/10 relative`}>
             {!selectedPartner ? (
               <div className="flex-1 flex items-center justify-center">
                 <div className="text-center p-8 bg-[#0a0b16]/60 backdrop-blur-xl border border-white/10 rounded-2xl shadow-xl max-w-sm">

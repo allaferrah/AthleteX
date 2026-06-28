@@ -577,7 +577,7 @@ export default function MessagesPage() {
         <span className="text-xs tracking-wider uppercase font-bold text-purple-400 bg-purple-950/40 border border-purple-500/20 py-1 px-3 rounded-full shadow-[0_0_10px_rgba(168,85,247,0.1)]">{t("nav.messages")}</span>
       </div>
 
-      <div className="mx-4 border border-purple-500/10 rounded-2xl bg-slate-950/60 backdrop-blur-xl overflow-hidden shadow-[0_0_50px_rgba(139,92,246,0.05)]" style={{ height: "calc(100vh - 180px)", minHeight: "550px" }}>
+      <div className="mx-4 border border-purple-500/10 rounded-2xl bg-slate-950/60 backdrop-blur-xl overflow-hidden shadow-[0_0_50px_rgba(139,92,246,0.05)]" style={{ height: "calc(100vh - 180px)", minHeight: "350px" }}>
         <div className="flex h-full">
           {/* Conversation List */}
           <div className={`${selectedPartner ? "hidden lg:flex" : "flex"} w-full lg:w-80 border-r border-purple-500/10 flex-col flex-shrink-0 bg-slate-950/40`}>

@@ -160,6 +160,14 @@ function AdminDashboardInner() {
             </div>
           </div>
 
+          {/* Mobile search — only shows below md */}
+          <div className="md:hidden mb-4">
+            <div className="search-bar w-full max-w-full">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="rgba(148,163,184,0.5)" strokeWidth="2" strokeLinecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+              <input type="text" placeholder="Search..." value={search} onChange={(e) => setSearch(e.target.value)} />
+            </div>
+          </div>
+
           {/* Tab Content — keep all tabs mounted, toggle visibility */}
           <div className="tab-content">
             {ALL_TABS.map((key) => (

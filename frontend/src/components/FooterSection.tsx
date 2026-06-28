@@ -64,7 +64,7 @@ export default function FooterSection() {
               ? "اشترك لتلقي أحدث نصائح التغذية والتمارين الرياضية مباشرة في بريدك." 
               : "Subscribe to receive weekly expert fitness, health tips, and direct product updates."}
           </p>
-          <div className="flex gap-2 w-full mt-1">
+          <div className="flex flex-col sm:flex-row gap-2 w-full mt-1">
             <input 
               id="footer-email"
               name="email"

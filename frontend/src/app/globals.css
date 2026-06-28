@@ -344,6 +344,7 @@ body::before {
     top: 0;
     left: 0;
     width: 280px;
+    max-width: calc(100vw - 2rem);
     z-index: 100;
     box-shadow: 0 0 50px rgba(0, 0, 0, 0.5);
   }
@@ -424,9 +425,15 @@ body::before {
 }
 
 /* ============ DASHBOARD TABLE ============ */
+.dashboard-table-wrapper {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
 .dashboard-table {
   width: 100%;
   border-collapse: collapse;
+  min-width: 500px;
 }
 
 .dashboard-table th {
@@ -487,7 +494,8 @@ body::before {
   border-radius: 9999px;
   padding: 0.5rem 1.25rem;
   transition: all 0.3s;
-  width: 280px;
+  width: 100%;
+  max-width: 280px;
 }
 
 .search-bar:focus-within {
@@ -650,6 +658,14 @@ body::before {
   .input-field {
     font-size: 16px !important;
   }
+}
+
+/* ============ EXTRA SMALL SCREENS (<=480px) ============ */
+@media (max-width: 480px) {
+  body { font-size: 14px; }
+  .dashboard-main { padding: 0.75rem; }
+  .stat-card { padding: 1rem; }
+  .orb-1, .orb-2, .orb-3 { display: none; }
 }
 
 /* ============ SMOOTH SCROLLING ============ */

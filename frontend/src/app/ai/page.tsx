@@ -896,7 +896,7 @@ export default function AIAssistant() {
                   <input
                     type="text" value={planTitle} onChange={(e) => setPlanTitle(e.target.value)}
                     placeholder={t("ai.planName")}
-                    className="flex-1 min-w-[200px] bg-black/30 border border-white/10 text-white rounded-xl px-4 py-2.5 text-sm focus:border-emerald-500/50 outline-none transition-all"
+                    className="flex-1 min-w-[150px] sm:min-w-[200px] max-w-full bg-black/30 border border-white/10 text-white rounded-xl px-4 py-2.5 text-sm focus:border-emerald-500/50 outline-none transition-all"
                   />
                   <button
                     onClick={handleSavePlan} disabled={saving}
@@ -1031,7 +1031,7 @@ export default function AIAssistant() {
             <h3 className="text-2xl font-black text-white text-center mb-2">Refuel AI Credits</h3>
             <p className="text-sm text-slate-400 text-center font-medium mb-8">Each credit unlocks 1 full custom generation. <br/><span className="text-amber-400 font-bold">{fDZD(creditPrice)} / credit</span></p>
 
-            <div className="grid grid-cols-4 gap-2 mb-8">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-8">
               {[1, 5, 10, 25].map((n) => (
                 <button
                   key={n} onClick={() => setBuyCredits(n)}
