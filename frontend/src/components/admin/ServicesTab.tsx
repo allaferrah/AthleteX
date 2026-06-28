@@ -107,7 +107,7 @@ export default function ServicesTab({ searchQuery = "" }: { searchQuery?: string
                   <tr><td colSpan={7} className="p-12 text-center text-slate-500">No results for &apos;{searchQuery}&apos;</td></tr>
                 ) : (
                   filtered.map((s: any) => (
-                    <tr key={s.id} className="border-b border-white/[0.03] hover:bg-white/[0.02] transition-colors">
+                    <tr key={s.id} className="border-b border-white/[0.03] hover:bg-white/5 transition-colors">
                       <td className="p-4">
                         <div className="flex items-center gap-3">
                           {s.imageUrl && <Image src={s.imageUrl} alt="" width={40} height={40} className="w-10 h-10 rounded-lg object-cover" />}

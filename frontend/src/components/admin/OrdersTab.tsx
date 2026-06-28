@@ -75,7 +75,7 @@ export default function OrdersTab({ searchQuery = "" }: { searchQuery?: string }
                   <tr><td colSpan={8} className="p-12 text-center text-slate-500">No results for &apos;{searchQuery}&apos;</td></tr>
                 ) : (
                   filtered.map((o) => (
-                    <tr key={o.id} className="border-b border-white/[0.03] hover:bg-white/[0.02] transition-colors">
+                    <tr key={o.id} className="border-b border-white/[0.03] hover:bg-white/5 transition-colors">
                       <td className="p-4 text-sm font-semibold text-white">{o.service?.title || "—"}</td>
                       <td className="p-4 text-sm text-slate-300">{o.user?.profile?.fullName || o.user?.email || "—"}</td>
                       <td className="p-4 text-sm text-slate-300">{o.service?.expert?.profile?.fullName || o.service?.expert?.email || "—"}</td>
@@ -86,7 +86,7 @@ export default function OrdersTab({ searchQuery = "" }: { searchQuery?: string }
                       <td className="p-4">
                         <div className="flex gap-2">
                           <select value={o.status} onChange={(e) => handleStatusChange(o.id, e.target.value)}
-                            className="bg-slate-800 text-xs text-slate-300 border border-white/10 rounded-lg px-2 py-1 outline-none focus:border-emerald-500">
+                            className="bg-slate-800 text-xs text-slate-300 border border-white/80 rounded-lg px-2 py-1 outline-none focus:border-emerald-500">
                             <option value="pending">pending</option>
                             <option value="in_progress">in_progress</option>
                             <option value="completed">completed</option>

@@ -69,12 +69,12 @@ export default function FlaggedTab({ searchQuery = "" }: { searchQuery?: string 
                   <tr><td colSpan={6} className="p-12 text-center text-slate-500">No results for &apos;{searchQuery}&apos;</td></tr>
                 ) : (
                   filtered.map((e) => (
-                    <tr key={e.id} className="border-b border-white/[0.03] hover:bg-white/[0.02] transition-colors">
+                    <tr key={e.id} className="border-b border-white/[0.03] hover:bg-white/5 transition-colors">
                       <td className="p-4">
                         <div className="flex items-center gap-3">
                           {e.profile?.photoUrl
                             ? <Image src={e.profile.photoUrl} alt="" width={32} height={32} className="w-8 h-8 rounded-full object-cover" />
-                            : <div className="w-8 h-8 rounded-full bg-gradient-to-br from-slate-600 to-slate-700 flex items-center justify-center text-xs font-bold text-white">{e.email[0].toUpperCase()}</div>}
+                            : <div className="w-8 h-8 rounded-full bg-gradient-to-br from-gray-200 to-gray-300 flex items-center justify-center text-xs font-bold text-slate-800">{e.email[0].toUpperCase()}</div>}
                           <div>
                             <p className="text-sm font-semibold text-white">{e.profile?.fullName || e.email}</p>
                             {e.profile?.specialization && <p className="text-xs text-slate-500">{e.profile.specialization}</p>}

@@ -69,7 +69,7 @@ export default function ReportsTab({ searchQuery = "" }: { searchQuery?: string 
                   <tr><td colSpan={6} className="p-12 text-center text-slate-500">No results for &apos;{searchQuery}&apos;</td></tr>
                 ) : (
                   filtered.map((r) => (
-                    <tr key={r.id} className="border-b border-white/[0.03] hover:bg-white/[0.02] transition-colors">
+                    <tr key={r.id} className="border-b border-white/[0.03] hover:bg-white/5 transition-colors">
                       <td className="p-4">
                         <p className="text-sm font-semibold text-white">{r.reason}</p>
                         {r.description && <p className="text-xs text-slate-500 mt-0.5">{r.description}</p>}

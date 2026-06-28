@@ -256,6 +256,15 @@ export interface Translations {
     todayPlan: string;
     completed: string;
   };
+  slogan: {
+    badge: string;
+    main: string;
+    sub: string;
+    pillar1: string;
+    pillar2: string;
+    pillar3: string;
+    pillar4: string;
+  };
   home2: {
     testimonialsTitle: string;
     testimonialsSubtitle: string;

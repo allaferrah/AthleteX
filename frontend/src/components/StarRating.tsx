@@ -23,7 +23,7 @@ export default function StarRating({ rating, reviewCount, size = 12 }: StarRatin
       {hasReviews ? (
         <span className="text-slate-500 ml-1 font-medium leading-none">{rating.toFixed(1)} ({reviewCount})</span>
       ) : (
-        <span className="text-slate-600 ml-1 leading-none">0</span>
+        <span className="text-slate-400 ml-1 leading-none">0</span>
       )}
     </span>
   );

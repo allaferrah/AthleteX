@@ -32,21 +32,7 @@ export default async function RootLayout({
 
   return (
     <html lang={initialLocale} className={`${geistSans.variable} antialiased`} suppressHydrationWarning>
-      <body className="min-h-screen flex flex-col relative font-sans" suppressHydrationWarning>
-        {/* Background image below navbar */}
-        <div
-          style={{
-            position: "fixed",
-            top: "96px",
-            left: 0,
-            right: 0,
-            bottom: 0,
-            zIndex: 0,
-            backgroundImage: "url(/bg.png)",
-            backgroundSize: "cover",
-            backgroundPosition: "center top",
-          }}
-        />
+      <body className="min-h-screen flex flex-col relative font-sans text-white bg-backdrop" suppressHydrationWarning>
 
         <LocaleProvider initialLocale={initialLocale}>
           <NavbarWrapper />

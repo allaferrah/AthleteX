@@ -95,11 +95,11 @@ export default function VideoCallOverlay({
                 className="w-24 h-24 rounded-full object-cover opacity-60"
               />
             ) : (
-              <div className="w-24 h-24 rounded-full bg-gray-700 flex items-center justify-center text-3xl text-gray-400">
+              <div className="w-24 h-24 rounded-full bg-gray-700 flex items-center justify-center text-3xl text-slate-500">
                 {partnerName?.charAt(0)?.toUpperCase() || "?"}
               </div>
             )}
-            <p className="text-gray-400 text-sm">
+            <p className="text-slate-500 text-sm">
               {partnerName}
             </p>
           </div>
@@ -115,7 +115,7 @@ export default function VideoCallOverlay({
           {fmt(duration)}
         </div>
 
-        <div className="absolute top-4 right-4 w-28 h-36 sm:w-32 sm:h-44 rounded-xl overflow-hidden border-2 border-white/20 shadow-xl">
+        <div className="absolute top-4 right-4 w-28 h-36 sm:w-32 sm:h-44 rounded-xl overflow-hidden border-2 border-gray-300/80 shadow-xl">
           <video
             ref={localRef}
             autoPlay
@@ -133,7 +133,7 @@ export default function VideoCallOverlay({
         </div>
       </div>
 
-      <div className="flex items-center justify-center gap-6 px-4 py-5 bg-gray-900/95 backdrop-blur-sm safe-bottom">
+      <div className="flex items-center justify-center gap-6 px-4 py-5 bg-white/95 backdrop-blur-sm safe-bottom">
         <button
           onClick={onToggleMute}
           className={`w-14 h-14 sm:w-16 sm:h-16 rounded-full flex items-center justify-center text-xl transition-all touch-manipulation min-touch ${

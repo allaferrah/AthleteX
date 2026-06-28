@@ -19,7 +19,7 @@ interface PlatformStats {
 const CustomTooltip = ({ active, payload, label }: any) => {
   if (!active || !payload?.length) return null;
   return (
-    <div className="glass-sm p-3 text-sm border border-white/10 shadow-xl">
+    <div className="glass-sm p-3 text-sm border border-white/80 shadow-xl">
       <p className="text-slate-400 text-xs mb-1">{label}</p>
       <p className="text-emerald-400 font-bold">{fDZD(payload[0].value)}</p>
     </div>
@@ -113,7 +113,7 @@ export default function ProfitsTab() {
               </thead>
               <tbody>
                 {fees.map((f, i) => (
-                  <tr key={i} className="border-b border-white/[0.03] hover:bg-white/[0.02] transition-colors">
+                  <tr key={i} className="border-b border-white/[0.03] hover:bg-white/5 transition-colors">
                     <td className="p-4 text-sm text-slate-500">{new Date(f.createdAt).toLocaleDateString()}</td>
                     <td className="p-4 text-sm text-slate-300">{f.from?.profile?.fullName || f.from?.email || "—"}</td>
                     <td className="p-4 text-sm text-white">{fDZD(f.amount / 0.2)}</td>

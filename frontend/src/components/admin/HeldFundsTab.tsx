@@ -74,7 +74,7 @@ export default function HeldFundsTab({ searchQuery = "" }: { searchQuery?: strin
                   <tr><td colSpan={6} className="p-12 text-center text-slate-500">No results for &apos;{searchQuery}&apos;</td></tr>
                 ) : (
                   filtered.map((order) => (
-                    <tr key={order.id} className="border-b border-white/[0.03] hover:bg-white/[0.02] transition-colors">
+                    <tr key={order.id} className="border-b border-white/[0.03] hover:bg-white/5 transition-colors">
                       <td className="p-4"><span className="text-sm font-semibold text-white">{order.service?.title || "—"}</span></td>
                       <td className="p-4 text-sm text-slate-300">{order.user?.profile?.fullName || order.user?.email || "—"}</td>
                       <td className="p-4 text-sm text-slate-300">{order.service?.expert?.profile?.fullName || order.service?.expert?.email || "—"}</td>

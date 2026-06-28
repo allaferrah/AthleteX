@@ -95,13 +95,13 @@ export default function PrecisionTap({ t }: { t: (k: string) => string }) {
 
   return (
     <div className="flex flex-col items-center gap-6">
-      <p className="text-gray-400 text-center max-w-md text-sm">{t("games.precisionInstructions")}</p>
+      <p className="text-slate-500 text-center max-w-md text-sm">{t("games.precisionInstructions")}</p>
 
       <div
         className="glass-sm p-6 sm:p-8 w-full max-w-sm flex flex-col items-center gap-5"
         style={flashColor ? { boxShadow: `0 0 0 2px ${flashColor === "emerald" ? "rgba(16,185,129,0.3)" : flashColor === "yellow" ? "rgba(234,179,8,0.3)" : flashColor === "red" ? "rgba(239,68,68,0.3)" : flashColor === "orange" ? "rgba(249,115,22,0.3)" : flashColor === "blue" ? "rgba(59,130,246,0.3)" : "rgba(16,185,129,0.3)"}` } : {}}
       >
-        <div className="flex items-center gap-2 text-xs text-gray-500 uppercase tracking-widest">
+        <div className="flex items-center gap-2 text-xs text-slate-400 uppercase tracking-widest">
           <span className={`w-2 h-2 rounded-full ${phase === "playing" ? "bg-emerald-500 animate-pulse" : "bg-gray-600"}`} />
           {phase === "idle" ? "Ready" : phase === "playing" ? `Round ${round + 1}/${totalRounds}` : "Complete"}
         </div>
@@ -162,14 +162,14 @@ export default function PrecisionTap({ t }: { t: (k: string) => string }) {
 
       {scores.length > 0 && (
         <div className="w-full max-w-sm">
-          <div className="flex justify-between text-xs text-gray-500 mb-2">
+          <div className="flex justify-between text-xs text-slate-400 mb-2">
             <span>Progress</span>
             <span>Avg: {avg}%</span>
           </div>
           <div className="flex gap-1 h-8 items-end">
             {scores.map((s, i) => (
               <div key={i} className="flex-1 flex flex-col items-center gap-0.5">
-                <span className="text-[9px] text-gray-500">{s}</span>
+                <span className="text-[9px] text-slate-400">{s}</span>
                 <div
                   className="w-full rounded-t"
                   style={{
@@ -191,19 +191,19 @@ export default function PrecisionTap({ t }: { t: (k: string) => string }) {
 
       {phase === "result" && (
         <div className="glass-sm p-5 w-full max-w-sm animate-scale-in">
-          <h4 className="text-sm font-semibold text-gray-400 uppercase tracking-wider text-center mb-3">Results</h4>
+          <h4 className="text-sm font-semibold text-slate-500 uppercase tracking-wider text-center mb-3">Results</h4>
           <div className="grid grid-cols-3 gap-3 text-center">
             <div>
               <div className="text-2xl font-bold text-white">{avg}<span className="text-xs ml-0.5">%</span></div>
-              <div className="text-xs text-gray-500">Average</div>
+              <div className="text-xs text-slate-400">Average</div>
             </div>
             <div>
               <div className="text-2xl font-bold text-emerald-400">{Math.max(...scores)}<span className="text-xs ml-0.5">%</span></div>
-              <div className="text-xs text-gray-500">Best</div>
+              <div className="text-xs text-slate-400">Best</div>
             </div>
             <div>
               <div className="text-2xl font-bold text-red-400">{Math.min(...scores)}<span className="text-xs ml-0.5">%</span></div>
-              <div className="text-xs text-gray-500">Lowest</div>
+              <div className="text-xs text-slate-400">Lowest</div>
             </div>
           </div>
           <div className="mt-3 text-center">
@@ -214,7 +214,7 @@ export default function PrecisionTap({ t }: { t: (k: string) => string }) {
         </div>
       )}
 
-      <div className="text-sm text-gray-500">
+      <div className="text-sm text-slate-400">
         Best: <strong className="text-emerald-400">{best}%</strong>
         {best > 0 && (
           <span className="ml-2 text-gray-600">

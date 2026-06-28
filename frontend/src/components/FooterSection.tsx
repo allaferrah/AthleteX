@@ -9,7 +9,7 @@ export default function FooterSection() {
   const isAr = locale === "ar";
 
   return (
-    <footer className="relative z-10 border-t border-white/10 bg-slate-950/40 backdrop-blur-md pt-16 pb-8 px-6 sm:px-8 lg:px-12 w-full mt-24">
+    <footer className="relative z-10 border-t border-white/5 bg-slate-950/40 backdrop-blur-md pt-16 pb-8 px-6 sm:px-8 lg:px-12 w-full mt-24">
       {/* Mesh glow effects inside footer */}
       <div className="absolute bottom-0 right-1/4 w-72 h-72 bg-emerald-500/5 rounded-full filter blur-3xl pointer-events-none" />
       <div className="absolute top-0 left-1/4 w-72 h-72 bg-cyan-500/5 rounded-full filter blur-3xl pointer-events-none" />
@@ -33,7 +33,7 @@ export default function FooterSection() {
               <a 
                 key={idx} 
                 href="#" 
-                className="w-8 h-8 rounded-lg bg-slate-900 border border-white/5 flex items-center justify-center text-slate-400 hover:text-emerald-400 hover:border-emerald-500/30 transition-all duration-300 hover:-translate-y-1 shadow-sm"
+                className="w-8 h-8 rounded-lg bg-slate-800 border border-white/5 flex items-center justify-center text-slate-400 hover:text-emerald-400 hover:border-emerald-500/30 transition-all duration-300 hover:-translate-y-1 shadow-sm"
               >
                 <span className="capitalize text-[10px] font-bold">{s[0]}</span>
               </a>
@@ -70,7 +70,7 @@ export default function FooterSection() {
               name="email"
               type="email" 
               placeholder={isAr ? "بريدك الإلكتروني..." : "Your email address..."} 
-              className="bg-slate-900 border border-white/5 focus:border-emerald-500/30 rounded-xl px-4 py-2.5 text-xs text-white placeholder-slate-500 outline-none w-full transition-all duration-300 font-sans"
+              className="bg-slate-800 border border-white/5 focus:border-emerald-500/30 rounded-xl px-4 py-2.5 text-xs text-white placeholder-gray-400 outline-none w-full transition-all duration-300 font-sans"
               autoComplete="email"
             />
             <button className="btn-primary !py-2 !px-4 text-xs font-bold whitespace-nowrap">

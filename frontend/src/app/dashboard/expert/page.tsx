@@ -14,7 +14,6 @@ import {
   createOffer, createAnswer, setRemoteDescription, addIceCandidate,
   fetchTurnCredentials, waitForDeviceRelease, cleanupAudioSink,
   ensureAudioSink, addLocalTracks, attemptIceRestart, resetIceRestartAttempts,
-  playMediaElement,
 } from "@/lib/webrtc";
 import type { CreatePcCallbacks } from "@/lib/webrtc";
 import { useCallSound } from "@/lib/useCallSound";
@@ -56,22 +55,22 @@ interface ChatMessage {
 
 type TabKey = "profile" | "services" | "orders" | "chat" | "wallet";
 
+// Polished Cyber-Dark Input Classes
+const inputClasses = "w-full bg-[#07080f] border border-white/10 text-white rounded-xl px-5 py-4 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-all placeholder:text-slate-600 shadow-inner font-medium";
+
 export default function ExpertDashboard() {
   const router = useRouter();
   const { t } = useLocale();
 
   const tabs: { key: TabKey; label: string; icon: string }[] = [
     { key: "profile", label: t("profile.title"), icon: "👤" },
-    { key: "services", label: t("services.title"), icon: "🏷️" },
+    { key: "services", label: t("services.title"), icon: "⚡" },
     { key: "orders", label: t("orders.title"), icon: "📦" },
     { key: "chat", label: t("nav.messages"), icon: "💬" },
-    { key: "wallet", label: t("dashboard.wallet"), icon: "💰" },
+    { key: "wallet", label: t("dashboard.wallet"), icon: "💳" },
   ];
   const [user, setUser] = useState<{ email: string; role: string; id?: string } | null>(null);
   const [activeTab, setActiveTab] = useState<TabKey>("profile");
-  const [tabIndicator, setTabIndicator] = useState({ left: 0, width: 0 });
-  const tabBarRef = useRef<HTMLDivElement>(null);
-  const tabRefs = useRef<Record<string, HTMLButtonElement | null>>({});
 
   useEffect(() => {
     if (isLoggedIn()) setUser(getUser());
@@ -80,80 +79,79 @@ export default function ExpertDashboard() {
     if (params.get("chat")) setActiveTab("chat");
   }, []);
 
-  useEffect(() => {
-    if (!isLoggedIn()) {
-      router.push("/login");
-    }
-  }, []);
-
-  useEffect(() => {
-    const el = tabRefs.current[activeTab];
-    if (el && tabBarRef.current) {
-      const barRect = tabBarRef.current.getBoundingClientRect();
-      const rect = el.getBoundingClientRect();
-      setTabIndicator({ left: rect.left - barRect.left, width: rect.width });
-    }
-  }, [activeTab]);
-
   return (
-    <div className="max-w-7xl mx-auto">
-      {/* HEADER */}
-      <div className="relative mb-10 overflow-hidden rounded-3xl glass border border-white/5 p-8 md:p-10 animate-fade-up">
-        <div className="absolute -top-20 -right-20 w-64 h-64 bg-emerald-500/5 rounded-full blur-3xl" />
-        <div className="absolute -bottom-10 -left-10 w-48 h-48 bg-cyan-500/5 rounded-full blur-3xl" />
-        <div className="relative flex items-center justify-between flex-wrap gap-6">
-          <div className="flex items-center gap-5">
-            <div className="relative">
-              <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-orange-400 to-rose-500 flex items-center justify-center text-2xl font-black text-white shadow-xl shadow-orange-500/20 ring-2 ring-white/10">
-                {user?.email?.[0].toUpperCase() || "E"}
+    <div className="min-h-screen bg-transparent text-slate-100 relative z-0 selection:bg-emerald-500/30">
+      {/* Decorative cyber backdrop circles */}
+      <div className="absolute top-[10%] left-[5%] w-[400px] h-[400px] bg-emerald-500/5 rounded-full blur-[120px] pointer-events-none" />
+      <div className="absolute bottom-[10%] right-[5%] w-[400px] h-[400px] bg-purple-500/5 rounded-full blur-[120px] pointer-events-none" />
+
+      <div className="flex flex-col lg:flex-row max-w-[1600px] mx-auto min-h-screen relative gap-6 px-4 lg:px-8 py-8 lg:py-12">
+        
+        {/* FLOATING CYBER DOCK (Balanced & Aligned to avoid collisions) */}
+        <nav className="fixed lg:sticky bottom-4 lg:top-28 left-4 right-4 lg:left-0 lg:h-[calc(100vh-140px)] lg:w-24 bg-[#0a0b16]/95 backdrop-blur-3xl border border-white/10 rounded-2xl lg:rounded-[2rem] z-50 flex lg:flex-col items-center justify-between lg:justify-start py-3 px-5 lg:py-8 lg:px-0 shadow-[0_15px_40px_rgba(0,0,0,0.8)] overflow-x-auto lg:overflow-visible gap-2 lg:gap-6 shrink-0">
+          
+          <div className="hidden lg:flex w-12 h-12 rounded-xl bg-gradient-to-br from-emerald-400 to-cyan-500 items-center justify-center text-lg font-black text-black shadow-[0_0_15px_rgba(16,185,129,0.3)] mb-4">
+            {user?.email?.[0].toUpperCase() || "X"}
+          </div>
+
+          {tabs.map((tab) => {
+            const isActive = activeTab === tab.key;
+            return (
+              <button
+                key={tab.key}
+                onClick={() => setActiveTab(tab.key)}
+                className={`group relative flex flex-col items-center justify-center w-12 h-12 lg:w-16 lg:h-16 rounded-xl transition-all duration-300 shrink-0 ${
+                  isActive
+                    ? "bg-emerald-500/10 border-emerald-500/30 text-emerald-400 shadow-[0_0_20px_rgba(16,185,129,0.15)] scale-105"
+                    : "hover:bg-white/5 border border-transparent text-slate-400 hover:text-white"
+                }`}
+              >
+                {isActive && (
+                  <div className="absolute inset-0 bg-emerald-500/20 blur-xl rounded-full" />
+                )}
+                <span className={`relative text-xl lg:text-2xl transition-transform duration-300 ${isActive ? "scale-105" : "group-hover:scale-105"}`}>
+                  {tab.icon}
+                </span>
+                <span className={`absolute -bottom-4 text-[8px] font-black tracking-widest uppercase transition-all duration-300 ${isActive ? "opacity-100 text-emerald-400" : "opacity-0 translate-y-[-5px] group-hover:opacity-100 group-hover:translate-y-0 text-slate-500"}`}>
+                  {tab.label}
+                </span>
+              </button>
+            );
+          })}
+        </nav>
+
+        {/* MAIN CONTENT AREA */}
+        <div className="flex-1 lg:pl-4 pb-24 lg:pb-0 min-w-0">
+          
+          {/* HEADER DASHBOARD CARD */}
+          <div className="relative mb-8 overflow-hidden rounded-2xl bg-[#0a0b16]/90 backdrop-blur-2xl border border-white/10 p-6 lg:p-8 shadow-[0_12px_40px_rgba(0,0,0,0.6)] animate-fade-up group">
+            <div className="absolute inset-0 bg-gradient-to-r from-emerald-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
+            <div className="relative flex items-center justify-between flex-wrap gap-6 z-10">
+              <div className="flex flex-col lg:flex-row lg:items-center gap-6">
+                <div>
+                  <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-[9px] font-black text-emerald-400 uppercase tracking-widest mb-3">
+                    <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_10px_rgba(16,185,129,1)]" />
+                    Verified Expert System
+                  </div>
+                  <h1 className="text-3xl lg:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-white to-slate-400 tracking-tighter uppercase">
+                    {t("dashboard.expertTitle")}
+                  </h1>
+                  <p className="text-slate-400 font-bold mt-2 flex items-center gap-3 text-xs lg:text-sm font-mono">
+                    <span className="text-emerald-500">_ID:</span> {user?.email}
+                  </p>
+                </div>
               </div>
-              <div className="absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-emerald-500 border-[3px] border-[#050a18] shadow-lg shadow-emerald-500/30" />
-            </div>
-            <div>
-              <h1 className="text-3xl font-black gradient-text-warm tracking-tight">{t("dashboard.expertTitle")}</h1>
-              <p className="text-slate-400 text-sm mt-1 flex items-center gap-2">
-                <svg className="w-3.5 h-3.5 text-emerald-400" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" /></svg>
-                {user?.email}
-              </p>
             </div>
           </div>
-          <div className="flex items-center gap-3 glass-sm px-4 py-2 rounded-xl">
-            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-            <span className="text-xs text-slate-400 font-medium">{t("dashboard.expertAccount")}</span>
+
+          <div className="animate-fade-up-d2 relative z-10">
+            {activeTab === "profile" && <ProfileTab />}
+            {activeTab === "services" && <ServicesTab />}
+            {activeTab === "orders" && <OrdersTab />}
+            {activeTab === "chat" && <ChatTab />}
+            {activeTab === "wallet" && <WalletTab />}
           </div>
         </div>
-      </div>
-
-      {/* TABS */}
-      <div ref={tabBarRef} className="relative flex gap-1 mb-8 animate-fade-up-d1 overflow-x-auto p-1 glass rounded-2xl border border-white/5">
-        <div
-          className="absolute bottom-1 top-1 rounded-xl bg-gradient-to-r from-emerald-500/20 to-cyan-500/20 border border-emerald-500/30 transition-all duration-400 ease-out shadow-[0_0_20px_rgba(16,185,129,0.1)]"
-          style={{ left: tabIndicator.left, width: tabIndicator.width }}
-        />
-        {tabs.map((tab) => (
-          <button
-            key={tab.key}
-            ref={(el) => { tabRefs.current[tab.key] = el; }}
-            onClick={() => setActiveTab(tab.key)}
-            className={`relative z-10 flex items-center gap-2.5 px-5 py-3 rounded-xl text-sm font-semibold transition-all duration-300 whitespace-nowrap ${
-              activeTab === tab.key
-                ? "text-white"
-                : "text-slate-400 hover:text-slate-200 hover:bg-white/[0.03]"
-            }`}
-          >
-            <span className={`${activeTab === tab.key ? "scale-110" : ""} transition-transform duration-300`}>{tab.icon}</span>
-            {tab.label}
-          </button>
-        ))}
-      </div>
-
-      {/* CONTENT */}
-      <div className="animate-fade-up-d2">
-        {activeTab === "profile" && <ProfileTab />}
-        {activeTab === "services" && <ServicesTab />}
-        {activeTab === "orders" && <OrdersTab />}
-        {activeTab === "chat" && <ChatTab />}
-        {activeTab === "wallet" && <WalletTab />}
       </div>
     </div>
   );
@@ -179,15 +177,15 @@ function UploadButton({ onUpload, accept = "image/*", label = "Upload" }: { onUp
     <>
       <input ref={inputRef} type="file" accept={accept} onChange={handleChange} className="hidden" />
       <button type="button" onClick={() => inputRef.current?.click()} disabled={uploading}
-        className="relative overflow-hidden group btn-ghost !py-1.5 !px-4 text-xs disabled:opacity-50"
+        className="px-6 py-4 rounded-xl bg-white/5 text-white font-black uppercase tracking-widest text-xs hover:bg-white/10 transition-all border border-white/10 shadow-[0_0_15px_rgba(0,0,0,0.5)] disabled:opacity-50"
       >
-        <span className="relative z-10 flex items-center gap-1.5">
+        <span className="flex items-center gap-2">
           {uploading ? (
-            <svg className="animate-spin w-3 h-3" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" /><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" /></svg>
+            <svg className="animate-spin w-4 h-4 text-emerald-500" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" /><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" /></svg>
           ) : (
-            <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+            <svg className="w-4 h-4 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
           )}
-          {uploading ? "Uploading..." : label}
+          {uploading ? "UPLOADING..." : label}
         </span>
       </button>
     </>
@@ -278,347 +276,290 @@ function ProfileTab() {
 
   if (loading) {
     return (
-      <div className="grid md:grid-cols-3 gap-6">
+      <div className="grid md:grid-cols-3 gap-8">
         {[...Array(3)].map((_, i) => (
-          <div key={i} className="h-64 rounded-2xl bg-slate-800/30 animate-pulse" />
+          <div key={i} className="h-80 rounded-[2.5rem] bg-white/5 animate-pulse border border-white/5" />
         ))}
-    </div>
-  );
-}
+      </div>
+    );
+  }
 
   // ─── VIEW MODE ───
   if (!editMode) {
     return (
-      <div className="space-y-8">
+      <div className="space-y-6">
         {msg && (
-          <div className="p-4 glass-sm text-sm rounded-xl border border-emerald-500/20 text-emerald-400 flex items-center gap-3">
-            <svg className="w-4 h-4 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" /></svg>
+          <div className="p-4 bg-emerald-500/10 text-xs font-black uppercase tracking-widest rounded-xl border border-emerald-500/30 text-emerald-400 flex items-center gap-3 shadow-[0_0_20px_rgba(16,185,129,0.2)]">
+            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
             {msg}
           </div>
         )}
 
-        {/* Profile Hero Card */}
-        <div className="relative overflow-hidden rounded-3xl glass border border-white/5 p-0 shadow-lg">
-          {/* Banner background */}
-          <div className="w-full h-40 bg-gradient-to-r from-emerald-500/20 via-cyan-500/10 to-purple-500/20 relative overflow-hidden">
-            <div className="absolute inset-0 grid-dots opacity-40" />
-            <div className="absolute inset-0 bg-gradient-to-t from-[#050a18] to-transparent" />
-            <div className="absolute top-4 right-4 flex items-center gap-1.5 bg-emerald-500/25 border border-emerald-500/30 text-emerald-400 text-[10px] font-extrabold uppercase tracking-widest px-2.5 py-1 rounded-full shadow-[0_0_15px_rgba(16,185,129,0.2)] animate-pulse">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
-              Verified Expert
-            </div>
-          </div>
+        {/* BENTO GRID LAYOUT */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           
-          <div className="p-8 md:p-10 pt-0 relative z-10 -mt-16">
-            <div className="relative flex items-end justify-between flex-wrap gap-6">
-              <div className="flex items-end gap-6 flex-wrap md:flex-nowrap">
-                <div className="relative group">
-                  <div className="w-28 h-28 rounded-2xl overflow-hidden ring-4 ring-emerald-500/30 shadow-2xl shadow-black/80 transition-transform duration-300 group-hover:scale-[1.02] bg-[#050a18] relative">
-                    {photoUrl ? (
-                      <Image src={normalizeUrl(photoUrl) || ""} alt="Profile" fill className="object-cover" />
-                    ) : (
-                      <div className="w-full h-full bg-gradient-to-br from-orange-400 to-rose-500 flex items-center justify-center text-4xl font-black text-white">
-                        {fullName?.[0]?.toUpperCase() || "E"}
-                      </div>
-                    )}
-                  </div>
-                  <div className="absolute -bottom-1 -right-1 w-6 h-6 rounded-full bg-emerald-500 border-[3px] border-[#050a18] shadow-lg shadow-emerald-500/30" />
+          {/* Main Hero Card (Spans 2 columns) */}
+          <div className="lg:col-span-2 relative overflow-hidden rounded-2xl bg-[#0a0b16]/90 backdrop-blur-2xl border border-white/10 p-6 lg:p-10 shadow-[0_12px_40px_rgba(0,0,0,0.6)] group">
+            <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-500/5 blur-[80px] rounded-full pointer-events-none" />
+            
+            <div className="flex flex-col sm:flex-row gap-6 items-start relative z-10">
+              <div className="relative shrink-0">
+                <div className="w-28 h-28 lg:w-36 lg:h-36 rounded-xl overflow-hidden border border-white/15 shadow-[0_0_20px_rgba(0,0,0,0.5)] bg-[#050505] relative group-hover:scale-102 transition-transform duration-500">
+                  {photoUrl ? (
+                    <Image src={normalizeUrl(photoUrl) || ""} alt="Profile" fill className="object-cover" />
+                  ) : (
+                    <div className="w-full h-full bg-gradient-to-br from-emerald-500 to-cyan-500 flex items-center justify-center text-4xl font-black text-black">
+                      {fullName?.[0]?.toUpperCase() || "E"}
+                    </div>
+                  )}
                 </div>
-                <div className="mb-2">
-                  <div className="flex items-center gap-2 flex-wrap">
-                    <h2 className="text-3xl font-black text-white tracking-tight">{fullName || t("profile.setNamePlaceholder")}</h2>
-                    <span className="w-5 h-5 text-emerald-400 animate-pulse-glow flex items-center justify-center">
-                      <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M6.267 3.455a.75.75 0 00-.708-.523H4.5a2.5 2.5 0 00-2.5 2.5v1.059a.75.75 0 00.523.708L3.5 7.5v5l-1.023.341A.75.75 0 002 13.55v1.059A2.5 2.5 0 004.5 17.17h1.059a.75.75 0 00.708-.523L6.5 16.5h7l.233.147a.75.75 0 00.708.523h1.059a2.5 2.5 0 002.5-2.5v-1.059a.75.75 0 00-.523-.708L16.5 12.5v-5l1.023-.341A.75.75 0 0018 6.45V5.39a2.5 2.5 0 00-2.5-2.5h-1.059a.75.75 0 00-.708.523L13.5 3.5h-7zM12 10a2 2 0 11-4 0 2 2 0 014 0z" />
-                      </svg>
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-3 mt-2 flex-wrap">
-                    <span className="flex items-center gap-1.5 text-emerald-400 text-sm font-semibold bg-emerald-500/10 px-3 py-1 rounded-full border border-emerald-500/20">
-                      {specialization || t("profile.addSpecPlaceholder")}
-                    </span>
-                    {yearsExperience && (
-                      <span className="text-slate-400 text-xs bg-white/[0.04] border border-white/5 px-3 py-1 rounded-full">
-                        {yearsExperience} {t("profile.yearsExpSuffix")}
-                      </span>
-                    )}
-                  </div>
-                </div>
+                <div className="absolute -bottom-1 -right-1 w-6 h-6 rounded-full bg-emerald-500 border-4 border-[#0a0b16] shadow-[0_0_10px_rgba(16,185,129,0.8)] animate-pulse" />
               </div>
-              <button onClick={() => setEditMode(true)}
-                className="group flex items-center gap-2 btn-ghost !py-2.5 !px-5 text-sm rounded-xl hover:bg-emerald-500/10 hover:border-emerald-500/20 border border-white/5 transition-all duration-300 self-end mb-2 cursor-pointer"
-              >
-                <svg className="w-4 h-4 transition-transform group-hover:rotate-12" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
-                {t("profile.editProfile")}
-              </button>
-            </div>
 
-            <div className="grid grid-cols-3 gap-4 mt-10">
-              {[
-                { value: achievements.length, label: t("profile.achievements"), color: "text-emerald-400", border: "border-t-emerald-500/40" },
-                { value: certifications.length, label: t("profile.certifications"), color: "text-blue-400", border: "border-t-blue-500/40" },
-                { value: portfolioPhotos.length, label: t("profile.photos"), color: "text-purple-400", border: "border-t-purple-500/40" },
-              ].map((stat) => (
-                <div key={stat.label} className={`glass-sm p-5 text-center border-t-2 ${stat.border} hover:bg-white/[0.03] transition-all duration-300 rounded-xl`}>
-                  <p className={`text-3xl font-black ${stat.color}`}><AnimatedCounter value={stat.value} /></p>
-                  <p className="text-[10px] text-slate-500 mt-1.5 font-bold uppercase tracking-wider">{stat.label}</p>
+              <div className="flex-1">
+                <div className="flex items-center justify-between gap-4 flex-wrap">
+                  <h2 className="text-2xl lg:text-3xl font-black text-white tracking-tighter uppercase">
+                    {fullName || "Anonymous Expert"}
+                  </h2>
+                  <button onClick={() => setEditMode(true)}
+                    className="flex items-center gap-1.5 px-5 py-2 bg-white/5 text-white text-[10px] font-black uppercase tracking-widest rounded-lg hover:bg-emerald-500 hover:text-black border border-white/10 hover:border-emerald-400 transition-all duration-300 shadow-[0_0_15px_rgba(0,0,0,0.5)]"
+                  >
+                    ⚙️ Edit
+                  </button>
                 </div>
-              ))}
+                
+                <div className="flex items-center gap-2.5 mt-3 flex-wrap">
+                  <span className="text-emerald-400 text-[10px] font-black uppercase tracking-widest bg-emerald-500/10 px-3.5 py-1.5 rounded-xl border border-emerald-500/20 shadow-inner">
+                    {specialization || "NO SPECIALIZATION"}
+                  </span>
+                  {yearsExperience && (
+                    <span className="text-slate-400 font-bold text-[10px] uppercase tracking-widest bg-white/5 border border-white/10 px-3.5 py-1.5 rounded-xl shadow-inner">
+                      EXP: {yearsExperience} YRS
+                    </span>
+                  )}
+                </div>
+
+                {bio && (
+                  <p className="mt-5 text-slate-400 leading-relaxed font-medium text-xs max-w-xl">
+                    {bio}
+                  </p>
+                )}
+              </div>
             </div>
           </div>
-        </div>
 
-        {/* About & Contact */}
-        <div className="grid md:grid-cols-3 gap-6">
-          {bio && (
-            <div className="md:col-span-2 glass rounded-2xl p-7 border border-white/5 hover:border-white/10 transition-all duration-300">
-              <h3 className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-4 flex items-center gap-2">
-                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
-                {t("profile.aboutMe")}
+          {/* Stats Column */}
+          <div className="flex flex-col gap-4">
+            {[
+              { value: achievements.length, label: t("profile.achievements"), color: "text-emerald-400", border: "border-emerald-500/20", bg: "bg-emerald-500/5", glow: "shadow-emerald-500/5" },
+              { value: certifications.length, label: t("profile.certifications"), color: "text-cyan-400", border: "border-cyan-500/20", bg: "bg-cyan-500/5", glow: "shadow-cyan-500/5" },
+              { value: portfolioPhotos.length, label: t("profile.photos"), color: "text-purple-400", border: "border-purple-500/20", bg: "bg-purple-500/5", glow: "shadow-purple-500/5" },
+            ].map((stat) => (
+              <div key={stat.label} className={`flex-1 ${stat.bg} border border-white/5 hover:${stat.border} p-5 flex flex-col justify-center items-center rounded-2xl backdrop-blur-md shadow-lg hover:${stat.glow} transition-all duration-300 group`}>
+                <p className={`text-4xl font-black ${stat.color} drop-shadow-md group-hover:scale-105 transition-transform duration-300`}><AnimatedCounter value={stat.value} /></p>
+                <p className="text-[9px] text-slate-500 mt-2 font-black uppercase tracking-widest">{stat.label}</p>
+              </div>
+            ))}
+          </div>
+
+          {/* Achievements Bento */}
+          {achievements.length > 0 && (
+            <div className="bg-[#0a0b16]/90 backdrop-blur-2xl rounded-2xl p-6 lg:p-8 border border-white/10 shadow-[0_12px_40px_rgba(0,0,0,0.5)]">
+              <h3 className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-4 flex items-center gap-2.5">
+                <span className="p-2 rounded-lg bg-emerald-500/10 text-emerald-500 border border-emerald-500/20">🏆</span>
+                {t("profile.achievements")}
               </h3>
-              <p className="text-slate-300 leading-relaxed text-sm">{bio}</p>
+              <div className="flex flex-wrap gap-2.5">
+                {achievements.map((a, i) => (
+                  <span key={i} className="bg-white/5 border border-white/10 text-white font-bold text-xs uppercase tracking-wider py-2.5 px-4 rounded-xl shadow-inner hover:border-emerald-500/30 hover:text-emerald-400 transition-colors">
+                    {a}
+                  </span>
+                ))}
+              </div>
             </div>
           )}
-          {phone && (
-            <div className="glass rounded-2xl p-7 border border-white/5 hover:border-white/10 transition-all duration-300">
-              <h3 className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-4 flex items-center gap-2">
-                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" /></svg>
-                {t("profile.contact")}
+
+          {/* Certifications Bento */}
+          {certifications.length > 0 && (
+            <div className="bg-[#0a0b16]/90 backdrop-blur-2xl rounded-2xl p-6 lg:p-8 border border-white/10 shadow-[0_12px_40px_rgba(0,0,0,0.5)]">
+              <h3 className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-4 flex items-center gap-2.5">
+                <span className="p-2 rounded-lg bg-cyan-500/10 text-cyan-500 border border-cyan-500/20">📜</span>
+                {t("profile.certifications")}
               </h3>
-              <p className="text-slate-300 text-sm flex items-center gap-2">
-                <span className="text-lg">📞</span> {phone}
-              </p>
+              <div className="space-y-2.5">
+                {certifications.map((c, i) => (
+                  <div key={i} className="flex items-center gap-3 bg-white/5 p-3 rounded-xl border border-white/10 shadow-inner group hover:border-cyan-500/20 transition-colors">
+                    <div className="w-8 h-8 rounded-lg bg-cyan-500/10 flex items-center justify-center text-sm shadow-sm border border-cyan-500/20">✅</div>
+                    <span className="text-slate-200 font-bold text-xs tracking-wide">{c}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Portfolio Bento (Spans full width if present) */}
+          {portfolioPhotos.length > 0 && (
+            <div className="lg:col-span-full bg-[#0a0b16]/90 backdrop-blur-2xl rounded-2xl p-6 lg:p-8 border border-white/10 shadow-[0_12px_40px_rgba(0,0,0,0.5)]">
+              <h3 className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-4 flex items-center gap-2.5">
+                <span className="p-2 rounded-lg bg-purple-500/10 text-purple-500 border border-purple-500/20">📸</span>
+                {t("profile.portfolio")}
+              </h3>
+              <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-3">
+                {portfolioPhotos.map((photo, i) => (
+                  <div key={i} className="group relative aspect-square rounded-xl overflow-hidden border border-white/10 shadow-inner">
+                    <Image src={photo} alt={`Portfolio ${i + 1}`} fill className="object-cover opacity-80 group-hover:opacity-100 transition-all duration-300" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                  </div>
+                ))}
+              </div>
             </div>
           )}
         </div>
-
-        {/* Achievements */}
-        {achievements.length > 0 && (
-          <div className="glass rounded-2xl p-7 border border-white/5 hover:border-white/10 transition-all duration-300">
-            <h3 className="text-sm font-bold text-white mb-5 flex items-center gap-2.5">
-              <span className="w-8 h-8 rounded-lg bg-emerald-500/15 flex items-center justify-center text-sm">🏆</span>
-              {t("profile.achievements")}
-            </h3>
-            <div className="flex flex-wrap gap-2">
-              {achievements.map((a, i) => (
-                <span key={i} className="badge badge-emerald text-sm py-2 px-4 rounded-xl shadow-sm hover:scale-[1.02] transition-transform duration-200">
-                  {a}
-                </span>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* Certifications */}
-        {certifications.length > 0 && (
-          <div className="glass rounded-2xl p-7 border border-white/5 hover:border-white/10 transition-all duration-300">
-            <h3 className="text-sm font-bold text-white mb-5 flex items-center gap-2.5">
-              <span className="w-8 h-8 rounded-lg bg-blue-500/15 flex items-center justify-center text-sm">📜</span>
-              {t("profile.certifications")}
-            </h3>
-            <div className="grid sm:grid-cols-2 gap-3">
-              {certifications.map((c, i) => (
-                <div key={i} className="flex items-center gap-3 glass-sm p-4 rounded-xl border border-white/[0.03] hover:border-emerald-500/10 transition-all duration-300">
-                  <div className="w-10 h-10 rounded-lg bg-blue-500/15 flex items-center justify-center text-sm flex-shrink-0">✅</div>
-                  <span className="text-slate-300 text-sm font-medium">{c}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* Portfolio */}
-        {portfolioPhotos.length > 0 && (
-          <div className="glass rounded-2xl p-7 border border-white/5 hover:border-white/10 transition-all duration-300">
-            <h3 className="text-sm font-bold text-white mb-5 flex items-center gap-2.5">
-              <span className="w-8 h-8 rounded-lg bg-purple-500/15 flex items-center justify-center text-sm">📸</span>
-              {t("profile.portfolio")}
-            </h3>
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-              {portfolioPhotos.map((photo, i) => (
-                <div key={i} className="group relative aspect-square rounded-xl overflow-hidden border border-white/5 hover:border-emerald-500/30 transition-all duration-500">
-<Image src={photo} alt={`Portfolio ${i + 1}`} fill className="object-cover transition-transform duration-700 group-hover:scale-110" />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                </div>
-              ))}
-            </div>
-        </div>
-      )}
-    </div>
-  );
-}
+      </div>
+    );
+  }
 
   // ─── EDIT MODE ───
   return (
-    <div className="space-y-8">
-      {/* Edit Header */}
-      <div className="flex items-center justify-between flex-wrap gap-4">
+    <div className="space-y-6 animate-in fade-in">
+      <div className="flex items-center justify-between flex-wrap gap-4 bg-[#0a0b16]/90 backdrop-blur-2xl p-6 rounded-2xl border border-white/10 shadow-[0_12px_40px_rgba(0,0,0,0.5)]">
         <div>
-          <h2 className="text-2xl font-black text-white tracking-tight">{t("profile.editProfile")}</h2>
-          <p className="text-slate-400 text-sm mt-1">Update your professional information</p>
+          <h2 className="text-xl font-black text-white tracking-tighter uppercase">My Profile</h2>
+          <p className="text-emerald-500 font-bold text-[10px] uppercase tracking-widest mt-0.5">Edit your profile</p>
         </div>
         <div className="flex gap-3">
-          <button onClick={() => setEditMode(false)} className="btn-ghost !py-2.5 !px-5 text-sm rounded-xl border border-white/5 hover:bg-white/5 transition-all">
-            {t("profile.cancel")}
+          <button onClick={() => setEditMode(false)} className="px-5 py-2.5 bg-white/5 text-white text-xs font-black uppercase tracking-widest rounded-lg hover:bg-white/10 transition-colors border border-white/10">
+            Cancel
           </button>
           <button onClick={handleSave} disabled={saving}
-            className="btn-primary !py-2.5 !px-6 text-sm rounded-xl disabled:opacity-50 shadow-lg shadow-emerald-500/20"
+            className="px-6 py-2.5 bg-emerald-500 text-black text-xs font-black uppercase tracking-widest rounded-lg shadow-md hover:bg-emerald-400 transition-all disabled:opacity-50"
           >
-            <span className="flex items-center gap-2">
-              {saving ? (
-                <svg className="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" /><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" /></svg>
-              ) : (
-                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
-              )}
-              {saving ? t("profile.saving") : t("profile.saveProfile")}
-            </span>
+            {saving ? "Saving..." : "Save"}
           </button>
         </div>
       </div>
 
-      {/* Basic Info */}
-      <div className="glass rounded-2xl p-8 border border-emerald-500/10">
-        <h3 className="text-sm font-bold text-white mb-6 flex items-center gap-2.5">
-          <span className="w-8 h-8 rounded-lg bg-emerald-500/15 flex items-center justify-center text-sm">👤</span>
-          {t("profile.basicInfo")}
+      <div className="bg-[#0a0b16]/90 backdrop-blur-2xl rounded-2xl p-6 lg:p-10 border border-white/10 shadow-[0_12px_40px_rgba(0,0,0,0.5)]">
+        <h3 className="text-xs font-black text-white uppercase tracking-widest mb-6 flex items-center gap-2.5">
+          <span className="p-2 rounded-lg bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">👤</span>
+          Basic Info
         </h3>
 
         <div className="grid md:grid-cols-2 gap-6">
           <div>
-            <label className="block text-xs font-semibold text-slate-400 mb-2 uppercase tracking-wider">{t("profile.fullName")}</label>
-            <input value={fullName} onChange={(e) => setFullName(e.target.value)} className="input-field" placeholder={t("profile.fullName")} />
+            <label className="block text-[9px] font-black text-slate-500 mb-2 uppercase tracking-widest">Full Name</label>
+            <input value={fullName} onChange={(e) => setFullName(e.target.value)} className={inputClasses} placeholder="John Doe" />
           </div>
           <div>
-            <label className="block text-xs font-semibold text-slate-400 mb-2 uppercase tracking-wider">{t("profile.specialization")}</label>
-            <input value={specialization} onChange={(e) => setSpecialization(e.target.value)} className="input-field" placeholder={t("profile.specialization")} />
+            <label className="block text-[9px] font-black text-slate-500 mb-2 uppercase tracking-widest">Specialization</label>
+            <input value={specialization} onChange={(e) => setSpecialization(e.target.value)} className={inputClasses} placeholder="Strength & Conditioning" />
           </div>
           <div>
-            <label className="block text-xs font-semibold text-slate-400 mb-2 uppercase tracking-wider">{t("profile.phone")}</label>
-            <input value={phone} onChange={(e) => setPhone(e.target.value)} className="input-field" placeholder={t("profile.phone")} />
+            <label className="block text-[9px] font-black text-slate-500 mb-2 uppercase tracking-widest">Comms (Phone)</label>
+            <input value={phone} onChange={(e) => setPhone(e.target.value)} className={inputClasses} placeholder="+213..." />
           </div>
           <div>
-            <label className="block text-xs font-semibold text-slate-400 mb-2 uppercase tracking-wider">{t("profile.yearsExperience")}</label>
-            <input type="number" value={yearsExperience} onChange={(e) => setYearsExperience(e.target.value)} className="input-field" placeholder={t("profile.yearsExperience")} />
+            <label className="block text-[9px] font-black text-slate-500 mb-2 uppercase tracking-widest">Experience (Years)</label>
+            <input type="number" value={yearsExperience} onChange={(e) => setYearsExperience(e.target.value)} className={inputClasses} placeholder="5" />
           </div>
         </div>
 
-        <div className="mt-6">
-          <label className="block text-xs font-semibold text-slate-400 mb-2 uppercase tracking-wider">{t("profile.profilePhoto")}</label>
-          <div className="flex items-center gap-4">
+        <div className="mt-8">
+          <label className="block text-[9px] font-black text-slate-500 mb-2 uppercase tracking-widest">Avatar Image</label>
+          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 bg-white/5 p-4 rounded-2xl border border-white/10">
             {photoUrl ? (
-              <Image src={normalizeUrl(photoUrl) || ""} alt="Preview" width={64} height={64} className="w-16 h-16 rounded-xl object-cover border-2 border-emerald-500/20 shadow-lg" />
+              <Image src={normalizeUrl(photoUrl) || ""} alt="Preview" width={80} height={80} className="w-20 h-20 rounded-xl object-cover border border-emerald-500/20" />
             ) : (
-              <div className="w-16 h-16 rounded-xl bg-slate-700/50 flex items-center justify-center text-slate-500 text-sm border border-white/5">{t("profile.noPhoto")}</div>
+              <div className="w-20 h-20 rounded-xl bg-black/50 border border-white/10 flex items-center justify-center text-2xl shadow-inner">📸</div>
             )}
-            <div className="flex-1 flex items-center gap-2">
-              <input value={photoUrl} onChange={(e) => setPhotoUrl(e.target.value)} className="input-field flex-1 text-sm" placeholder={t("profile.pasteUrl")} />
-              <UploadButton onUpload={(url) => setPhotoUrl(url)} label={t("profile.upload")} />
+            <div className="flex-1 w-full flex flex-col sm:flex-row gap-3">
+              <input value={photoUrl} onChange={(e) => setPhotoUrl(e.target.value)} className={inputClasses} placeholder="Paste image URL..." />
+              <UploadButton onUpload={(url) => setPhotoUrl(url)} label="Upload File" />
             </div>
           </div>
         </div>
 
-        <div className="mt-6">
-          <label className="block text-xs font-semibold text-slate-400 mb-2 uppercase tracking-wider">{t("profile.bio")}</label>
-          <textarea value={bio} onChange={(e) => setBio(e.target.value)} className="input-field min-h-[120px] resize-none" placeholder={t("profile.bioPlaceholder")} />
+        <div className="mt-8">
+          <label className="block text-[9px] font-black text-slate-500 mb-2 uppercase tracking-widest">Biography</label>
+          <textarea value={bio} onChange={(e) => setBio(e.target.value)} className={`${inputClasses} min-h-[120px] resize-none`} placeholder="Describe your expertise..." />
         </div>
       </div>
 
-      {/* Achievements */}
-      <div className="glass rounded-2xl p-8 border border-emerald-500/10">
-        <h3 className="text-sm font-bold text-white mb-5 flex items-center gap-2.5">
-          <span className="w-8 h-8 rounded-lg bg-emerald-500/15 flex items-center justify-center text-sm">🏆</span>
-          {t("profile.achievements")}
-        </h3>
-        <div className="flex gap-2 mb-4">
-          <input value={newAchievement} onChange={(e) => setNewAchievement(e.target.value)}
-            className="input-field flex-1" placeholder={t("profile.achievementPlaceholder")}
-            onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); addItem(newAchievement, setNewAchievement, achievements, setAchievements); }}}
-          />
-          <button onClick={() => addItem(newAchievement, setNewAchievement, achievements, setAchievements)}
-            className="btn-primary !py-2 !px-5 text-sm rounded-xl"
-          >
-            <span className="flex items-center gap-1.5">{t("profile.addAchievement")}</span>
-          </button>
-        </div>
-        <div className="flex flex-wrap gap-2">
-          {achievements.map((a, i) => (
-            <span key={i} className="badge badge-emerald text-sm py-2 px-4 rounded-xl flex items-center gap-2 group hover:scale-[1.02] transition-transform">
-              {a}
-              <button onClick={() => removeItem(i, achievements, setAchievements)}
-                className="opacity-50 hover:opacity-100 text-red-400 transition-all ml-1"
-              >×</button>
-            </span>
-          ))}
-          {achievements.length === 0 && <p className="text-slate-500 text-sm italic">{t("profile.noAchievements")}</p>}
-        </div>
-      </div>
-
-      {/* Certifications */}
-      <div className="glass rounded-2xl p-8 border border-emerald-500/10">
-        <h3 className="text-sm font-bold text-white mb-5 flex items-center gap-2.5">
-          <span className="w-8 h-8 rounded-lg bg-blue-500/15 flex items-center justify-center text-sm">📜</span>
-          {t("profile.certifications")}
-        </h3>
-        <div className="flex gap-2 mb-4">
-          <input value={newCertification} onChange={(e) => setNewCertification(e.target.value)}
-            className="input-field flex-1" placeholder={t("profile.certificationPlaceholder")}
-            onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); addItem(newCertification, setNewCertification, certifications, setCertifications); }}}
-          />
-          <button onClick={() => addItem(newCertification, setNewCertification, certifications, setCertifications)}
-            className="btn-primary !py-2 !px-5 text-sm rounded-xl"
-          >
-            <span className="flex items-center gap-1.5">{t("profile.addCertification")}</span>
-          </button>
-        </div>
-        <div className="space-y-2">
-          {certifications.map((c, i) => (
-            <div key={i} className="flex items-center justify-between glass-sm p-4 rounded-xl border border-white/[0.03] hover:border-emerald-500/10 transition-all duration-300">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-lg bg-blue-500/15 flex items-center justify-center text-sm flex-shrink-0">✅</div>
-                <span className="text-slate-300 text-sm font-medium">{c}</span>
+      <div className="grid md:grid-cols-2 gap-6">
+        <div className="bg-[#0a0b16]/90 backdrop-blur-2xl rounded-2xl p-6 border border-white/10 shadow-[0_12px_40px_rgba(0,0,0,0.5)]">
+          <h3 className="text-xs font-black text-white uppercase tracking-widest mb-4 flex items-center gap-2.5">
+            <span className="p-2 rounded-lg bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">🏆</span>
+            Achievements
+          </h3>
+          <div className="flex gap-2.5 mb-4">
+            <input value={newAchievement} onChange={(e) => setNewAchievement(e.target.value)}
+              className={inputClasses} placeholder="Enter achievement..."
+              onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); addItem(newAchievement, setNewAchievement, achievements, setAchievements); }}}
+            />
+            <button onClick={() => addItem(newAchievement, setNewAchievement, achievements, setAchievements)}
+              className="px-5 bg-white/5 hover:bg-white/10 text-white font-black uppercase text-xs tracking-widest rounded-xl transition-colors border border-white/10"
+            >
+              Add
+            </button>
+          </div>
+          <div className="flex flex-col gap-2.5">
+            {achievements.map((a, i) => (
+              <div key={i} className="bg-white/5 border border-white/10 text-white font-bold text-xs py-3 px-4 rounded-xl flex items-center justify-between shadow-inner">
+                <span className="truncate pr-4">{a}</span>
+                <button onClick={() => removeItem(i, achievements, setAchievements)} className="w-7 h-7 rounded-lg bg-rose-500/10 flex items-center justify-center text-rose-500 hover:bg-rose-500/20 transition-colors shrink-0">✕</button>
               </div>
-              <button onClick={() => removeItem(i, certifications, setCertifications)}
-                className="text-red-400/60 hover:text-red-400 transition-colors text-sm px-3 py-1 rounded-lg hover:bg-red-500/10"
-              >
-                {t("profile.remove")}
-              </button>
-            </div>
-          ))}
-          {certifications.length === 0 && <p className="text-slate-500 text-sm italic">{t("profile.noCertifications")}</p>}
+            ))}
+          </div>
+        </div>
+
+        <div className="bg-[#0a0b16]/90 backdrop-blur-2xl rounded-2xl p-6 border border-white/10 shadow-[0_12px_40px_rgba(0,0,0,0.5)]">
+          <h3 className="text-xs font-black text-white uppercase tracking-widest mb-4 flex items-center gap-2.5">
+            <span className="p-2 rounded-lg bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">📜</span>
+            Certifications
+          </h3>
+          <div className="flex gap-2.5 mb-4">
+            <input value={newCertification} onChange={(e) => setNewCertification(e.target.value)}
+              className={inputClasses} placeholder="Enter certification..."
+              onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); addItem(newCertification, setNewCertification, certifications, setCertifications); }}}
+            />
+            <button onClick={() => addItem(newCertification, setNewCertification, certifications, setCertifications)}
+              className="px-5 bg-white/5 hover:bg-white/10 text-white font-black uppercase text-xs tracking-widest rounded-xl transition-colors border border-white/10"
+            >
+              Add
+            </button>
+          </div>
+          <div className="flex flex-col gap-2.5">
+            {certifications.map((c, i) => (
+              <div key={i} className="bg-white/5 border border-white/10 text-white font-bold text-xs py-3 px-4 rounded-xl flex items-center justify-between shadow-inner">
+                <span className="truncate pr-4 flex items-center gap-2"><span className="text-cyan-400">✓</span> {c}</span>
+                <button onClick={() => removeItem(i, certifications, setCertifications)} className="w-7 h-7 rounded-lg bg-rose-500/10 flex items-center justify-center text-rose-500 hover:bg-rose-500/20 transition-colors shrink-0">✕</button>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
 
-      {/* Portfolio Photos */}
-      <div className="glass rounded-2xl p-8 border border-emerald-500/10">
-        <h3 className="text-sm font-bold text-white mb-5 flex items-center gap-2.5">
-          <span className="w-8 h-8 rounded-lg bg-purple-500/15 flex items-center justify-center text-sm">📸</span>
-          {t("profile.portfolio")}
+      <div className="bg-[#0a0b16]/90 backdrop-blur-2xl rounded-2xl p-6 border border-white/10 shadow-[0_12px_40px_rgba(0,0,0,0.5)]">
+        <h3 className="text-xs font-black text-white uppercase tracking-widest mb-4 flex items-center gap-2.5">
+          <span className="p-2 rounded-lg bg-purple-500/10 text-purple-400 border border-purple-500/20">📸</span>
+          Portfolio Evidence
         </h3>
-        <div className="flex gap-2 mb-4">
+        <div className="flex flex-col sm:flex-row gap-3 mb-6 bg-white/5 p-4 rounded-2xl border border-white/10">
           <input value={newPhoto} onChange={(e) => setNewPhoto(e.target.value)}
-            className="input-field flex-1" placeholder={t("profile.photoPlaceholder")}
+            className={inputClasses} placeholder="Paste image URL..."
             onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); addItem(newPhoto, setNewPhoto, portfolioPhotos, setPortfolioPhotos); }}}
           />
-          <UploadButton onUpload={(url) => { setPortfolioPhotos([...portfolioPhotos, url]); }} label={t("profile.upload")} />
+          <UploadButton onUpload={(url) => { setPortfolioPhotos([...portfolioPhotos, url]); }} label="Upload Photo" />
         </div>
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
           {portfolioPhotos.map((photo, i) => (
-            <div key={i} className="relative group aspect-square rounded-xl overflow-hidden border border-white/5 hover:border-emerald-500/30 transition-all duration-500">
-              <Image src={photo} alt={`Portfolio ${i + 1}`} fill className="object-cover transition-transform duration-700 group-hover:scale-110" />
+            <div key={i} className="relative group aspect-square rounded-xl overflow-hidden border border-white/10 shadow-inner">
+              <Image src={photo} alt={`Portfolio ${i + 1}`} fill className="object-cover" />
               <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-                <button onClick={() => removeItem(i, portfolioPhotos, setPortfolioPhotos)}
-                  className="bg-red-500/80 text-white text-xs px-4 py-2 rounded-full hover:bg-red-500 transition shadow-lg"
-                >
-                  {t("profile.remove")}
-                </button>
+                <button onClick={() => removeItem(i, portfolioPhotos, setPortfolioPhotos)} className="bg-rose-500 text-white font-black text-[9px] uppercase tracking-widest px-4 py-2 rounded-lg hover:bg-rose-600 transition-colors shadow-lg">Remove</button>
               </div>
             </div>
           ))}
-          {portfolioPhotos.length === 0 && (
-            <div className="col-span-full text-center py-12 text-slate-500 text-sm italic border-2 border-dashed border-white/5 rounded-xl">
-              {t("profile.noPortfolio")}
-            </div>
-          )}
         </div>
       </div>
     </div>
@@ -641,49 +582,11 @@ function ServicesTab() {
   const [msg, setMsg] = useState("");
   const [msgType, setMsgType] = useState<"success" | "error">("success");
   const [sports, setSports] = useState<any[]>([]);
-  const [editingId, setEditingId] = useState<string | null>(null);
-  const [editForm, setEditForm] = useState<Record<string, any>>({});
-  const [savingEdit, setSavingEdit] = useState(false);
 
   useEffect(() => { loadServices(); sportCategoryAPI.getAll().then(setSports).catch(() => {}); }, []);
 
   const loadServices = async () => {
     try { const all = await serviceAPI.getAll(); setServices(all); } catch {}
-  };
-
-  const startEdit = (s: any) => {
-    setEditingId(s.id);
-    setEditForm({
-      title: s.title,
-      description: s.description,
-      price: s.price,
-      imageUrl: s.imageUrl || "",
-      category: s.category || "NUTRITION",
-      sportId: s.sportId || "",
-    });
-  };
-
-  const cancelEdit = () => {
-    setEditingId(null);
-    setEditForm({});
-  };
-
-  const handleEditSave = async (id: string) => {
-    setSavingEdit(true);
-    setMsg("");
-    try {
-      await serviceAPI.update(id, editForm);
-      setMsg(t("services.createdSuccess"));
-      setMsgType("success");
-      setEditingId(null);
-      setEditForm({});
-      loadServices();
-    } catch (err: unknown) {
-      setMsg((err as Error).message);
-      setMsgType("error");
-    } finally {
-      setSavingEdit(false);
-    }
   };
 
   const handleCreate = async (e: React.FormEvent) => {
@@ -701,73 +604,58 @@ function ServicesTab() {
   };
 
   return (
-    <div className="space-y-8">
-      {/* Header */}
-      <div className="flex items-center justify-between flex-wrap gap-4">
+    <div className="space-y-6 animate-in fade-in">
+      <div className="flex items-center justify-between flex-wrap gap-4 bg-[#0a0b16]/90 backdrop-blur-2xl p-6 rounded-2xl border border-white/10 shadow-[0_12px_40px_rgba(0,0,0,0.5)]">
         <div>
-          <h2 className="text-2xl font-black text-white tracking-tight">{t("services.title")}</h2>
-          <p className="text-slate-400 text-sm mt-1">{services.length} {t("services.subtitle")}</p>
+          <h2 className="text-2xl font-black text-white tracking-tighter uppercase">{t("services.title")}</h2>
+          <p className="text-emerald-500 font-bold text-[10px] uppercase tracking-widest mt-0.5">[{services.length}] Active Services</p>
         </div>
         <button onClick={() => setShowForm(!showForm)}
-          className={`btn-primary !py-2.5 !px-6 text-sm rounded-xl shadow-lg transition-all duration-300 ${showForm ? "!bg-red-500/20 !text-red-400 !border-red-500/30" : "shadow-emerald-500/20"}`}
+          className={`px-6 py-3 rounded-lg font-black text-xs uppercase tracking-widest transition-all duration-300 border ${showForm ? "bg-rose-500/10 text-rose-400 border-rose-500/20 hover:bg-rose-500/20" : "bg-emerald-500 text-black border-emerald-400 hover:bg-emerald-400 shadow-[0_0_15px_rgba(16,185,129,0.2)]"}`}
         >
-          <span className="flex items-center gap-2">
-            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              {showForm
-                ? <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                : <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-              }
-            </svg>
-            {showForm ? t("services.cancel") : t("services.newService")}
-          </span>
+          {showForm ? "Cancel" : "New Service"}
         </button>
       </div>
 
       {msg && (
-        <div className={`p-4 glass-sm text-sm rounded-xl flex items-center gap-3 ${
-          msgType === "success" ? "border border-emerald-500/20 text-emerald-400" : "border border-red-500/20 text-red-400"
+        <div className={`p-4 font-black text-xs uppercase tracking-widest rounded-xl flex items-center gap-3 border shadow-md ${
+          msgType === "success" ? "bg-emerald-500/10 border-emerald-500/20 text-emerald-400" : "bg-rose-500/10 border-rose-500/20 text-rose-400"
         }`}>
-          <svg className="w-4 h-4 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-            {msgType === "success"
-              ? <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-              : <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
-            }
-          </svg>
-          {msg}
+          <span className="text-lg">{msgType === "success" ? "✅" : "⚠️"}</span> {msg}
         </div>
       )}
 
-      {/* Create Form */}
       {showForm && (
-        <div className="glass rounded-2xl p-8 border border-emerald-500/10 animate-fade-up">
-          <h3 className="text-lg font-bold text-white mb-6 flex items-center gap-2.5">
-            <span className="w-8 h-8 rounded-lg bg-emerald-500/15 flex items-center justify-center text-sm">✨</span>
-            {t("services.createTitle")}
+        <div className="bg-[#0a0b16]/90 backdrop-blur-3xl rounded-2xl p-6 lg:p-10 border border-emerald-500/20 shadow-[0_12px_40px_rgba(16,185,129,0.05)] relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-96 h-96 bg-emerald-500/5 blur-[100px] rounded-full pointer-events-none" />
+          <h3 className="text-xs font-black text-white mb-6 flex items-center gap-2.5 uppercase tracking-widest relative z-10">
+            <span className="w-10 h-10 rounded-xl bg-emerald-500/10 flex items-center justify-center text-xl border border-emerald-500/20 text-emerald-400">✨</span>
+            Service Details
           </h3>
-          <form onSubmit={handleCreate} className="flex flex-col gap-6">
+          <form onSubmit={handleCreate} className="flex flex-col gap-6 relative z-10">
             <div className="grid md:grid-cols-2 gap-6">
               <div className="md:col-span-2">
-                <label className="block text-xs font-semibold text-slate-400 mb-2 uppercase tracking-wider">{t("services.serviceTitle")}</label>
-                <input value={title} onChange={(e) => setTitle(e.target.value)} className="input-field" placeholder={t("services.serviceTitlePlaceholder")} required />
+                <label className="block text-[9px] font-black text-emerald-500 mb-2 uppercase tracking-widest">Title</label>
+                <input value={title} onChange={(e) => setTitle(e.target.value)} className={inputClasses} placeholder={t("services.serviceTitlePlaceholder")} required />
               </div>
               <div className="md:col-span-2">
-                <label className="block text-xs font-semibold text-slate-400 mb-2 uppercase tracking-wider">{t("services.description")}</label>
-                <textarea value={description} onChange={(e) => setDescription(e.target.value)} className="input-field min-h-[120px] resize-none" placeholder={t("services.descriptionPlaceholder")} required />
+                <label className="block text-[9px] font-black text-emerald-500 mb-2 uppercase tracking-widest">Description</label>
+                <textarea value={description} onChange={(e) => setDescription(e.target.value)} className={`${inputClasses} min-h-[120px] resize-none`} placeholder={t("services.descriptionPlaceholder")} required />
               </div>
               <div>
-                <label className="block text-xs font-semibold text-slate-400 mb-2 uppercase tracking-wider">{t("services.price")}</label>
-                <input type="number" value={price} onChange={(e) => setPrice(e.target.value)} className="input-field" placeholder="49" required />
+                <label className="block text-[9px] font-black text-emerald-500 mb-2 uppercase tracking-widest">Price (DZD)</label>
+                <input type="number" value={price} onChange={(e) => setPrice(e.target.value)} className={inputClasses} placeholder="1500" required />
               </div>
               <div>
-                <label className="block text-xs font-semibold text-slate-400 mb-2 uppercase tracking-wider">{t("services.category")}</label>
-                <div className="grid grid-cols-2 gap-2 h-[42px]">
+                <label className="block text-[9px] font-black text-emerald-500 mb-2 uppercase tracking-widest">Category</label>
+                <div className="grid grid-cols-2 gap-3 h-[58px]">
                   <button type="button" onClick={() => setCategory("NUTRITION")}
-                    className={`rounded-xl text-xs font-semibold transition-all duration-300 border ${category === "NUTRITION" ? "border-emerald-500 bg-emerald-500/10 text-emerald-400 shadow-sm" : "border-white/5 bg-white/[0.02] text-slate-400 hover:border-white/10"}`}
+                    className={`rounded-xl text-[10px] font-black uppercase tracking-widest transition-all border ${category === "NUTRITION" ? "border-emerald-500 bg-emerald-500/20 text-emerald-400 shadow-[0_0_15px_rgba(16,185,129,0.2)]" : "border-white/10 bg-[#07080f] text-slate-500 hover:bg-white/5"}`}
                   >
                     🥗 {t("marketplace.nutrition")}
                   </button>
                   <button type="button" onClick={() => setCategory("SPORTS")}
-                    className={`rounded-xl text-xs font-semibold transition-all duration-300 border ${category === "SPORTS" ? "border-amber-500 bg-amber-500/10 text-amber-400 shadow-sm" : "border-white/5 bg-white/[0.02] text-slate-400 hover:border-white/10"}`}
+                    className={`rounded-xl text-[10px] font-black uppercase tracking-widest transition-all border ${category === "SPORTS" ? "border-amber-500 bg-amber-500/20 text-amber-400 shadow-[0_0_15px_rgba(245,158,11,0.2)]" : "border-white/10 bg-[#07080f] text-slate-500 hover:bg-white/5"}`}
                   >
                     🏋️ {t("marketplace.sports")}
                   </button>
@@ -775,135 +663,75 @@ function ServicesTab() {
               </div>
             </div>
             <div>
-              <label className="block text-xs font-semibold text-slate-400 mb-2 uppercase tracking-wider">{t("services.serviceImage")}</label>
-              <div className="flex gap-2">
-                <input value={imageUrl} onChange={(e) => setImageUrl(e.target.value)} className="input-field flex-1" placeholder={t("services.pasteImageUrl")} />
-                <UploadButton onUpload={(url) => setImageUrl(url)} label={t("profile.upload")} />
-              </div>
-              {imageUrl && (
-                <div className="mt-3 w-32 h-20 rounded-xl overflow-hidden border border-white/5 shadow-lg relative">
-                  <Image src={imageUrl} alt="Preview" fill className="object-cover" />
-                </div>
-              )}
-            </div>
-            <button type="submit" disabled={loading}
-              className="btn-primary disabled:opacity-50 !py-3 text-sm rounded-xl shadow-lg shadow-emerald-500/20"
-            >
-              <span className="flex items-center justify-center gap-2">
-                {loading ? (
-                  <svg className="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" /><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" /></svg>
+              <label className="block text-[9px] font-black text-emerald-500 mb-2 uppercase tracking-widest">Cover Image</label>
+              <div className="flex flex-col sm:flex-row gap-4 bg-white/5 p-6 rounded-2xl border border-white/10 items-center">
+                {imageUrl ? (
+                  <div className="w-24 h-16 rounded-lg overflow-hidden border border-emerald-500/20 shadow-md relative shrink-0">
+                    <Image src={imageUrl} alt="Preview" fill className="object-cover" />
+                  </div>
                 ) : (
-                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
+                  <div className="w-24 h-16 rounded-lg bg-black/50 border border-white/10 flex items-center justify-center text-xl shadow-inner shrink-0">🖼️</div>
                 )}
-                {loading ? t("services.creating") : t("services.publish")}
-              </span>
-            </button>
+                <div className="flex-1 w-full flex flex-col sm:flex-row gap-3">
+                  <input value={imageUrl} onChange={(e) => setImageUrl(e.target.value)} className={inputClasses} placeholder={t("services.pasteImageUrl")} />
+                  <UploadButton onUpload={(url) => setImageUrl(url)} label="Browse" />
+                </div>
+              </div>
+            </div>
+            <div className="border-t border-white/10 pt-6">
+              <button type="submit" disabled={loading}
+                className="w-full bg-emerald-500 text-black font-black text-base tracking-widest py-4 rounded-xl shadow-md hover:bg-emerald-400 active:scale-98 transition-all disabled:opacity-50 uppercase"
+              >
+                {loading ? "Creating..." : "Publish"}
+              </button>
+            </div>
           </form>
         </div>
       )}
 
-      {/* Stats */}
-      <div className="grid md:grid-cols-3 gap-5">
-        {[
-          { value: services.length, label: t("services.totalServices"), color: "text-emerald-400", border: "border-t-emerald-500", icon: "🏷️" },
-          { value: t("services.active"), label: t("common.status"), color: "text-emerald-400", border: "border-t-blue-500", icon: "✅", isString: true },
-          { value: "EXPERT", label: t("services.accountType"), color: "text-purple-400", border: "border-t-purple-500", icon: "👑", isString: true },
-        ].map((stat) => (
-          <div key={stat.label} className={`glass p-6 border-t-2 ${stat.border} rounded-2xl hover:bg-white/[0.02] transition-all duration-300`}>
-            <div className="flex items-center justify-between mb-3">
-              <span className="text-lg">{stat.icon}</span>
-            </div>
-            <h3 className="text-xs text-slate-500 uppercase tracking-wider mb-1 font-medium">{stat.label}</h3>
-            <p className={`text-3xl font-black ${stat.color}`}>
-              {stat.isString ? stat.value : stat.value}
-            </p>
-          </div>
-        ))}
-      </div>
-
-      {/* Service List */}
-      <div className="glass rounded-2xl p-8 border border-white/5">
+      {/* Services List - Holographic Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
         {services.length === 0 ? (
-          <div className="text-center py-16">
-            <div className="text-5xl mb-4 opacity-60">🏷️</div>
-            <p className="text-slate-400 font-medium">{t("services.noServices")}</p>
-            <p className="text-slate-500 text-sm mt-2">{t("services.noServicesDesc")}</p>
+          <div className="col-span-full bg-[#0a0b16]/90 backdrop-blur-2xl p-12 rounded-2xl border border-white/10 text-center">
+            <div className="text-5xl mb-4 opacity-20">📭</div>
+            <p className="text-white font-black text-xl uppercase tracking-widest">{t("services.noServices")}</p>
+            <p className="text-slate-500 font-bold mt-2 uppercase tracking-widest text-[10px]">{t("services.noServicesDesc")}</p>
           </div>
         ) : (
-          <div className="grid md:grid-cols-2 gap-5">
-            {services.map((s: any) => (
-              editingId === s.id ? (
-                <div key={s.id} className="glass-sm p-5 rounded-xl border border-emerald-500/30">
-                  <h4 className="text-sm font-bold text-white mb-4">✏️ Edit Service</h4>
-                  <div className="flex flex-col gap-3">
-                    <input value={editForm.title || ""} onChange={(e) => setEditForm({ ...editForm, title: e.target.value })} className="input-field text-sm" placeholder="Title" />
-                    <textarea value={editForm.description || ""} onChange={(e) => setEditForm({ ...editForm, description: e.target.value })} className="input-field text-sm min-h-[80px] resize-none" placeholder="Description" />
-                    <div className="grid grid-cols-2 gap-3">
-                      <input type="number" value={editForm.price || ""} onChange={(e) => setEditForm({ ...editForm, price: e.target.value })} className="input-field text-sm" placeholder="Price" />
-                      <div className="flex gap-1">
-                        <button type="button" onClick={() => setEditForm({ ...editForm, category: "NUTRITION", sportId: "" })} className={`flex-1 rounded-lg text-xs font-semibold border ${editForm.category === "NUTRITION" ? "border-emerald-500 bg-emerald-500/10 text-emerald-400" : "border-white/5 text-slate-400"}`}>🥗 Nutrition</button>
-                        <button type="button" onClick={() => setEditForm({ ...editForm, category: "SPORTS", sportId: "" })} className={`flex-1 rounded-lg text-xs font-semibold border ${editForm.category === "SPORTS" ? "border-amber-500 bg-amber-500/10 text-amber-400" : "border-white/5 text-slate-400"}`}>🏋️ Sports</button>
-                      </div>
-                    </div>
-                    {editForm.category === "SPORTS" && (
-                      <div className="flex flex-wrap gap-1">
-                        {sports.map((sp: any) => (
-                          <button key={sp.id} type="button" onClick={() => setEditForm({ ...editForm, sportId: editForm.sportId === sp.id ? "" : sp.id })}
-                            className={`text-[10px] px-2 py-1 rounded-lg border ${editForm.sportId === sp.id ? "border-amber-500 bg-amber-500/20 text-amber-400" : "border-white/5 text-slate-400"}`}
-                          >{sp.icon} {sp.name}</button>
-                        ))}
-                      </div>
-                    )}
-                    <div className="flex gap-2">
-                      <input value={editForm.imageUrl || ""} onChange={(e) => setEditForm({ ...editForm, imageUrl: e.target.value })} className="input-field text-sm flex-1" placeholder="Image URL" />
-                      <UploadButton onUpload={(url) => setEditForm({ ...editForm, imageUrl: url })} label="Upload" />
-                    </div>
-                    {editForm.imageUrl && (
-                      <div className="w-20 h-14 rounded-lg overflow-hidden border border-white/5 relative">
-                        <Image src={editForm.imageUrl} alt="" fill className="object-cover" />
-                      </div>
-                    )}
-                    <div className="flex gap-2 mt-1">
-                      <button onClick={() => handleEditSave(s.id)} disabled={savingEdit} className="btn-primary !py-1.5 !px-4 text-xs disabled:opacity-50">
-                        {savingEdit ? "Saving..." : "Save"}
-                      </button>
-                      <button onClick={cancelEdit} className="btn-ghost !py-1.5 !px-4 text-xs">Cancel</button>
-                    </div>
+          services.map((s: any) => (
+            <div key={s.id} className="group relative bg-[#0a0b16]/90 backdrop-blur-xl rounded-2xl p-1 overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl flex flex-col">
+              <div className="relative bg-[#07080f] rounded-xl h-full flex flex-col border border-white/5 z-10 overflow-hidden">
+                <div className="h-44 relative overflow-hidden bg-black/50">
+                  {s.imageUrl ? (
+                    <Image src={s.imageUrl} alt="" fill className="object-cover group-hover:scale-105 transition-transform duration-500 ease-out opacity-80 group-hover:opacity-100" />
+                  ) : (
+                    <div className="absolute inset-0 flex items-center justify-center text-4xl opacity-10">⚡</div>
+                  )}
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#07080f] via-transparent to-transparent" />
+                  <span className={`absolute top-4 left-4 px-3 py-1.5 text-[8px] font-black uppercase tracking-widest rounded-lg backdrop-blur-md border shadow-md ${s.category === "SPORTS" ? "bg-amber-500/20 text-amber-400 border-amber-500/20" : "bg-emerald-500/20 text-emerald-400 border-emerald-500/20"}`}>
+                    {s.category === "SPORTS" ? "🏋️ Sports" : "🥗 Nutrition"}
+                  </span>
+                  <div className="absolute bottom-4 left-5 right-5 flex items-end justify-between">
+                    <h3 className="font-black text-lg text-white truncate uppercase tracking-tight">{s.title}</h3>
                   </div>
                 </div>
-              ) : (
-                <div key={s.id} className="group glass-sm p-5 rounded-xl border border-white/[0.03] hover:border-emerald-500/20 hover:bg-white/[0.03] transition-all duration-500">
-                  <div className="flex items-start gap-4">
-                    {s.imageUrl ? (
-                      <div className="w-16 h-16 rounded-xl overflow-hidden flex-shrink-0 border border-white/5 relative">
-                        <Image src={s.imageUrl} alt="" fill className="object-cover transition-transform duration-500 group-hover:scale-110" />
-                      </div>
-                    ) : (
-                      <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-emerald-500/10 to-cyan-500/10 flex items-center justify-center text-2xl flex-shrink-0 border border-white/5">
-                        🏷️
-                      </div>
-                    )}
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2 mb-1">
-                        <h3 className="font-bold text-white truncate group-hover:text-emerald-300 transition-colors">{s.title}</h3>
-                        <span className={`badge text-[10px] flex-shrink-0 ${s.category === "SPORTS" ? "bg-amber-500/20 text-amber-400" : "bg-emerald-500/20 text-emerald-400"}`}>
-                          {s.category === "SPORTS" ? "🏋️" : "🥗"}
-                        </span>
-                      </div>
-                      <p className="text-xs text-slate-500 mt-0.5 line-clamp-2">{s.description}</p>
-                      <div className="flex items-center justify-between mt-3 pt-3 border-t border-white/[0.03]">
-                        <span className="font-bold text-emerald-400">{fDZD(s.price)}</span>
-                        <button onClick={() => startEdit(s)} className="text-xs bg-white/[0.06] hover:bg-emerald-500/20 hover:text-emerald-400 border border-white/5 hover:border-emerald-500/30 px-3 py-1.5 rounded-lg transition-all flex items-center gap-1.5 font-medium">
-                          <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
-                          Edit
-                        </button>
-                      </div>
+                
+                <div className="p-5 flex-1 flex flex-col">
+                  <p className="text-xs text-slate-400 line-clamp-3 font-medium leading-relaxed bg-white/5 p-3 rounded-xl border border-white/5 flex-1">{s.description}</p>
+                  
+                  <div className="mt-5 flex items-center justify-between pt-5 border-t border-white/10">
+                    <div className="flex flex-col">
+                      <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest mb-1.5">Exchange Rate</span>
+                      <p className={`font-black text-base ${s.category === "SPORTS" ? "text-amber-400" : "text-emerald-400"} drop-shadow-md`}>{fDZD(s.price)}</p>
                     </div>
+                    <Link href="/my-services" className="px-4 py-2 bg-white/5 text-white font-black text-[9px] uppercase tracking-widest rounded-lg hover:bg-white/25 transition-colors border border-white/10">
+                      Edit ↗
+                    </Link>
                   </div>
                 </div>
-              )
-            ))}
-          </div>
+              </div>
+            </div>
+          ))
         )}
       </div>
     </div>
@@ -920,111 +748,87 @@ function OrdersTab() {
 
   useEffect(() => {
     const load = async () => {
-      try {
-        const data = await orderAPI.getExpertOrders();
-        setOrders(data);
-      } catch {}
+      try { const data = await orderAPI.getExpertOrders(); setOrders(data); } catch {}
       setLoading(false);
     };
     load();
   }, []);
 
   const paymentBadge = (ps: string) => {
-    const colors: Record<string, string> = { PENDING: "badge-orange", HELD: "badge-blue", RELEASED: "badge-emerald", REFUNDED: "badge-red" };
-    const labels: Record<string, string> = { PENDING: `⏳ ${t("orders.pending")}`, HELD: `🔒 ${t("dashboard.paymentHeld")}`, RELEASED: `✅ ${t("dashboard.paymentReleased")}`, REFUNDED: `↩️ ${t("dashboard.orderRefunded")}` };
-    return <span className={`badge text-[10px] ${colors[ps] || "badge-blue"}`}>{labels[ps] || ps}</span>;
+    const configs: Record<string, { bg: string, text: string, border: string, icon: string, label: string }> = {
+      PENDING: { bg: "bg-orange-500/10", border: "border-orange-500/30", text: "text-orange-400", icon: "⏳", label: t("orders.pending") },
+      HELD: { bg: "bg-blue-500/10", border: "border-blue-500/30", text: "text-blue-400", icon: "🔒", label: t("dashboard.paymentHeld") },
+      RELEASED: { bg: "bg-emerald-500/10", border: "border-emerald-500/30", text: "text-emerald-400", icon: "✅", label: t("dashboard.paymentReleased") },
+      REFUNDED: { bg: "bg-red-500/10", border: "border-red-500/30", text: "text-red-400", icon: "↩️", label: t("dashboard.orderRefunded") },
+    };
+    const c = configs[ps] || { bg: "bg-white/5", border: "border-white/10", text: "text-slate-400", icon: "📦", label: ps };
+    return <span className={`px-3 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-widest flex items-center gap-2 border ${c.bg} ${c.text} ${c.border} shadow-sm`}>{c.icon} {c.label}</span>;
   };
 
-  const pendingCount = orders.filter((o) => o.status === "pending").length;
-  const completedCount = orders.filter((o) => o.status === "completed").length;
-  const cancelledCount = orders.filter((o) => o.status === "cancelled").length;
-
   return (
-    <div className="space-y-8">
-      <div className="flex items-center justify-between flex-wrap gap-4">
+    <div className="space-y-6 animate-in fade-in">
+      <div className="bg-[#0a0b16]/90 backdrop-blur-2xl p-6 rounded-2xl border border-white/10 shadow-[0_12px_40px_rgba(0,0,0,0.5)] flex items-center justify-between flex-wrap gap-4">
         <div>
-          <h2 className="text-2xl font-black text-white tracking-tight">{t("orders.title")}</h2>
-          <p className="text-slate-400 text-sm mt-1">{orders.length} {t("orders.subtitle")}</p>
+          <h2 className="text-2xl font-black text-white tracking-tighter uppercase">Messages & Orders</h2>
+          <p className="text-emerald-500 font-bold text-[10px] uppercase tracking-widest mt-0.5">[{orders.length}] Active Services</p>
         </div>
       </div>
 
-      {/* Stats */}
-      <div className="grid md:grid-cols-3 gap-5">
-        {[
-          { value: pendingCount, label: t("orders.pending"), color: "text-white", border: "border-t-orange-500", icon: "⏳", bg: "bg-orange-500/10" },
-          { value: completedCount, label: t("orders.completed"), color: "text-emerald-400", border: "border-t-emerald-500", icon: "✅", bg: "bg-emerald-500/10" },
-          { value: cancelledCount, label: t("orders.cancelled"), color: "text-red-400", border: "border-t-red-500", icon: "❌", bg: "bg-red-500/10" },
-        ].map((stat) => (
-          <div key={stat.label} className={`glass p-6 border-t-2 ${stat.border} rounded-2xl hover:bg-white/[0.02] transition-all duration-300`}>
-            <div className="flex items-center justify-between mb-3">
-              <span className={`w-10 h-10 rounded-xl ${stat.bg} flex items-center justify-center text-lg`}>{stat.icon}</span>
-            </div>
-            <p className={`text-3xl font-black ${stat.color}`}><AnimatedCounter value={stat.value} /></p>
-            <p className="text-xs text-slate-500 mt-1 font-medium">{stat.label}</p>
+      <div className="bg-[#0a0b16]/90 backdrop-blur-2xl rounded-2xl p-6 lg:p-8 border border-white/10 shadow-[0_12px_40px_rgba(0,0,0,0.5)] relative overflow-hidden">
+        <div className="absolute -top-20 -left-20 w-80 h-80 bg-blue-500/5 blur-[100px] rounded-full pointer-events-none" />
+        {loading ? (
+          <div className="grid md:grid-cols-2 gap-6 relative z-10">
+            {[...Array(4)].map((_, i) => (
+              <div key={i} className="h-44 rounded-xl bg-white/5 animate-pulse border border-white/5" />
+            ))}
           </div>
-        ))}
-      </div>
-
-      {/* Orders */}
-      {loading ? (
-        <div className="grid md:grid-cols-2 gap-5">
-          {[...Array(4)].map((_, i) => (
-            <div key={i} className="h-32 rounded-2xl bg-slate-800/30 animate-pulse" />
-          ))}
-        </div>
-      ) : orders.length === 0 ? (
-        <div className="glass rounded-2xl p-16 text-center border border-white/5">
-          <div className="text-6xl mb-5 opacity-40">📦</div>
-          <h3 className="text-xl font-bold text-white mb-2">{t("orders.noOrders")}</h3>
-          <p className="text-slate-400 text-sm">{t("orders.noOrdersDesc")}</p>
-        </div>
-      ) : (
-        <div className="grid md:grid-cols-2 gap-5">
-          {orders.map((order) => {
-            const customerName = order.user?.profile?.fullName || order.user?.email || "Customer";
-            const customerPhoto = order.user?.profile?.photoUrl;
-            return (
-              <div key={order.id} className="group glass-sm p-5 rounded-xl border border-white/[0.03] hover:border-emerald-500/20 hover:bg-white/[0.03] transition-all duration-500">
-                <div className="flex items-start gap-4">
-                  {customerPhoto ? (
-                    <Image src={customerPhoto} alt="" width={48} height={48} className="w-12 h-12 rounded-full object-cover border-2 border-emerald-500/20 flex-shrink-0" />
-                  ) : (
-                    <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-400 to-indigo-500 flex items-center justify-center text-sm font-bold text-white flex-shrink-0 shadow-lg">
-                      {customerName[0].toUpperCase()}
-                    </div>
-                  )}
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 mb-1">
-                      <h3 className="font-bold text-white text-sm truncate group-hover:text-emerald-300 transition-colors">{order.service.title}</h3>
-                      <span className={`badge text-[10px] flex-shrink-0 ${order.service.category === "SPORTS" ? "bg-amber-500/20 text-amber-400" : "bg-emerald-500/20 text-emerald-400"}`}>
-                        {order.service.category === "SPORTS" ? "🏋️" : "🥗"}
-                      </span>
-                    </div>
-                    <p className="text-xs text-slate-500">
-                      {t("orders.byCustomer")} <span className="text-slate-400 font-medium">{customerName}</span>
-                    </p>
-                    <div className="flex items-center justify-between mt-3 pt-3 border-t border-white/[0.03]">
-                      <div className="flex items-center gap-2">
-                        <span className="text-sm font-bold text-emerald-400">{fDZD(order.service.price)}</span>
-                        <span className="text-[10px] text-slate-600">{new Date(order.createdAt).toLocaleDateString()}</span>
+        ) : orders.length === 0 ? (
+          <div className="text-center py-16 relative z-10">
+            <div className="text-6xl mb-4 opacity-20">📦</div>
+            <h3 className="text-xl font-black text-white mb-2 uppercase tracking-widest">{t("orders.noOrders")}</h3>
+            <p className="text-slate-500 font-bold text-xs uppercase tracking-widest">{t("orders.noOrdersDesc")}</p>
+          </div>
+        ) : (
+          <div className="grid md:grid-cols-2 gap-6 relative z-10">
+            {orders.map((order) => {
+              const customerName = order.user?.profile?.fullName || order.user?.email || "UNKNOWN ENTITY";
+              const customerPhoto = order.user?.profile?.photoUrl;
+              return (
+                <div key={order.id} className="bg-black/40 p-6 rounded-xl border border-white/10 hover:border-emerald-500/20 transition-all duration-300 group">
+                  <div className="flex items-start gap-4">
+                    {customerPhoto ? (
+                      <Image src={customerPhoto} alt="" width={56} height={56} className="w-14 h-14 rounded-xl object-cover border border-white/15 shrink-0" />
+                    ) : (
+                      <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-indigo-500/10 to-purple-500/10 border border-indigo-500/20 flex items-center justify-center text-xl font-black text-indigo-400 shrink-0">
+                        {customerName[0].toUpperCase()}
                       </div>
-                      <div className="flex items-center gap-2">
+                    )}
+                    <div className="flex-1 min-w-0">
+                      <h3 className="font-black text-white text-base truncate mb-1.5 uppercase tracking-tight group-hover:text-emerald-400 transition-colors">{order.service.title}</h3>
+                      <p className="text-[9px] font-black text-slate-500 uppercase tracking-widest mb-3">
+                        By <span className="text-white bg-white/10 px-2 py-0.5 rounded ml-1 font-mono">{customerName}</span>
+                      </p>
+                      <div className="flex items-center justify-between bg-white/5 p-3 rounded-xl border border-white/5">
+                        <span className="text-lg font-black text-emerald-400">{fDZD(order.service.price)}</span>
                         {paymentBadge(order.paymentStatus)}
-                        <Link
-                          href={`/dashboard/expert?chat=${order.user.id}`}
-                          className="btn-ghost !py-1.5 !px-3 text-xs rounded-lg hover:bg-emerald-500/10 hover:border-emerald-500/20 border border-white/5 transition-all"
-                        >
-                          💬 {t("orders.chat")}
-                        </Link>
                       </div>
                     </div>
                   </div>
+                  <div className="mt-4 pt-4 border-t border-white/5 flex items-center justify-between">
+                    <span className="text-[9px] font-black text-slate-600 uppercase tracking-widest font-mono">Date: {new Date(order.createdAt).toLocaleDateString()}</span>
+                    <Link
+                      href={`/dashboard/expert?chat=${order.user.id}`}
+                      className="px-4 py-2.5 bg-white/5 text-white font-black text-[9px] uppercase tracking-widest rounded-lg hover:bg-emerald-500 hover:text-black transition-colors border border-white/10 flex items-center gap-1.5"
+                    >
+                      <span>💬</span> Chat
+                    </Link>
+                  </div>
                 </div>
-              </div>
-            );
-          })}
-        </div>
-      )}
+              );
+            })}
+          </div>
+        )}
+      </div>
     </div>
   );
 }
@@ -1224,13 +1028,11 @@ function ChatTab() {
       const socket = getSocket();
       if (!socket) { cleanupCall(); return; }
       socket.emit("call:offer", { calleeId: selectedPartner, offer });
-      console.log("📞 Call offer sent to", selectedPartner);
 
       durationRef.current = setInterval(() => {
         setCallDuration((d) => d + 1);
       }, 1000);
     } catch (err) {
-      console.error("❌ Call start failed:", err);
       setCallError(err instanceof DOMException && err.name === "NotAllowedError"
         ? "Camera/microphone permission denied. Allow access in browser settings."
         : err instanceof DOMException && err.name === "NotFoundError"
@@ -1289,8 +1091,6 @@ function ChatTab() {
         await setRemoteDescription(pc, incomingCall.offer);
         await flushPendingCandidates();
         const answer = await createAnswer(pc);
-        console.log("📞 Call answer created for", incomingCall.from);
-
         const socket = getSocket();
         if (socket) {
           socket.emit("call:accept", { callLogId: incomingCall.callLogId, calleeId: incomingCall.from, answer });
@@ -1300,7 +1100,6 @@ function ChatTab() {
       setIncomingCall(null);
       durationRef.current = setInterval(() => { setCallDuration((d) => d + 1); }, 1000);
     } catch (err) {
-      console.error("❌ Call accept failed:", err);
       setCallError(err instanceof DOMException && err.name === "NotAllowedError"
         ? "Camera/microphone permission denied. Allow access in browser settings."
         : err instanceof DOMException && err.name === "NotFoundError"
@@ -1398,14 +1197,13 @@ function ChatTab() {
 
   return (
     <>
-      {/* ─── Video Call Overlays ─── */}
       {socketError && (
-        <div className="fixed top-0 left-0 right-0 z-[200] bg-red-600/90 text-white px-4 py-3 text-sm text-center font-medium">
+        <div className="fixed top-0 left-0 right-0 z-[200] bg-rose-600 text-white px-4 py-3 text-sm text-center font-black uppercase tracking-widest shadow-md">
           {socketError}
         </div>
       )}
       {callError && (
-        <div className="fixed top-20 left-1/2 -translate-x-1/2 z-[110] bg-red-500/20 border border-red-500/30 text-red-400 px-6 py-3 rounded-xl text-sm font-medium animate-fade-in backdrop-blur-sm max-w-md text-center">
+        <div className="fixed top-24 left-1/2 -translate-x-1/2 z-[110] bg-rose-500/25 backdrop-blur-md border border-rose-500/50 text-rose-400 px-8 py-4 rounded-2xl text-xs font-black uppercase tracking-widest animate-fade-in shadow-[0_0_30px_rgba(239,68,68,0.5)] max-w-md text-center">
           {callError}
         </div>
       )}
@@ -1440,23 +1238,28 @@ function ChatTab() {
       )}
 
       {callState === "calling" && (
-        <div className="fixed inset-0 z-[100] bg-black/80 flex items-center justify-center">
-          <div className="text-center">
-            <div className="w-20 h-20 rounded-full bg-gray-700 mx-auto mb-4 flex items-center justify-center text-3xl animate-pulse">📹</div>
-            <p className="text-white text-lg font-semibold">{t("call.calling")}</p>
-            <p className="text-gray-400 text-sm mt-1">{selectedPartnerEmail}</p>
-            <button onClick={handleEndCall} className="mt-6 btn-primary !bg-red-600 !px-8"><span>{t("call.endCall")}</span></button>
+        <div className="fixed inset-0 z-[100] bg-black/90 backdrop-blur-xl flex items-center justify-center">
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-emerald-500/10 rounded-full blur-[100px] animate-pulse" />
+          <div className="text-center relative z-10">
+            <div className="w-24 h-24 rounded-2xl bg-black/50 border border-emerald-500/30 mx-auto mb-6 flex items-center justify-center text-4xl animate-pulse shadow-[0_0_50px_rgba(16,185,129,0.3)]">📹</div>
+            <p className="text-emerald-400 text-2xl font-black tracking-tighter uppercase mb-2">Connecting...</p>
+            <p className="text-slate-500 font-bold uppercase tracking-widest text-xs">{selectedPartnerEmail}</p>
+            <button onClick={handleEndCall} className="mt-8 px-8 py-3 bg-rose-500/20 text-rose-500 border border-rose-500/50 hover:bg-rose-500 hover:text-black font-black uppercase tracking-widest rounded-xl transition-all">
+              End Call
+            </button>
           </div>
         </div>
       )}
 
       {callState === "ended" && (
-        <div className="fixed inset-0 z-[100] bg-black/60 flex items-center justify-center pointer-events-none">
-          <div className="text-center animate-fade-in">
-            <div className="text-4xl mb-3">📞</div>
-            <p className="text-white text-lg">{t("call.callEnded")}</p>
+        <div className="fixed inset-0 z-[100] bg-black/90 backdrop-blur-xl flex items-center justify-center pointer-events-none">
+          <div className="text-center bg-black/50 p-10 rounded-2xl shadow-2xl border border-white/10 animate-in zoom-in-95 duration-200">
+            <div className="text-5xl mb-4 opacity-50">📞</div>
+            <p className="text-white text-xl font-black uppercase tracking-widest">Call Ended</p>
             {callDuration > 0 && (
-              <p className="text-gray-400 text-sm mt-1">{Math.floor(callDuration / 60)}:{String(callDuration % 60).padStart(2, "0")}</p>
+              <p className="text-emerald-500 font-black text-base mt-3 bg-emerald-500/10 inline-block px-4 py-1.5 rounded-lg border border-emerald-500/20">
+                {Math.floor(callDuration / 60)}:{String(callDuration % 60).padStart(2, "0")}
+              </p>
             )}
           </div>
         </div>
@@ -1471,234 +1274,238 @@ function ChatTab() {
         />
       )}
 
-      <div className="glass rounded-2xl border border-white/5 overflow-hidden" style={{ height: "650px" }}>
-      <div className="flex h-full">
-        {/* Conversations Sidebar */}
-        <div className="w-72 lg:w-80 border-r border-white/5 flex flex-col flex-shrink-0">
-          <div className="p-5 border-b border-white/5">
-            <h3 className="text-sm font-bold text-white flex items-center gap-2">
-              <span className="w-7 h-7 rounded-lg bg-emerald-500/15 flex items-center justify-center text-xs">💬</span>
-              {t("chat.conversations")}
-            </h3>
-          </div>
-          <div className="flex-1 overflow-y-auto scrollbar-thin">
-            {loadingConvos ? (
-              <div className="p-4 space-y-3">
-                {[...Array(4)].map((_, i) => (
-                  <div key={i} className="flex items-center gap-3 p-3">
-                    <div className="w-10 h-10 rounded-full bg-slate-800/40 animate-pulse flex-shrink-0" />
-                    <div className="flex-1 space-y-2">
-                      <div className="h-3 rounded bg-slate-800/40 animate-pulse w-3/4" />
-                      <div className="h-2 rounded bg-slate-800/40 animate-pulse w-1/2" />
-                    </div>
-                  </div>
-                ))}
-              </div>
-            ) : conversations.length === 0 ? (
-              <div className="p-8 text-center">
-                <div className="text-4xl mb-3 opacity-50">📭</div>
-                <p className="text-slate-500 text-sm">{t("chat.noConversations")}</p>
-                <p className="text-slate-500 text-xs mt-1">{t("chat.clientInterestDesc")}</p>
-              </div>
-            ) : (
-              conversations.map((conv) => (
-                <button key={conv.partnerId} onClick={() => selectConversation(conv.partnerId, conv.partnerEmail)}
-                  className={`w-full p-4 text-left transition-all duration-200 border-b border-white/[0.02] flex items-center gap-3 ${
-                    selectedPartner === conv.partnerId
-                      ? "bg-emerald-500/10 border-l-[3px] border-l-emerald-500"
-                      : "hover:bg-white/[0.02] border-l-[3px] border-l-transparent"
-                  }`}
-                >
-                  <div className="w-10 h-10 rounded-full bg-gradient-to-br from-emerald-500 to-cyan-500 flex items-center justify-center text-xs font-bold text-white flex-shrink-0 shadow-lg shadow-emerald-500/10">
-                    {conv.partnerEmail[0].toUpperCase()}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm font-semibold text-white truncate">{conv.partnerEmail}</span>
-                      <div className="flex items-center gap-1.5">
-                        {missedCalls.has(conv.partnerId) && (
-                          <span className="text-[10px] text-red-400 font-semibold" title={t("call.missedCallLabel")}>🕐</span>
-                        )}
-                        {conv.unreadCount > 0 && (
-                          <span className="w-5 h-5 rounded-full bg-emerald-500 text-[10px] font-bold text-black flex items-center justify-center flex-shrink-0 shadow-sm shadow-emerald-500/30">
-                            {conv.unreadCount}
-                          </span>
-                        )}
+      <div className="bg-[#0a0b16]/90 backdrop-blur-2xl rounded-2xl border border-white/10 overflow-hidden shadow-[0_12px_40px_rgba(0,0,0,0.5)] animate-in fade-in h-[700px] relative">
+        <div className="absolute -top-40 -right-40 w-96 h-96 bg-emerald-500/5 blur-[100px] rounded-full pointer-events-none" />
+        <div className="flex h-full relative z-10">
+          
+          {/* Sidebar */}
+          <div className="w-80 border-r border-white/10 bg-black/30 flex flex-col flex-shrink-0">
+            <div className="p-6 border-b border-white/10">
+              <h3 className="text-xs font-black text-white uppercase tracking-widest flex items-center gap-2.5">
+                <span className="w-8 h-8 rounded-lg bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400">💬</span>
+                Conversations
+              </h3>
+            </div>
+            <div className="flex-1 overflow-y-auto custom-scrollbar">
+              {loadingConvos ? (
+                <div className="p-5 space-y-3">
+                  {[...Array(4)].map((_, i) => (
+                    <div key={i} className="flex items-center gap-3 p-3">
+                      <div className="w-10 h-10 rounded-lg bg-white/5 animate-pulse flex-shrink-0" />
+                      <div className="flex-1 space-y-1.5">
+                        <div className="h-2.5 rounded bg-white/5 animate-pulse w-3/4" />
+                        <div className="h-2 rounded bg-white/5 animate-pulse w-1/2" />
                       </div>
                     </div>
-                    <p className="text-xs text-slate-500 truncate mt-0.5">{conv.lastMessage}</p>
+                  ))}
+                </div>
+              ) : conversations.length === 0 ? (
+                <div className="p-8 text-center mt-8">
+                  <div className="text-4xl mb-4 opacity-20">📭</div>
+                  <p className="text-white font-black uppercase tracking-widest text-xs">No conversations</p>
+                  <p className="text-slate-600 text-[10px] mt-2 font-bold uppercase tracking-widest">No messages yet</p>
+                </div>
+              ) : (
+                conversations.map((conv) => (
+                  <button key={conv.partnerId} onClick={() => selectConversation(conv.partnerId, conv.partnerEmail)}
+                    className={`w-full p-5 text-left transition-all duration-300 border-b border-white/5 flex items-center gap-4 relative group ${
+                      selectedPartner === conv.partnerId
+                        ? "bg-emerald-500/10"
+                        : "hover:bg-white/5"
+                    }`}
+                  >
+                    {selectedPartner === conv.partnerId && (
+                      <div className="absolute left-0 top-0 bottom-0 w-1 bg-emerald-500 shadow-[0_0_15px_rgba(16,185,129,1)]" />
+                    )}
+                    <div className={`w-10 h-10 rounded-xl flex items-center justify-center text-xs font-black flex-shrink-0 transition-all ${selectedPartner === conv.partnerId ? "bg-emerald-500 text-black shadow-[0_0_20px_rgba(16,185,129,0.5)]" : "bg-white/5 text-slate-400 border border-white/10"}`}>
+                      {conv.partnerEmail[0].toUpperCase()}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center justify-between mb-1">
+                        <span className={`text-[11px] font-black uppercase tracking-widest truncate ${selectedPartner === conv.partnerId ? "text-emerald-400" : "text-white"}`}>{conv.partnerEmail}</span>
+                        <div className="flex items-center gap-1.5">
+                          {missedCalls.has(conv.partnerId) && (
+                            <span className="text-[8px] text-rose-500 font-black uppercase">MISSED</span>
+                          )}
+                          {conv.unreadCount > 0 && (
+                            <span className="w-5 h-5 rounded bg-emerald-500 text-[9px] font-black text-black flex items-center justify-center flex-shrink-0">
+                              {conv.unreadCount}
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                      <p className="text-[9px] font-bold text-slate-500 truncate uppercase tracking-wider">{conv.lastMessage}</p>
+                    </div>
+                  </button>
+                ))
+              )}
+            </div>
+          </div>
+
+          {/* Main Chat Area */}
+          <div className="flex-1 flex flex-col min-w-0 bg-black/10 relative">
+            {!selectedPartner ? (
+              <div className="flex-1 flex items-center justify-center">
+                <div className="text-center p-8 bg-[#0a0b16]/60 backdrop-blur-xl border border-white/10 rounded-2xl shadow-xl max-w-sm">
+                  <div className="w-16 h-16 bg-white/5 border border-white/10 rounded-xl mx-auto flex items-center justify-center text-3xl mb-4 shadow-inner">💬</div>
+                  <h3 className="text-base font-black text-white mb-2 uppercase tracking-widest">Messages</h3>
+                  <p className="text-slate-500 font-bold text-[10px] uppercase tracking-widest">Select a conversation to start chatting.</p>
+                </div>
+              </div>
+            ) : (
+              <>
+                {/* Chat Header */}
+                <div className="px-6 py-4 border-b border-white/10 flex items-center gap-4 bg-[#0a0b16]/60 backdrop-blur-md z-10">
+                  <button onClick={() => setSelectedPartner(null)} className="lg:hidden text-slate-400 hover:text-white mr-1 transition-colors">
+                    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}><path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" /></svg>
+                  </button>
+                  <div className="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-xs font-black text-white flex-shrink-0 shadow-inner">
+                    {selectedPartnerEmail[0].toUpperCase()}
                   </div>
-                </button>
-              ))
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-center gap-2 mb-0.5">
+                      <p className="text-xs font-black text-white uppercase tracking-widest truncate">{selectedPartnerEmail}</p>
+                      {missedCalls.has(selectedPartner) && (
+                        <span className="text-[8px] bg-rose-500/15 text-rose-500 border border-rose-500/20 px-1.5 py-0.5 rounded font-black uppercase tracking-widest">MISSED 🕐</span>
+                      )}
+                    </div>
+                    <p className={`text-[8px] font-black uppercase tracking-widest flex items-center gap-1.5 ${partnerOnline ? "text-emerald-500" : "text-slate-500"}`}>
+                      <span className={`w-1.5 h-1.5 rounded-full ${partnerOnline ? "bg-emerald-500 animate-pulse" : "bg-slate-600"}`} />
+                      {partnerOnline ? "Online" : "Offline"}
+                    </p>
+                  </div>
+                  <button
+                    onClick={handleStartCall}
+                    disabled={callState !== "idle"}
+                    className="w-10 h-10 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-500 flex items-center justify-center transition-all disabled:opacity-30 border border-emerald-500/20 shadow-md group"
+                    title={t("call.videoCall")}
+                  >
+                    <svg className="w-5 h-5 group-hover:scale-105 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                      <polygon points="23 7 16 12 23 17 23 7" />
+                      <rect x="1" y="5" width="15" height="14" rx="2" ry="2" />
+                    </svg>
+                  </button>
+                </div>
+
+                {/* Order Banner */}
+                {currentOrder && currentOrder.paymentStatus && (
+                  <div className={`px-6 py-3 border-b flex items-center justify-between bg-[#0a0b16]/60 backdrop-blur-sm ${
+                    currentOrder.paymentStatus === "RELEASED" ? "border-emerald-500/20 bg-emerald-500/5" :
+                    currentOrder.paymentStatus === "HELD" ? "border-blue-500/20 bg-blue-500/5" :
+                    currentOrder.paymentStatus === "PENDING" ? "border-amber-500/20 bg-amber-500/5" : "border-white/10"
+                  }`}>
+                    <div className="flex items-center gap-2 text-[9px] font-black uppercase tracking-widest">
+                      {currentOrder.paymentStatus === "HELD" && <span className="text-blue-400 bg-blue-500/10 px-2 py-1 rounded-md border border-blue-500/20">🔒 {t("dashboard.paymentHeld")}</span>}
+                      {currentOrder.paymentStatus === "RELEASED" && <span className="text-emerald-400 bg-emerald-500/10 px-2 py-1 rounded-md border border-emerald-500/20">✅ {t("dashboard.paymentReleased")}</span>}
+                      {currentOrder.paymentStatus === "PENDING" && <span className="text-amber-400 bg-amber-500/10 px-2 py-1 rounded-md border border-amber-500/20">⏳ {t("dashboard.awaitingPayment")}</span>}
+                      {currentOrder.paymentStatus === "REFUNDED" && <span className="text-rose-400 bg-rose-500/10 px-2 py-1 rounded-md border border-rose-500/20">↩️ {t("dashboard.orderRefunded")}</span>}
+                    </div>
+                    {currentOrder.service?.title && (
+                      <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">
+                        {currentOrder.service.title} <span className="mx-1.5 text-white/10">|</span> <span className="text-white">{fDZD(currentOrder.amount || currentOrder.service?.price || 0)}</span>
+                      </p>
+                    )}
+                  </div>
+                )}
+
+                {/* Messages Body */}
+                <div ref={messagesContainerRef} className="flex-1 overflow-y-auto p-6 space-y-4 custom-scrollbar relative">
+                  {loadingMsgs ? (
+                    <div className="flex items-center justify-center h-full">
+                      <svg className="animate-spin w-8 h-8 text-emerald-500" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" /><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" /></svg>
+                    </div>
+                  ) : messages.length === 0 ? (
+                    <div className="flex items-center justify-center h-full relative z-10">
+                      <div className="text-center p-6 bg-black/40 border border-white/10 rounded-2xl shadow-md backdrop-blur-md">
+                        <div className="text-4xl mb-4 opacity-25">👋</div>
+                        <p className="text-white font-black text-xs uppercase tracking-widest mb-1">Start chatting</p>
+                        <p className="text-slate-500 text-[9px] font-bold uppercase tracking-widest">{t("chat.startChatDesc")}</p>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="relative z-10 space-y-4">
+                      {messages.map((msg, idx) => {
+                        const isMe = msg.senderId === user?.id;
+                        const showAvatar = idx === 0 || messages[idx - 1]?.senderId !== msg.senderId;
+                        return (
+                          <div key={msg.id} className={`flex items-end gap-3 ${isMe ? "justify-end" : "justify-start"} ${showAvatar ? "mt-6" : "mt-1.5"}`}>
+                            {!isMe && showAvatar && (
+                              <div className="w-8 h-8 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-[9px] font-black text-white flex-shrink-0 shadow-inner">
+                                {msg.sender.email[0].toUpperCase()}
+                              </div>
+                            )}
+                            {!isMe && !showAvatar && <div className="w-8" />}
+                            <div className={`max-w-[75%] px-4 py-3 text-xs ${
+                              isMe
+                                ? "bg-emerald-500 text-black rounded-2xl rounded-br-none shadow-[0_0_15px_rgba(16,185,129,0.25)] font-medium"
+                                : "bg-white/5 backdrop-blur-md text-white rounded-2xl rounded-bl-none border border-white/10 font-medium"
+                            }`}>
+                              {msg.content && <p className="leading-relaxed whitespace-pre-wrap">{msg.content}</p>}
+                              {msg.imageUrl && (
+                                <div className={`relative rounded-lg overflow-hidden border ${isMe ? "border-black/10" : "border-white/10"} ${msg.content ? "mt-3" : ""}`}>
+                                  <Image src={msg.imageUrl} alt="Shared image" width={0} height={0} sizes="100vw"
+                                    className="max-h-[220px] object-cover w-auto h-auto cursor-pointer hover:scale-102 transition-transform duration-300"
+                                    onClick={() => window.open(msg.imageUrl!, "_blank")}
+                                  />
+                                </div>
+                              )}
+                              <p className={`text-[8px] font-black uppercase tracking-widest mt-1.5 text-right ${isMe ? "text-emerald-900/60" : "text-slate-500"}`}>
+                                {new Date(msg.createdAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
+                              </p>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
+
+                {/* Input Area */}
+                <div className="p-4 border-t border-white/10 bg-black/60 backdrop-blur-xl relative z-20">
+                  <div className="flex gap-3 items-center bg-black/50 border border-white/10 p-2 rounded-xl shadow-inner focus-within:ring-1 focus-within:ring-emerald-500/50 transition-all">
+                    <button type="button" onClick={() => document.getElementById("expert-chat-image")?.click()}
+                      className="w-10 h-10 rounded-lg flex items-center justify-center text-slate-400 bg-white/5 hover:bg-emerald-500/10 hover:text-emerald-400 border border-transparent transition-all shrink-0"
+                      title={t("chat.sendPhoto")}
+                    >
+                      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                      </svg>
+                    </button>
+                    <input id="expert-chat-image" type="file" accept="image/*" className="hidden"
+                      onChange={async (e) => {
+                        const file = e.target.files?.[0];
+                        if (!file || !selectedPartner) return;
+                        try {
+                          const res = await uploadAPI.uploadFile(file);
+                          await messageAPI.sendMessage(selectedPartner, "", res.url);
+                          const data = await messageAPI.getMessages(selectedPartner);
+                          setMessages(data);
+                          loadConversations();
+                        } catch {}
+                        e.target.value = "";
+                      }}
+                    />
+                    <input value={newMessage} onChange={(e) => setNewMessage(e.target.value)}
+                      onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); handleSend(); }}}
+                      className="flex-1 bg-transparent border-none outline-none text-white text-xs px-1" placeholder="Type a message..."
+                    />
+                    <button onClick={handleSend} disabled={sending || !newMessage.trim()}
+                      className="px-5 py-2.5 bg-emerald-500 text-black text-[10px] font-black uppercase tracking-widest rounded-lg disabled:opacity-50 hover:bg-emerald-400 transition-all shrink-0 flex items-center gap-2"
+                    >
+                      {sending ? (
+                        <svg className="animate-spin w-3.5 h-3.5" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" /><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" /></svg>
+                      ) : (
+                        <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}><path strokeLinecap="round" strokeLinejoin="round" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" /></svg>
+                      )}
+                      <span className="hidden sm:inline">SEND</span>
+                    </button>
+                  </div>
+                </div>
+              </>
             )}
           </div>
         </div>
-
-        {/* Chat Area */}
-        <div className="flex-1 flex flex-col min-w-0">
-          {!selectedPartner ? (
-            <div className="flex-1 flex items-center justify-center bg-white/[0.01]">
-              <div className="text-center p-8">
-                <div className="text-6xl mb-4 opacity-20">💬</div>
-                <h3 className="text-lg font-bold text-white mb-2">{t("chat.yourMessages")}</h3>
-                <p className="text-slate-500 text-sm">{t("chat.selectConversation")}</p>
-              </div>
-            </div>
-          ) : (
-            <>
-              {/* Chat Header */}
-              <div className="px-6 py-4 border-b border-white/5 flex items-center gap-3 bg-white/[0.01]">
-                <button onClick={() => setSelectedPartner(null)} className="lg:hidden text-slate-400 hover:text-white mr-1 transition-colors">
-                  <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
-                </button>
-                <div className="w-9 h-9 rounded-full bg-gradient-to-br from-emerald-500 to-cyan-500 flex items-center justify-center text-xs font-bold text-white flex-shrink-0 shadow-lg">
-                  {selectedPartnerEmail[0].toUpperCase()}
-                </div>
-                <div className="min-w-0 flex-1">
-                  <div className="flex items-center gap-2">
-                    <p className="text-sm font-semibold text-white truncate">{selectedPartnerEmail}</p>
-                    {missedCalls.has(selectedPartner) && (
-                      <span className="text-[10px] text-red-400 font-semibold">{t("call.missedCallLabel")} 🕐</span>
-                    )}
-                  </div>
-                  <p className={`text-[10px] ${partnerOnline ? "text-emerald-400" : "text-slate-500"} flex items-center gap-1`}>
-                    <span className={`w-1.5 h-1.5 rounded-full ${partnerOnline ? "bg-emerald-400 animate-pulse" : "bg-slate-500"}`} />
-                    {partnerOnline ? t("common.online") : t("common.offline")}
-                  </p>
-                </div>
-                <button
-                  onClick={handleStartCall}
-                  disabled={callState !== "idle"}
-                  className="btn-ghost !p-2.5 !rounded-full flex-shrink-0 disabled:opacity-30"
-                  title={t("call.videoCall")}
-                >
-                  <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <polygon points="23 7 16 12 23 17 23 7" />
-                    <rect x="1" y="5" width="15" height="14" rx="2" ry="2" />
-                  </svg>
-                </button>
-              </div>
-
-              {/* Order Banner */}
-              {currentOrder && currentOrder.paymentStatus && (
-                <div className={`px-5 py-3 border-b ${
-                  currentOrder.paymentStatus === "RELEASED" ? "border-emerald-500/20 bg-emerald-500/5" :
-                  currentOrder.paymentStatus === "HELD" ? "border-blue-500/20 bg-blue-500/5" :
-                  currentOrder.paymentStatus === "PENDING" ? "border-amber-500/20 bg-amber-500/5" : "border-white/5"
-                }`}>
-                  <div className="flex items-center gap-2">
-                    <span className="text-sm">
-                      {currentOrder.paymentStatus === "HELD" && <>🔒 {t("dashboard.paymentHeld")}</>}
-                      {currentOrder.paymentStatus === "RELEASED" && <>✅ {t("dashboard.paymentReleased")}</>}
-                      {currentOrder.paymentStatus === "PENDING" && <>⏳ {t("dashboard.awaitingPayment")}</>}
-                      {currentOrder.paymentStatus === "REFUNDED" && <>↩️ {t("dashboard.orderRefunded")}</>}
-                    </span>
-                  </div>
-                  {currentOrder.service?.title && (
-                    <p className="text-xs text-slate-500 mt-1">
-                      {currentOrder.service.title} — {fDZD(currentOrder.amount || currentOrder.service?.price || 0)}
-                    </p>
-                  )}
-                </div>
-              )}
-
-              {/* Messages */}
-              <div ref={messagesContainerRef} className="flex-1 overflow-y-auto p-5 space-y-3 bg-white/[0.005]">
-                {loadingMsgs ? (
-                  <div className="flex items-center justify-center h-full">
-                    <svg className="animate-spin w-6 h-6 text-emerald-400" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" /><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" /></svg>
-                  </div>
-                ) : messages.length === 0 ? (
-                  <div className="flex items-center justify-center h-full">
-                    <div className="text-center">
-                      <div className="text-4xl mb-3 opacity-40">👋</div>
-                      <p className="text-slate-500 text-sm">{t("chat.startChat")}</p>
-                      <p className="text-slate-500 text-xs mt-1">{t("chat.startChatDesc")}</p>
-                    </div>
-                  </div>
-                ) : (
-                  messages.map((msg, idx) => {
-                    const isMe = msg.senderId === user?.id;
-                    const showAvatar = idx === 0 || messages[idx - 1]?.senderId !== msg.senderId;
-                    return (
-                      <div key={msg.id} className={`flex items-end gap-2 ${isMe ? "justify-end" : "justify-start"} ${showAvatar ? "mt-4" : "mt-0.5"}`}>
-                        {!isMe && showAvatar && (
-                          <div className="w-7 h-7 rounded-full bg-gradient-to-br from-emerald-500 to-cyan-500 flex items-center justify-center text-[9px] font-bold text-white flex-shrink-0 shadow-sm">
-                            {msg.sender.email[0].toUpperCase()}
-                          </div>
-                        )}
-                        {!isMe && !showAvatar && <div className="w-7" />}
-                        <div className={`max-w-[75%] px-4 py-2.5 text-sm shadow-lg ${
-                          isMe
-                            ? "bg-gradient-to-r from-emerald-600 to-cyan-600 text-white rounded-2xl rounded-br-md"
-                            : "glass-sm text-slate-200 rounded-2xl rounded-bl-md border border-white/5"
-                        }`}>
-                          {msg.content && <p className="leading-relaxed">{msg.content}</p>}
-                          {msg.imageUrl && (
-                            <Image src={msg.imageUrl} alt="Shared image" width={0} height={0} sizes="100vw"
-                              className={`rounded-xl max-h-64 object-cover w-auto h-auto cursor-pointer transition-transform duration-200 hover:scale-[1.02] ${msg.content ? "mt-2" : ""}`}
-                              onClick={() => window.open(msg.imageUrl!, "_blank")}
-                            />
-                          )}
-                          <p className={`text-[10px] mt-1.5 ${isMe ? "text-emerald-200/60" : "text-slate-500"}`}>
-                            {new Date(msg.createdAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
-                          </p>
-                        </div>
-                      </div>
-                    );
-                  })
-                )}
-
-              </div>
-
-              {/* Input */}
-              <div className="p-4 border-t border-white/5 bg-white/[0.01]">
-                <div className="flex gap-2 items-center">
-                  <button type="button" onClick={() => document.getElementById("expert-chat-image")?.click()}
-                    className="btn-ghost !p-2.5 !rounded-xl flex-shrink-0 hover:bg-emerald-500/10 hover:border-emerald-500/20 border border-white/5 transition-all"
-                    title={t("chat.sendPhoto")}
-                  >
-                    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                    </svg>
-                  </button>
-                  <input id="expert-chat-image" type="file" accept="image/*" className="hidden"
-                    onChange={async (e) => {
-                      const file = e.target.files?.[0];
-                      if (!file || !selectedPartner) return;
-                      try {
-                        const res = await uploadAPI.uploadFile(file);
-                        await messageAPI.sendMessage(selectedPartner, "", res.url);
-                        const data = await messageAPI.getMessages(selectedPartner);
-                        setMessages(data);
-                        loadConversations();
-                      } catch {}
-                      e.target.value = "";
-                    }}
-                  />
-                  <input value={newMessage} onChange={(e) => setNewMessage(e.target.value)}
-                    onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); handleSend(); }}}
-                    className="input-field flex-1 !rounded-xl" placeholder={t("chat.typeMessage")}
-                  />
-                  <button onClick={handleSend} disabled={sending || !newMessage.trim()}
-                    className="btn-primary !py-2.5 !px-5 text-sm rounded-xl disabled:opacity-50 shadow-lg shadow-emerald-500/20 transition-all duration-200 hover:scale-[1.02] active:scale-95"
-                  >
-                    <span className="flex items-center gap-1.5">
-                      {sending ? (
-                        <svg className="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" /><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" /></svg>
-                      ) : (
-                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" /></svg>
-                      )}
-                      {t("chat.send")}
-                    </span>
-                  </button>
-                </div>
-              </div>
-            </>
-          )}
-        </div>
       </div>
-    </div>
     </>
   );
 }
@@ -1729,7 +1536,7 @@ function WalletTab() {
       const res = await paymentAPI.deposit(amount);
       setBalance(res.balance);
       setDepositAmount("");
-      setMsg(`${fDZD(amount)} deposited successfully!`);
+      setMsg(`Deposit of ${fDZD(amount)} successful.`);
       loadWallet();
     } catch (err: unknown) { setMsg((err as Error).message); }
     setDepositing(false);
@@ -1742,118 +1549,99 @@ function WalletTab() {
   const totalEarnings = transactions.filter((t) => t.type === "RELEASE").reduce((s: number, t: any) => s + t.amount, 0);
 
   return (
-    <div className="space-y-8">
-      {/* Balance Hero */}
-      <div className="relative overflow-hidden rounded-3xl glass border border-white/5 p-8 md:p-10">
-        <div className="absolute -top-20 -right-20 w-64 h-64 bg-emerald-500/8 rounded-full blur-3xl" />
-        <div className="absolute -bottom-10 -left-10 w-48 h-48 bg-cyan-500/8 rounded-full blur-3xl" />
-        <div className="relative">
-          <div className="flex items-center justify-between mb-2">
-            <h2 className="text-sm font-semibold text-slate-400 uppercase tracking-wider">{t("dashboard.currentBalance")}</h2>
-            <span className="text-xs text-slate-500 bg-white/[0.04] px-3 py-1 rounded-full">{transactions.length} {t("dashboard.transactions")}</span>
+    <div className="space-y-6 animate-in fade-in">
+      {/* Holographic Balance Hero */}
+      <div className="relative overflow-hidden rounded-2xl bg-[#090a14] p-8 lg:p-12 border border-white/10 shadow-[0_12px_40px_rgba(0,0,0,0.6)] group">
+        <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/10 via-transparent to-purple-500/10 opacity-60 pointer-events-none" />
+        <div className="absolute -top-32 -right-32 w-[350px] h-[350px] bg-emerald-500/5 rounded-full blur-[90px] pointer-events-none" />
+        <div className="absolute -bottom-16 -left-16 w-[300px] h-[300px] bg-cyan-500/5 rounded-full blur-[80px] pointer-events-none" />
+
+        <div className="relative z-10 flex flex-col md:flex-row md:items-end justify-between gap-6">
+          <div>
+            <div className="flex items-center gap-3 mb-4">
+              <h2 className="text-[10px] font-black text-slate-400 uppercase tracking-widest border border-white/10 px-3 py-1.5 rounded-lg bg-black/40 backdrop-blur-md">Balance</h2>
+            </div>
+            <p className="text-5xl lg:text-7xl font-black text-transparent bg-clip-text bg-gradient-to-r from-white via-slate-200 to-slate-400 tracking-tighter">
+              {fDZD(balance)}
+            </p>
+            <p className="text-emerald-500 font-black text-[10px] uppercase tracking-widest mt-4 flex items-center gap-2">
+              <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_10px_rgba(16,185,129,0.8)]" />
+              Active
+            </p>
           </div>
-          <p className="text-5xl md:text-6xl font-black gradient-text tracking-tight">
-            {fDZD(balance)}
-          </p>
-          <p className="text-slate-500 text-sm mt-3 flex items-center gap-2">
-            <svg className="w-4 h-4 text-emerald-400" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" /></svg>
-            Manage your earnings and deposits
-          </p>
+          
+          <div className="bg-white/5 backdrop-blur-xl border border-white/10 p-5 rounded-xl shadow-2xl flex flex-col items-center justify-center min-w-[180px]">
+            <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1.5">Total Earnings</span>
+            <span className="text-2xl font-black text-cyan-400 drop-shadow-[0_0_15px_rgba(6,182,212,0.4)]">{fDZD(totalEarnings)}</span>
+          </div>
         </div>
       </div>
 
       {msg && (
-        <div className={`p-4 glass-sm text-sm rounded-xl flex items-center gap-3 ${
-          msg.includes("successfully") ? "border border-emerald-500/20 text-emerald-400" : "border border-red-500/20 text-red-400"
+        <div className={`p-4 text-xs font-black uppercase tracking-widest rounded-xl flex items-center gap-3 border shadow-md ${
+          msg.includes("successful") ? "bg-emerald-500/10 border-emerald-500/20 text-emerald-400" : "bg-rose-500/10 border-rose-500/20 text-rose-400"
         }`}>
-          <svg className="w-4 h-4 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-            {msg.includes("successfully")
-              ? <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-              : <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
-            }
-          </svg>
-          {msg}
+          <span className="text-lg">{msg.includes("successful") ? "✅" : "⚠️"}</span> {msg}
         </div>
       )}
 
-      {/* Deposit */}
-      <div className="glass rounded-2xl p-8 border border-white/5">
-        <h3 className="text-sm font-bold text-white mb-5 flex items-center gap-2.5">
-          <span className="w-8 h-8 rounded-lg bg-emerald-500/15 flex items-center justify-center text-sm">💳</span>
-          {t("dashboard.deposit")}
+      {/* Control Panel (Deposit) */}
+      <div className="bg-[#0a0b16]/90 backdrop-blur-2xl rounded-2xl p-6 lg:p-8 border border-white/10 shadow-[0_12px_40px_rgba(0,0,0,0.5)]">
+        <h3 className="text-xs font-black text-white mb-4 flex items-center gap-2.5 uppercase tracking-widest">
+          <span className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center text-base border border-white/10">💳</span>
+          Deposit
         </h3>
-        <div className="flex gap-3 items-start">
-          <div className="flex-1 max-w-xs">
+        <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center">
+          <div className="flex-1 w-full max-w-md relative">
+            <span className="absolute left-4 top-1/2 -translate-y-1/2 text-emerald-500 font-black text-sm">DZD</span>
             <input type="number" value={depositAmount} onChange={(e) => setDepositAmount(e.target.value)}
-              className="input-field" placeholder={t("dashboard.depositAmount")} min="1" step="0.01"
+              className={`${inputClasses} pl-14 py-4 text-base`} placeholder="0.00" min="1" step="0.01"
               onKeyDown={(e) => { if (e.key === "Enter") handleDeposit(); }}
             />
           </div>
           <button onClick={handleDeposit} disabled={depositing || !depositAmount}
-            className="btn-primary !py-2.5 !px-6 text-sm rounded-xl disabled:opacity-50 shadow-lg shadow-emerald-500/20 transition-all duration-200 hover:scale-[1.02] active:scale-95"
+            className="w-full sm:w-auto px-8 py-4 bg-emerald-500 text-black font-black text-xs uppercase tracking-widest rounded-xl disabled:opacity-50 hover:bg-emerald-400 transition-all flex items-center justify-center gap-2"
           >
-            <span className="flex items-center gap-2">
-              {depositing ? (
-                <svg className="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" /><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" /></svg>
-              ) : (
-                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" /></svg>
-              )}
-              {depositing ? t("common.loading") : t("dashboard.deposit")}
-            </span>
+            {depositing ? (
+              <svg className="animate-spin w-4 h-4 text-black" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" /><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" /></svg>
+            ) : (
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}><path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6m0 0v6m0-6h6m-6 0H6" /></svg>
+            )}
+            {depositing ? "Processing..." : "Deposit"}
           </button>
         </div>
       </div>
 
-      {/* Stats */}
-      <div className="grid md:grid-cols-3 gap-5">
-        {[
-          { value: fDZD(balance), label: t("dashboard.currentBalance"), id: "balance", color: "text-emerald-400", border: "border-t-emerald-500", icon: "💰" },
-          { value: fDZD(totalEarnings), label: t("dashboard.totalEarnings"), id: "earnings", color: "text-blue-400", border: "border-t-blue-500", icon: "📈" },
-          { value: transactions.length, label: t("dashboard.transactions"), id: "transactions", color: "text-purple-400", border: "border-t-purple-500", icon: "🔄" },
-        ].map((stat) => (
-          <div key={stat.id} className={`glass p-6 border-t-2 ${stat.border} rounded-2xl hover:bg-white/[0.02] transition-all duration-300`}>
-            <div className="flex items-center justify-between mb-3">
-              <span className={`w-10 h-10 rounded-xl flex items-center justify-center text-lg ${
-                stat.id === "balance" ? "bg-emerald-500/10" :
-                stat.id === "earnings" ? "bg-blue-500/10" : "bg-purple-500/10"
-              }`}>{stat.icon}</span>
-            </div>
-            <p className={`text-2xl font-black ${stat.color}`}>{stat.value}</p>
-            <p className="text-xs text-slate-500 mt-1 font-medium">{stat.label}</p>
-          </div>
-        ))}
-      </div>
-
-      {/* Transactions */}
+      {/* Ledger (Transactions) */}
       {transactions.length > 0 && (
-        <div className="glass rounded-2xl p-8 border border-white/5">
-          <h3 className="text-sm font-bold text-white mb-5 flex items-center gap-2.5">
-            <span className="w-8 h-8 rounded-lg bg-slate-500/15 flex items-center justify-center text-sm">📋</span>
-            {t("dashboard.transactionHistory")}
+        <div className="bg-[#0a0b16]/90 backdrop-blur-2xl rounded-2xl p-6 lg:p-8 border border-white/10 shadow-[0_12px_40px_rgba(0,0,0,0.5)]">
+          <h3 className="text-xs font-black text-white mb-6 flex items-center gap-2.5 uppercase tracking-widest">
+            <span className="w-8 h-8 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-base">📋</span>
+            Transaction History
           </h3>
-          <div className="divide-y divide-slate-800/50">
+          <div className="divide-y divide-white/5">
             {transactions.slice(0, 20).map((tx: any) => {
               const isCredit = tx.type === "DEPOSIT" || tx.type === "RELEASE" || tx.type === "REFUND";
               return (
-                <div key={tx.id} className="py-4 flex items-center justify-between hover:bg-white/[0.02] px-4 -mx-4 rounded-lg transition-all duration-200">
+                <div key={tx.id} className="py-4 flex items-center justify-between hover:bg-white/5 px-4 -mx-4 rounded-xl transition-all duration-300 group">
                   <div className="flex items-center gap-4">
-                    <div className={`w-10 h-10 rounded-xl flex items-center justify-center text-lg ${
-                      tx.type === "DEPOSIT" ? "bg-emerald-500/10" :
-                      tx.type === "RELEASE" ? "bg-blue-500/10" :
-                      tx.type === "REFUND" ? "bg-amber-500/10" : "bg-red-500/10"
+                    <div className={`w-12 h-12 rounded-xl flex items-center justify-center text-xl border ${
+                      tx.type === "DEPOSIT" ? "bg-emerald-500/10 border-emerald-500/20" :
+                      tx.type === "RELEASE" ? "bg-cyan-500/10 border-cyan-500/20" :
+                      tx.type === "REFUND" ? "bg-amber-500/10 border-amber-500/20" : "bg-rose-500/10 border-rose-500/20"
                     }`}>
                       {transIcon[tx.type] || "💳"}
                     </div>
                     <div>
-                      <p className="text-sm font-semibold text-white">{tx.description || tx.type}</p>
-                      <p className="text-[11px] text-slate-500 mt-0.5">
-                        {new Date(tx.createdAt).toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" })}
-                        {" at "}
-                        {new Date(tx.createdAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
+                      <p className="text-xs font-black text-white uppercase tracking-widest group-hover:text-emerald-400 transition-colors">{tx.description || tx.type}</p>
+                      <p className="text-[9px] font-bold text-slate-500 uppercase tracking-widest mt-1 flex items-center gap-1.5 font-mono">
+                        <span>{new Date(tx.createdAt).toLocaleDateString()}</span>
+                        <span className="w-1 h-1 rounded-full bg-slate-600" />
+                        <span>{new Date(tx.createdAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}</span>
                       </p>
                     </div>
                   </div>
-                  <span className={`text-sm font-bold ${isCredit ? "text-emerald-400" : "text-red-400"}`}>
+                  <span className={`text-base font-black ${isCredit ? "text-emerald-400" : "text-rose-400"}`}>
                     {isCredit ? "+" : "-"}{fDZD(tx.amount)}
                   </span>
                 </div>

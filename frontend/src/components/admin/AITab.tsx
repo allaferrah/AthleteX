@@ -64,12 +64,12 @@ export default function AITab({ searchQuery = "" }: { searchQuery?: string }) {
           <div>
             <label className="block text-sm text-slate-400 mb-1">{t("admin.creditPrice")}</label>
             <input type="number" value={creditPrice} onChange={(e) => setCreditPrice(e.target.value)}
-              className="w-full bg-slate-800/60 border border-white/10 rounded-lg px-4 py-2.5 text-white text-sm focus:outline-none focus:border-emerald-500/50" />
+              className="w-full bg-slate-800/60 border border-white/80 rounded-lg px-4 py-2.5 text-white text-sm focus:outline-none focus:border-emerald-500/50" />
           </div>
           <div>
             <label className="block text-sm text-slate-400 mb-1">{t("admin.freeGenerations")}</label>
             <input type="number" value={freeGen} onChange={(e) => setFreeGen(e.target.value)}
-              className="w-full bg-slate-800/60 border border-white/10 rounded-lg px-4 py-2.5 text-white text-sm focus:outline-none focus:border-emerald-500/50" />
+              className="w-full bg-slate-800/60 border border-white/80 rounded-lg px-4 py-2.5 text-white text-sm focus:outline-none focus:border-emerald-500/50" />
           </div>
         </div>
 
@@ -102,7 +102,7 @@ export default function AITab({ searchQuery = "" }: { searchQuery?: string }) {
                   <tr><td colSpan={5} className="p-12 text-center text-slate-500">No results for &apos;{searchQuery}&apos;</td></tr>
                 ) : (
                   filteredUsers.map((u: any) => (
-                    <tr key={u.id} className="border-b border-white/[0.03] hover:bg-white/[0.02] transition-colors">
+                    <tr key={u.id} className="border-b border-white/[0.03] hover:bg-white/5 transition-colors">
                       <td className="p-4 text-sm text-slate-300">{u.fullName || u.email}</td>
                       <td className="p-4 text-sm text-white">{u.aiGenerationsUsed ?? 0}</td>
                       <td className="p-4 text-sm text-slate-400">{u.aiGenerationsLimit ?? config?.freeGenerations ?? 3}</td>

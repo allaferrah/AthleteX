@@ -64,25 +64,26 @@ export default function NutritionPage() {
 
   return (
     <div>
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-2 animate-fade-up">
-        <div>
-          <div className="flex items-center gap-3 mb-1">
-            <Link href="/marketplace" className="text-sm text-slate-500 hover:text-emerald-400 transition-colors">
-              {t("nav.marketplace")}
-            </Link>
-            <span className="text-slate-600">/</span>
-            <span className="text-sm text-emerald-400 font-semibold">{t("nav.nutrition")}</span>
+      <div className="glass p-6 sm:p-8 animate-fade-up rounded-2xl border border-white/5 mb-8">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+          <div>
+            <div className="flex items-center gap-3 mb-1">
+              <Link href="/marketplace" className="text-sm text-slate-500 hover:text-emerald-400 transition-colors">
+                {t("nav.marketplace")}
+              </Link>
+              <span className="text-slate-400">/</span>
+              <span className="text-sm text-emerald-400 font-semibold">{t("nav.nutrition")}</span>
+            </div>
+            <h1 className="text-3xl md:text-4xl font-bold text-white mb-2 flex items-center gap-3">
+              <span>🥗</span> {t("nav.nutrition")}
+            </h1>
+            <p className="text-slate-400">{t("marketplace.nutritionSubtitle")}</p>
           </div>
-          <h1 className="text-3xl md:text-4xl font-bold text-white mb-2 flex items-center gap-3">
-            <span>🥗</span> {t("nav.nutrition")}
-          </h1>
-          <p className="text-slate-400">{t("marketplace.nutritionSubtitle")}</p>
-        </div>
-        <div className="relative w-full md:w-72">
-          <svg className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-          </svg>
-          <input
+          <div className="relative w-full md:w-72">
+            <svg className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+            <input
             type="text"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
@@ -91,6 +92,7 @@ export default function NutritionPage() {
           />
         </div>
       </div>
+    </div>
 
       {loading && (
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mt-8">

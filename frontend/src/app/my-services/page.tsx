@@ -122,261 +122,339 @@ export default function MyServices() {
 
   const categoryColor = (cat: string) =>
     cat === "SPORTS"
-      ? { bg: "from-amber-500/20 to-orange-500/10", badge: "bg-amber-500/20 text-amber-400", icon: "🏋️", hover: "hover:border-amber-500/30" }
-      : { bg: "from-emerald-500/20 to-teal-500/10", badge: "bg-emerald-500/20 text-emerald-400", icon: "🥗", hover: "hover:border-emerald-500/30" };
+      ? { bg: "from-amber-500/20 to-orange-500/10", glow: "group-hover:shadow-[0_10px_40px_-10px_rgba(245,158,11,0.3)]", badge: "bg-amber-500/20 text-amber-400 border border-amber-500/30", icon: "🏋️", hover: "hover:border-amber-500/50" }
+      : { bg: "from-emerald-500/20 to-teal-500/10", glow: "group-hover:shadow-[0_10px_40px_-10px_rgba(16,185,129,0.3)]", badge: "bg-emerald-500/20 text-emerald-400 border border-emerald-500/30", icon: "🥗", hover: "hover:border-emerald-500/50" };
 
   return (
-    <div>
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-20 relative">
+      {/* Ambient BG Glow */}
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-4xl h-96 bg-emerald-500/10 blur-[150px] rounded-full pointer-events-none -z-10" />
+
       {/* Header */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-10 animate-fade-up">
-        <div>
-          <div className="flex items-center gap-2 mb-1">
-            <Link href="/" className="text-sm text-slate-500 hover:text-emerald-400 transition-colors">{t("nav.home")}</Link>
-            <span className="text-slate-600">/</span>
-            <span className="text-sm text-white font-semibold">{t("myServices.title")}</span>
+      <div className="bg-slate-900/60 backdrop-blur-3xl p-8 sm:p-10 animate-fade-up rounded-[2.5rem] border border-white/10 mb-10 shadow-2xl relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-500/10 blur-[80px] rounded-full pointer-events-none" />
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 relative z-10">
+          <div>
+            <div className="flex items-center gap-2 mb-3">
+              <Link href="/" className="text-xs font-bold text-slate-500 hover:text-emerald-400 transition-colors tracking-widest uppercase">{t("nav.home")}</Link>
+              <span className="text-slate-500">/</span>
+              <span className="text-xs font-bold text-white tracking-widest uppercase">{t("myServices.title")}</span>
+            </div>
+            <h1 className="text-4xl md:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-white to-slate-400 flex items-center gap-4 drop-shadow-md">
+              <span>🏷️</span> {t("myServices.title")}
+            </h1>
+            <p className="text-slate-400 text-sm md:text-base mt-2 font-medium">{t("myServices.subtitle")}</p>
           </div>
-          <h1 className="text-3xl md:text-4xl font-bold text-white flex items-center gap-3">
-            <span>🏷️</span> {t("myServices.title")}
-          </h1>
-          <p className="text-slate-400 text-sm mt-1">{t("myServices.subtitle")}</p>
+          <button onClick={() => setShowForm(!showForm)} className={`px-6 py-3.5 rounded-2xl font-black text-sm transition-all active:scale-95 shadow-lg flex items-center gap-2 ${showForm ? "bg-white/10 text-white hover:bg-white/20 border border-white/10" : "bg-gradient-to-r from-emerald-500 to-cyan-500 text-black hover:shadow-[0_0_25px_rgba(16,185,129,0.4)] hover:scale-[1.02]"}`}>
+            {showForm ? (
+              <><span>✕</span> {t("common.cancel")}</>
+            ) : (
+              <><span>✨</span> {t("services.newService")}</>
+            )}
+          </button>
         </div>
-        <button onClick={() => setShowForm(!showForm)} className="btn-primary !py-2.5 !px-6 text-sm">
-          <span>{showForm ? t("common.cancel") : t("services.newService")}</span>
-        </button>
       </div>
 
       {msg && (
-        <div className={`mb-6 p-4 rounded-xl text-sm animate-fade-up ${msg.includes("created") || msg.includes("success") ? "bg-emerald-500/10 border border-emerald-500/20 text-emerald-400" : "bg-red-500/10 border border-red-500/20 text-red-400"}`}>
+        <div className={`mb-8 p-4 rounded-2xl text-sm font-bold animate-in slide-in-from-top-4 flex items-center gap-3 ${msg.includes("created") || msg.includes("updated") ? "bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 shadow-[0_0_20px_rgba(16,185,129,0.15)]" : "bg-red-500/10 border border-red-500/30 text-red-400 shadow-[0_0_20px_rgba(239,68,68,0.15)]"}`}>
+          <span className="text-xl">{msg.includes("created") || msg.includes("updated") ? "✅" : "⚠️"}</span>
           {msg}
         </div>
       )}
 
+      {/* Stats Dashboard */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10 animate-fade-up-d1">
+        {[
+          { label: t("services.totalServices"), val: services.length, icon: "📊", color: "from-blue-500/20 to-indigo-500/5", border: "border-blue-500/30", text: "text-blue-400" },
+          { label: "Sports Services", val: services.filter((s) => s.category === "SPORTS").length, icon: "🏋️", color: "from-amber-500/20 to-orange-500/5", border: "border-amber-500/30", text: "text-amber-400" },
+          { label: "Nutrition Plans", val: services.filter((s) => s.category === "NUTRITION").length, icon: "🥗", color: "from-emerald-500/20 to-teal-500/5", border: "border-emerald-500/30", text: "text-emerald-400" },
+        ].map((stat, i) => (
+          <div key={i} className={`bg-gradient-to-br ${stat.color} border ${stat.border} p-6 rounded-3xl relative overflow-hidden backdrop-blur-md flex items-center gap-5 shadow-lg`}>
+            <div className={`w-14 h-14 rounded-2xl bg-black/20 flex items-center justify-center text-3xl border border-white/10 shrink-0`}>
+              {stat.icon}
+            </div>
+            <div>
+              <p className="text-3xl font-black text-white leading-none tracking-tight">{stat.val}</p>
+              <p className={`text-[11px] font-extrabold uppercase tracking-widest mt-1.5 ${stat.text}`}>{stat.label}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+
       {/* Create Form */}
       {showForm && (
-        <div className="glass p-8 mb-10 border border-emerald-500/10 animate-fade-up">
-          <h3 className="text-xl font-bold text-white mb-6 flex items-center gap-2">✨ {t("services.createTitle")}</h3>
-          <form onSubmit={handleCreate} className="flex flex-col gap-6">
-            <div>
-              <label className="block text-xs font-semibold text-slate-400 mb-2 uppercase tracking-wider">{t("services.serviceTitle")}</label>
-              <input value={title} onChange={(e) => setTitle(e.target.value)} className="input-field" placeholder={t("services.serviceTitlePlaceholder")} required />
-            </div>
-            <div>
-              <label className="block text-xs font-semibold text-slate-400 mb-2 uppercase tracking-wider">{t("services.description")}</label>
-              <textarea value={description} onChange={(e) => setDescription(e.target.value)} className="input-field min-h-[120px] resize-none" placeholder={t("myServices.descPlaceholder")} required />
-            </div>
-            <div className="grid md:grid-cols-3 gap-5">
+        <div className="bg-slate-900/80 backdrop-blur-2xl p-8 sm:p-10 mb-12 rounded-[2.5rem] border border-emerald-500/30 shadow-[0_20px_60px_-15px_rgba(16,185,129,0.2)] animate-in zoom-in-95 duration-300">
+          <h3 className="text-2xl font-black text-white mb-8 flex items-center gap-3">
+            <span className="p-2 rounded-xl bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">✨</span> 
+            {t("services.createTitle")}
+          </h3>
+          <form onSubmit={handleCreate} className="flex flex-col gap-8">
+            <div className="grid md:grid-cols-2 gap-8">
               <div>
-                <label className="block text-xs font-semibold text-slate-400 mb-2 uppercase tracking-wider">{t("services.category")}</label>
-                <div className="grid grid-cols-2 gap-2">
-                  <button type="button" onClick={() => { setCategory("SPORTS"); setSportId(""); }} className={`p-3 rounded-xl text-sm font-semibold transition-all border ${category === "SPORTS" ? "border-amber-500 bg-amber-500/10 text-amber-400" : "border-white/5 bg-white/[0.02] text-slate-400 hover:border-white/10"}`}>
-                    🏋️ {t("marketplace.sports")}
+                <label className="block text-[11px] font-extrabold text-slate-400 mb-2 uppercase tracking-widest pl-1">{t("services.serviceTitle")}</label>
+                <input value={title} onChange={(e) => setTitle(e.target.value)} className="w-full bg-black/40 border border-white/10 text-white rounded-2xl px-5 py-4 focus:ring-2 focus:ring-emerald-500/50 outline-none transition-all font-medium placeholder:text-slate-600 shadow-inner" placeholder={t("services.serviceTitlePlaceholder")} required />
+              </div>
+              <div>
+                <label className="block text-[11px] font-extrabold text-slate-400 mb-2 uppercase tracking-widest pl-1">{t("services.price")}</label>
+                <div className="relative">
+                  <span className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-500 font-bold">DZD</span>
+                  <input type="number" value={price} onChange={(e) => setPrice(e.target.value)} className="w-full bg-black/40 border border-white/10 text-white rounded-2xl pl-16 pr-5 py-4 focus:ring-2 focus:ring-emerald-500/50 outline-none transition-all font-medium placeholder:text-slate-600 shadow-inner" placeholder="0.00" required />
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-[11px] font-extrabold text-slate-400 mb-2 uppercase tracking-widest pl-1">{t("services.description")}</label>
+              <textarea value={description} onChange={(e) => setDescription(e.target.value)} className="w-full bg-black/40 border border-white/10 text-white rounded-2xl px-5 py-4 focus:ring-2 focus:ring-emerald-500/50 outline-none transition-all font-medium placeholder:text-slate-600 shadow-inner min-h-[140px] resize-none" placeholder={t("myServices.descPlaceholder")} required />
+            </div>
+
+            <div className="grid lg:grid-cols-2 gap-8 bg-white/5 p-6 rounded-3xl border border-white/5">
+              <div>
+                <label className="block text-[11px] font-extrabold text-slate-400 mb-3 uppercase tracking-widest pl-1">{t("services.category")}</label>
+                <div className="grid grid-cols-2 gap-3 mb-6">
+                  <button type="button" onClick={() => { setCategory("SPORTS"); setSportId(""); }} className={`py-4 rounded-2xl text-sm font-bold transition-all border active:scale-95 flex items-center justify-center gap-2 ${category === "SPORTS" ? "border-amber-500/50 bg-amber-500/20 text-amber-300 shadow-[0_0_20px_rgba(245,158,11,0.2)]" : "border-white/10 bg-black/40 text-slate-400 hover:bg-white/10 hover:text-white"}`}>
+                    <span className="text-xl">🏋️</span> {t("marketplace.sports")}
                   </button>
-                  <button type="button" onClick={() => { setCategory("NUTRITION"); setSportId(""); }} className={`p-3 rounded-xl text-sm font-semibold transition-all border ${category === "NUTRITION" ? "border-emerald-500 bg-emerald-500/10 text-emerald-400" : "border-white/5 bg-white/[0.02] text-slate-400 hover:border-white/10"}`}>
-                    🥗 {t("marketplace.nutrition")}
+                  <button type="button" onClick={() => { setCategory("NUTRITION"); setSportId(""); }} className={`py-4 rounded-2xl text-sm font-bold transition-all border active:scale-95 flex items-center justify-center gap-2 ${category === "NUTRITION" ? "border-emerald-500/50 bg-emerald-500/20 text-emerald-300 shadow-[0_0_20px_rgba(16,185,129,0.2)]" : "border-white/10 bg-black/40 text-slate-400 hover:bg-white/10 hover:text-white"}`}>
+                    <span className="text-xl">🥗</span> {t("marketplace.nutrition")}
                   </button>
                 </div>
+
                 {category === "SPORTS" && (
-                  <div className="mt-3">
-                    <label className="block text-xs font-semibold text-slate-400 mb-2 uppercase tracking-wider">{t("services.sportType")}</label>
-                    <div className="grid grid-cols-3 sm:grid-cols-5 gap-1.5">
+                  <div className="animate-in fade-in slide-in-from-top-2">
+                    <label className="block text-[11px] font-extrabold text-slate-400 mb-3 uppercase tracking-widest pl-1">{t("services.sportType")}</label>
+                    <div className="flex flex-wrap gap-2 max-h-[180px] overflow-y-auto pr-2 custom-scrollbar">
                       {sports.map((s) => (
                         <button key={s.id} type="button" onClick={() => setSportId(sportId === s.id ? "" : s.id)}
-                          className={`flex flex-col items-center justify-center p-2 rounded-lg text-xs font-semibold transition-all border ${sportId === s.id ? "border-amber-500 bg-amber-500/20 text-amber-400" : "border-white/5 bg-white/[0.02] text-slate-400 hover:border-white/10 hover:text-white"}`}
+                          className={`px-4 py-2.5 rounded-xl text-xs font-bold transition-all border flex items-center gap-2 ${sportId === s.id ? "border-amber-500/50 bg-amber-500/20 text-amber-300 shadow-md" : "border-white/10 bg-black/40 text-slate-400 hover:border-white/20 hover:text-white"}`}
                         >
-                          <span className="text-lg">{s.icon}</span>
-                          <span className="mt-0.5 leading-tight text-center">{locale === "ar" ? s.nameAr : s.name}</span>
+                          <span className="text-base">{s.icon}</span>
+                          <span>{locale === "ar" ? s.nameAr : s.name}</span>
                         </button>
                       ))}
                     </div>
                   </div>
                 )}
               </div>
+
               <div>
-                <label className="block text-xs font-semibold text-slate-400 mb-2 uppercase tracking-wider">{t("services.price")}</label>
-                <input type="number" value={price} onChange={(e) => setPrice(e.target.value)} className="input-field" placeholder="49" required />
-              </div>
-              <div>
-                <label className="block text-xs font-semibold text-slate-400 mb-2 uppercase tracking-wider">{t("services.serviceImage")}</label>
-                <div className="flex gap-2">
-                  <input value={imageUrl} onChange={(e) => setImageUrl(e.target.value)} className="input-field flex-1 text-sm" placeholder={t("myServices.imagePlaceholder")} />
-                  <button type="button" onClick={() => {
-                    const input = document.createElement("input");
-                    input.type = "file";
-                    input.accept = "image/*";
-                    input.onchange = async (e: any) => {
-                      const file = e.target?.files?.[0];
-                      if (!file) return;
-                      try {
-                        const res = await uploadAPI.uploadFile(file);
-                        setImageUrl(res.url);
-                      } catch {}
-                    };
-                    input.click();
-                  }} className="btn-ghost !py-1.5 !px-3 text-xs">{t("myServices.browse")}</button>
+                <label className="block text-[11px] font-extrabold text-slate-400 mb-3 uppercase tracking-widest pl-1">{t("services.serviceImage")}</label>
+                <div className="p-6 border-2 border-dashed border-white/10 rounded-3xl bg-black/20 text-center hover:bg-black/40 hover:border-emerald-500/30 transition-all group">
+                  {imageUrl ? (
+                    <div className="relative w-full h-40 rounded-2xl overflow-hidden border border-white/10 group">
+                      <Image src={imageUrl} alt="" fill className="object-cover" />
+                      <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                        <button type="button" onClick={() => setImageUrl("")} className="px-4 py-2 bg-red-500 text-white font-bold rounded-xl text-xs shadow-lg hover:scale-105 transition-all">Remove Image</button>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="py-6">
+                      <div className="w-16 h-16 mx-auto rounded-full bg-white/5 flex items-center justify-center text-2xl mb-4 group-hover:bg-emerald-500/10 group-hover:text-emerald-400 transition-colors">📸</div>
+                      <p className="text-sm font-medium text-slate-400 mb-4">Upload a high-quality cover image</p>
+                      <button type="button" onClick={() => {
+                        const input = document.createElement("input");
+                        input.type = "file"; input.accept = "image/*";
+                        input.onchange = async (e: any) => {
+                          const file = e.target?.files?.[0]; if (!file) return;
+                          try { const res = await uploadAPI.uploadFile(file); setImageUrl(res.url); } catch {}
+                        };
+                        input.click();
+                      }} className="px-6 py-2.5 rounded-xl bg-white/10 text-white font-bold text-xs hover:bg-white/20 transition-all border border-white/5 shadow-md">
+                        Browse Files
+                      </button>
+                    </div>
+                  )}
                 </div>
-                {imageUrl && <Image src={imageUrl} alt="" width={80} height={56} className="w-20 h-14 mt-2 rounded-lg object-cover border border-white/5" />}
               </div>
             </div>
-            <button type="submit" disabled={saving} className="btn-primary disabled:opacity-50">
-              <span>{saving ? t("services.creating") : t("services.publish")}</span>
-            </button>
+
+            <div className="pt-4">
+              <button type="submit" disabled={saving} className="w-full py-4 rounded-2xl bg-gradient-to-r from-emerald-500 to-cyan-500 text-black font-black text-lg shadow-[0_0_20px_rgba(16,185,129,0.3)] hover:shadow-[0_0_30px_rgba(16,185,129,0.5)] hover:scale-[1.01] active:scale-[0.99] transition-all disabled:opacity-50 disabled:pointer-events-none">
+                {saving ? "Publishing..." : t("services.publish")}
+              </button>
+            </div>
           </form>
         </div>
       )}
 
-      {/* Stats */}
-      <div className="grid grid-cols-3 gap-4 mb-8 animate-fade-up-d1">
-        <div className="glass p-5 border-t-2 border-t-emerald-500">
-          <p className="text-2xl font-black text-white">{services.length}</p>
-          <p className="text-xs text-slate-500 mt-1">{t("services.totalServices")}</p>
-        </div>
-        <div className="glass p-5 border-t-2 border-t-amber-500">
-          <p className="text-2xl font-black text-white">{services.filter((s) => s.category === "SPORTS").length}</p>
-          <p className="text-xs text-slate-500 mt-1">🏋️ Sports</p>
-        </div>
-        <div className="glass p-5 border-t-2 border-t-emerald-500">
-          <p className="text-2xl font-black text-white">{services.filter((s) => s.category === "NUTRITION").length}</p>
-          <p className="text-xs text-slate-500 mt-1">🥗 Nutrition</p>
-        </div>
-      </div>
-
       {/* Loading */}
       {loading && (
-        <div className="grid md:grid-cols-2 gap-6">
-          {[1, 2].map((i) => (
-            <div key={i} className="glass overflow-hidden animate-pulse">
-              <div className="h-44 bg-slate-800/60" />
-              <div className="p-6 space-y-3">
-                <div className="h-5 bg-slate-800/60 rounded w-3/4" />
-                <div className="h-4 bg-slate-800/40 rounded w-full" />
-                <div className="h-4 bg-slate-800/40 rounded w-1/3" />
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {[1, 2, 3].map((i) => (
+            <div key={i} className="bg-slate-900/50 rounded-3xl overflow-hidden border border-white/5 animate-pulse">
+              <div className="h-48 bg-white/5" />
+              <div className="p-6 space-y-4">
+                <div className="h-6 bg-white/5 rounded-md w-3/4" />
+                <div className="h-4 bg-white/5 rounded-md w-full" />
+                <div className="h-4 bg-white/5 rounded-md w-2/3" />
+                <div className="pt-4 flex justify-between">
+                  <div className="h-4 bg-white/5 rounded-md w-1/4" />
+                  <div className="h-4 bg-white/5 rounded-md w-1/4" />
+                </div>
               </div>
             </div>
           ))}
         </div>
       )}
 
-      {/* Empty */}
+      {/* Empty State */}
       {!loading && services.length === 0 && (
-        <div className="glass p-16 text-center animate-fade-up">
-          <div className="text-6xl mb-4 opacity-60">🏷️</div>
-          <h2 className="text-2xl font-bold text-white mb-2">{t("myServices.noServices")}</h2>
-          <p className="text-slate-400 mb-6">{t("myServices.noServicesDesc")}</p>
-          <button onClick={() => setShowForm(true)} className="btn-primary">
-            <span>{t("myServices.createService")}</span>
+        <div className="bg-slate-900/40 backdrop-blur-md p-16 rounded-[3rem] border border-white/10 text-center animate-fade-up shadow-2xl relative overflow-hidden">
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-emerald-500/10 blur-[100px] rounded-full pointer-events-none" />
+          <div className="w-24 h-24 mx-auto bg-gradient-to-br from-slate-800 to-slate-900 border border-white/10 rounded-3xl flex items-center justify-center text-5xl mb-6 shadow-inner relative z-10">🏷️</div>
+          <h2 className="text-3xl font-black text-white mb-3 relative z-10">{t("myServices.noServices")}</h2>
+          <p className="text-slate-400 mb-8 max-w-md mx-auto font-medium relative z-10">{t("myServices.noServicesDesc")}</p>
+          <button onClick={() => setShowForm(true)} className="px-8 py-4 rounded-2xl bg-gradient-to-r from-emerald-500 to-cyan-500 text-black font-black shadow-[0_0_20px_rgba(16,185,129,0.3)] hover:scale-105 active:scale-95 transition-all relative z-10">
+            {t("myServices.createService")}
           </button>
         </div>
       )}
 
       {/* Services Grid */}
       {!loading && services.length > 0 && (
-        <div className="grid md:grid-cols-2 gap-6 animate-fade-up-d2">
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 animate-fade-up-d2">
           {services.map((svc) => {
             const cc = categoryColor(svc.category);
+            
+            // Edit Mode Card
             if (editingId === svc.id) {
               return (
-                <div key={svc.id} className="glass p-6 border border-emerald-500/30">
-                  <h3 className="text-lg font-bold text-white mb-4">✏️ Edit Service</h3>
-                  <div className="flex flex-col gap-4">
-                    <input value={editForm.title || ""} onChange={(e) => setEditForm({ ...editForm, title: e.target.value })} className="input-field" placeholder="Title" required />
-                    <textarea value={editForm.description || ""} onChange={(e) => setEditForm({ ...editForm, description: e.target.value })} className="input-field min-h-[100px] resize-none" placeholder="Description" required />
-                    <div className="grid grid-cols-2 gap-4">
-                      <input type="number" value={editForm.price || ""} onChange={(e) => setEditForm({ ...editForm, price: e.target.value })} className="input-field" placeholder="Price" required />
-                      <div className="grid grid-cols-2 gap-2">
-                        <button type="button" onClick={() => setEditForm({ ...editForm, category: "NUTRITION", sportId: "" })} className={`p-2 rounded-xl text-xs font-semibold border ${editForm.category === "NUTRITION" ? "border-emerald-500 bg-emerald-500/10 text-emerald-400" : "border-white/5 text-slate-400"}`}>🥗 Nutrition</button>
-                        <button type="button" onClick={() => setEditForm({ ...editForm, category: "SPORTS", sportId: "" })} className={`p-2 rounded-xl text-xs font-semibold border ${editForm.category === "SPORTS" ? "border-amber-500 bg-amber-500/10 text-amber-400" : "border-white/5 text-slate-400"}`}>🏋️ Sports</button>
+                <div key={svc.id} className="bg-slate-900/90 backdrop-blur-2xl p-6 rounded-3xl border border-emerald-500/50 shadow-[0_10px_40px_-10px_rgba(16,185,129,0.3)] lg:col-span-2 xl:col-span-3 animate-in zoom-in-95 duration-200 relative overflow-hidden">
+                  <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-500/10 blur-[80px] rounded-full pointer-events-none" />
+                  
+                  <div className="flex items-center justify-between mb-6 relative z-10">
+                    <h3 className="text-xl font-black text-white flex items-center gap-2"><span className="text-2xl">✏️</span> Edit Service</h3>
+                    <button onClick={cancelEdit} className="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center text-slate-400 hover:text-white hover:bg-white/10 transition-colors">✕</button>
+                  </div>
+                  
+                  <div className="grid lg:grid-cols-2 gap-8 relative z-10">
+                    <div className="space-y-5">
+                      <div>
+                        <label className="block text-[10px] font-extrabold text-slate-400 mb-2 uppercase tracking-widest pl-1">Title</label>
+                        <input value={editForm.title || ""} onChange={(e) => setEditForm({ ...editForm, title: e.target.value })} className="w-full bg-black/40 border border-white/10 text-white rounded-xl px-4 py-3 focus:border-emerald-500/50 outline-none text-sm font-medium" placeholder="Title" required />
+                      </div>
+                      <div>
+                        <label className="block text-[10px] font-extrabold text-slate-400 mb-2 uppercase tracking-widest pl-1">Description</label>
+                        <textarea value={editForm.description || ""} onChange={(e) => setEditForm({ ...editForm, description: e.target.value })} className="w-full bg-black/40 border border-white/10 text-white rounded-xl px-4 py-3 focus:border-emerald-500/50 outline-none text-sm font-medium min-h-[100px] resize-none" placeholder="Description" required />
+                      </div>
+                      <div className="grid grid-cols-2 gap-4">
+                        <div>
+                          <label className="block text-[10px] font-extrabold text-slate-400 mb-2 uppercase tracking-widest pl-1">Price (DZD)</label>
+                          <input type="number" value={editForm.price || ""} onChange={(e) => setEditForm({ ...editForm, price: e.target.value })} className="w-full bg-black/40 border border-white/10 text-white rounded-xl px-4 py-3 focus:border-emerald-500/50 outline-none text-sm font-medium" placeholder="Price" required />
+                        </div>
+                        <div>
+                          <label className="block text-[10px] font-extrabold text-slate-400 mb-2 uppercase tracking-widest pl-1">Image URL</label>
+                          <div className="flex gap-2">
+                            <input value={editForm.imageUrl || ""} onChange={(e) => setEditForm({ ...editForm, imageUrl: e.target.value })} className="w-full bg-black/40 border border-white/10 text-white rounded-xl px-4 py-3 focus:border-emerald-500/50 outline-none text-xs font-medium" placeholder="Image URL" />
+                            <button type="button" onClick={() => {
+                              const input = document.createElement("input");
+                              input.type = "file"; input.accept = "image/*";
+                              input.onchange = async (e: any) => {
+                                const file = e.target?.files?.[0]; if (!file) return;
+                                try { const res = await uploadAPI.uploadFile(file); setEditForm({ ...editForm, imageUrl: res.url }); } catch {}
+                              }; input.click();
+                            }} className="px-3 bg-white/10 rounded-xl text-xs font-bold hover:bg-white/20 transition-colors">UP</button>
+                          </div>
+                        </div>
                       </div>
                     </div>
-                    {editForm.category === "SPORTS" && (
-                      <div className="flex flex-wrap gap-1.5">
-                        {sports.map((sp) => (
-                          <button key={sp.id} type="button" onClick={() => setEditForm({ ...editForm, sportId: editForm.sportId === sp.id ? "" : sp.id })}
-                            className={`text-xs px-3 py-1.5 rounded-lg border ${editForm.sportId === sp.id ? "border-amber-500 bg-amber-500/20 text-amber-400" : "border-white/5 text-slate-400"}`}
-                          >{sp.icon} {locale === "ar" ? sp.nameAr : sp.name}</button>
-                        ))}
+                    
+                    <div className="space-y-5 bg-white/5 p-5 rounded-2xl border border-white/5">
+                      <div>
+                        <label className="block text-[10px] font-extrabold text-slate-400 mb-3 uppercase tracking-widest pl-1">Category</label>
+                        <div className="grid grid-cols-2 gap-3">
+                          <button type="button" onClick={() => setEditForm({ ...editForm, category: "NUTRITION", sportId: "" })} className={`py-3 rounded-xl text-sm font-bold transition-all border ${editForm.category === "NUTRITION" ? "border-emerald-500/50 bg-emerald-500/20 text-emerald-400" : "border-white/10 bg-black/30 text-slate-400"}`}>🥗 Nutrition</button>
+                          <button type="button" onClick={() => setEditForm({ ...editForm, category: "SPORTS", sportId: "" })} className={`py-3 rounded-xl text-sm font-bold transition-all border ${editForm.category === "SPORTS" ? "border-amber-500/50 bg-amber-500/20 text-amber-400" : "border-white/10 bg-black/30 text-slate-400"}`}>🏋️ Sports</button>
+                        </div>
                       </div>
-                    )}
-                    <div className="flex gap-2">
-                      <input value={editForm.imageUrl || ""} onChange={(e) => setEditForm({ ...editForm, imageUrl: e.target.value })} className="input-field flex-1" placeholder="Image URL" />
-                      <button type="button" onClick={() => {
-                        const input = document.createElement("input");
-                        input.type = "file";
-                        input.accept = "image/*";
-                        input.onchange = async (e: any) => {
-                          const file = e.target?.files?.[0];
-                          if (!file) return;
-                          try {
-                            const res = await uploadAPI.uploadFile(file);
-                            setEditForm({ ...editForm, imageUrl: res.url });
-                          } catch {}
-                        };
-                        input.click();
-                      }} className="btn-ghost !py-1.5 !px-3 text-xs">Browse</button>
+
+                      {editForm.category === "SPORTS" && (
+                        <div>
+                          <label className="block text-[10px] font-extrabold text-slate-400 mb-2 uppercase tracking-widest pl-1">Sport Type</label>
+                          <div className="flex flex-wrap gap-2 max-h-[120px] overflow-y-auto pr-2 custom-scrollbar">
+                            {sports.map((sp) => (
+                              <button key={sp.id} type="button" onClick={() => setEditForm({ ...editForm, sportId: editForm.sportId === sp.id ? "" : sp.id })}
+                                className={`text-xs px-3 py-2 rounded-lg font-bold border transition-colors ${editForm.sportId === sp.id ? "border-amber-500/50 bg-amber-500/20 text-amber-300" : "border-white/10 bg-black/30 text-slate-400 hover:bg-white/10"}`}
+                              >{sp.icon} {locale === "ar" ? sp.nameAr : sp.name}</button>
+                            ))}
+                          </div>
+                        </div>
+                      )}
                     </div>
-                    {editForm.imageUrl && <Image src={editForm.imageUrl} alt="" width={80} height={56} className="w-20 h-14 rounded-lg object-cover border border-white/5" />}
-                    <div className="flex gap-3">
-                      <button onClick={() => handleEditSave(svc.id)} disabled={savingEdit} className="btn-primary disabled:opacity-50">
-                        {savingEdit ? "Saving..." : "Save Changes"}
-                      </button>
-                      <button onClick={cancelEdit} className="btn-ghost">Cancel</button>
-                    </div>
+                  </div>
+
+                  <div className="mt-8 flex justify-end gap-3 relative z-10 border-t border-white/10 pt-6">
+                    <button onClick={cancelEdit} className="px-6 py-3 rounded-xl text-slate-400 font-bold hover:text-white hover:bg-white/5 transition-colors text-sm">Cancel</button>
+                    <button onClick={() => handleEditSave(svc.id)} disabled={savingEdit} className="px-8 py-3 rounded-xl bg-emerald-500 text-black font-black hover:bg-emerald-400 active:scale-95 transition-all shadow-[0_0_15px_rgba(16,185,129,0.3)] text-sm disabled:opacity-50">
+                      {savingEdit ? "Saving..." : "Save Changes"}
+                    </button>
                   </div>
                 </div>
               );
             }
+
+            // Normal Card
             return (
-              <div key={svc.id} className={`glass overflow-hidden border border-transparent ${cc.hover} transition-all duration-300 group`}>
-                {/* Image header */}
-                <div className={`h-44 bg-gradient-to-br ${cc.bg} relative overflow-hidden`}>
+              <div key={svc.id} className={`group bg-slate-900/60 backdrop-blur-md rounded-[2rem] overflow-hidden border border-white/10 transition-all duration-500 hover:-translate-y-2 hover:scale-[1.02] ${cc.hover} ${cc.glow} flex flex-col`}>
+                
+                {/* Image Header */}
+                <div className={`h-56 relative overflow-hidden bg-gradient-to-br ${cc.bg}`}>
                   {svc.imageUrl ? (
-                    <Image src={svc.imageUrl} alt={svc.title} fill className="object-cover" />
+                    <Image src={svc.imageUrl} alt={svc.title} fill className="object-cover group-hover:scale-110 transition-transform duration-700 ease-out" />
                   ) : (
                     <div className="absolute inset-0 flex items-center justify-center">
-                      <div className="text-7xl opacity-15">{cc.icon}</div>
+                      <div className="text-8xl opacity-20 transform group-hover:scale-125 group-hover:rotate-6 transition-all duration-700">{cc.icon}</div>
                     </div>
                   )}
+                  <div className="absolute inset-0 bg-gradient-to-t from-slate-900/90 via-slate-900/20 to-transparent" />
+                  
+                  {/* Badges */}
                   <div className="absolute top-4 left-4 flex gap-2">
-                    <span className={`badge text-xs ${cc.badge}`}>{cc.icon} {svc.category === "SPORTS" ? t("marketplace.sports") : t("marketplace.nutrition")}</span>
+                    <span className={`px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest backdrop-blur-md ${cc.badge}`}>
+                      {cc.icon} {svc.category === "SPORTS" ? t("marketplace.sports") : t("marketplace.nutrition")}
+                    </span>
                     {svc.sport && (
-                      <span className="badge text-xs bg-white/10 text-white/80">{svc.sport.icon} {locale === "ar" ? svc.sport.nameAr : svc.sport.name}</span>
+                      <span className="px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest backdrop-blur-md bg-white/10 border border-white/20 text-white shadow-md">
+                        {svc.sport.icon} {locale === "ar" ? svc.sport.nameAr : svc.sport.name}
+                      </span>
                     )}
                   </div>
-                  <div className="absolute top-4 right-4 flex gap-2">
-                    <button onClick={() => startEdit(svc)} className="w-8 h-8 rounded-full bg-black/40 backdrop-blur-sm flex items-center justify-center text-xs text-emerald-400 hover:bg-emerald-500/30 transition-all opacity-0 group-hover:opacity-100">
+
+                  {/* Actions (Hover) */}
+                  <div className="absolute top-4 right-4 flex gap-2 opacity-0 translate-y-[-10px] group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300">
+                    <button onClick={() => startEdit(svc)} className="w-10 h-10 rounded-xl bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center text-sm shadow-xl hover:bg-emerald-500/80 hover:border-emerald-400 hover:text-white transition-all text-slate-200">
                       ✏️
                     </button>
-                    <button onClick={() => handleDelete(svc.id)} className="w-8 h-8 rounded-full bg-black/40 backdrop-blur-sm flex items-center justify-center text-xs text-red-400 hover:bg-red-500/30 transition-all opacity-0 group-hover:opacity-100">
+                    <button onClick={() => handleDelete(svc.id)} className="w-10 h-10 rounded-xl bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center text-sm shadow-xl hover:bg-red-500/80 hover:border-red-400 hover:text-white transition-all text-slate-200">
                       ✕
                     </button>
                   </div>
-                  <div className="absolute bottom-4 left-4">
-                    <span className="text-2xl font-black text-white drop-shadow-lg">{fDZD(svc.price)}</span>
-                    <span className="text-slate-300 text-xs ml-1">{t("myServices.perMonth")}</span>
+
+                  {/* Price Plate */}
+                  <div className="absolute bottom-5 left-6">
+                    <span className="text-3xl font-black text-white drop-shadow-[0_2px_10px_rgba(0,0,0,0.8)] tracking-tight">{fDZD(svc.price)}</span>
+                    <span className="text-slate-300 text-xs font-bold uppercase tracking-widest ml-2 opacity-80">{t("myServices.perMonth")}</span>
                   </div>
                 </div>
 
                 {/* Content */}
-                <div className="p-6">
-                  <h3 className="text-lg font-bold text-white mb-2 line-clamp-1">{svc.title}</h3>
-                  <p className="text-slate-400 text-sm mb-5 line-clamp-2">{svc.description}</p>
+                <div className="p-6 flex-1 flex flex-col">
+                  <h3 className="text-xl font-bold text-white mb-3 line-clamp-1 group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-white group-hover:to-slate-400 transition-colors">{svc.title}</h3>
+                  <p className="text-slate-400 text-sm mb-6 line-clamp-2 leading-relaxed font-medium">{svc.description}</p>
 
-                  {/* Stats row */}
-                  <div className="flex items-center justify-between pt-4 border-t border-white/5">
-                    <div className="flex items-center gap-4 text-xs text-slate-500">
-                      <span className="flex items-center gap-1">
-                        <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
-                        {svc._count.orders} {t("myServices.orders")}
+                  {/* Stats Footer */}
+                  <div className="mt-auto flex items-center justify-between pt-5 border-t border-white/5">
+                    <div className="flex items-center gap-5">
+                      <span className="flex items-center gap-2 text-xs font-bold text-slate-400 group-hover:text-slate-300 transition-colors">
+                        <span className="w-6 h-6 rounded-md bg-white/5 flex items-center justify-center border border-white/5">📦</span>
+                        {svc._count.orders} <span className="hidden sm:inline uppercase tracking-widest text-[9px] opacity-70">Orders</span>
                       </span>
-                      <span className="flex items-center gap-1">
-                        <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
-                        </svg>
-                        {svc._count.reviews} {t("myServices.reviews")}
+                      <span className="flex items-center gap-2 text-xs font-bold text-slate-400 group-hover:text-slate-300 transition-colors">
+                        <span className="w-6 h-6 rounded-md bg-white/5 flex items-center justify-center border border-white/5">⭐</span>
+                        {svc._count.reviews} <span className="hidden sm:inline uppercase tracking-widest text-[9px] opacity-70">Reviews</span>
                       </span>
                     </div>
-                    <span className="text-xs text-slate-500">{new Date(svc.createdAt).toLocaleDateString()}</span>
+                    <span className="text-[10px] font-extrabold text-slate-600 uppercase tracking-widest">{new Date(svc.createdAt).toLocaleDateString()}</span>
                   </div>
                 </div>
               </div>

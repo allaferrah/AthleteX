@@ -93,11 +93,11 @@ export default function SequenceMemory({ t }: { t: (k: string) => string }) {
 
   return (
     <div className="flex flex-col items-center gap-6">
-      <p className="text-gray-400 text-center max-w-md text-sm">{t("games.memoryInstructions")}</p>
+      <p className="text-slate-500 text-center max-w-md text-sm">{t("games.memoryInstructions")}</p>
 
       <div className={`glass-sm p-6 sm:p-8 w-full max-w-sm flex flex-col items-center gap-5 ${phase === "showing" ? "animate-pulse-glow" : ""}`}>
         <div className="flex items-center justify-between w-full">
-          <div className="flex items-center gap-2 text-xs text-gray-500 uppercase tracking-widest">
+          <div className="flex items-center gap-2 text-xs text-slate-400 uppercase tracking-widest">
             <span className={`w-2 h-2 rounded-full ${phase === "showing" ? "bg-blue-500 animate-pulse" : phase === "input" ? "bg-emerald-500" : "bg-gray-600"}`} />
             {phase === "idle" ? "Ready" : phase === "showing" ? `Watch... ${flashCount}/${sequence.length}` : phase === "input" ? "Your Turn" : "Done"}
           </div>
@@ -164,7 +164,7 @@ export default function SequenceMemory({ t }: { t: (k: string) => string }) {
             <p className="text-3xl font-black text-white mb-1">
               Level <span className="text-emerald-400">{level}</span>
             </p>
-            <p className="text-sm text-gray-500 mb-3">
+            <p className="text-sm text-slate-400 mb-3">
               Sequence of {sequence.length} colors remembered
             </p>
             {level - 1 >= best && level - 1 > 0 && (
@@ -180,13 +180,13 @@ export default function SequenceMemory({ t }: { t: (k: string) => string }) {
       )}
 
       <div className="flex items-center gap-3 text-sm">
-        <span className="text-gray-500">
+        <span className="text-slate-400">
           Best: <strong className="text-emerald-400">Level {best}</strong>
         </span>
         {best > 0 && (
           <>
             <span className="text-gray-600">•</span>
-            <span className="text-gray-500">
+            <span className="text-slate-400">
               {best >= 10 ? "🧠 Genius!" : best >= 7 ? "🌟 Excellent!" : best >= 5 ? "👏 Great!" : best >= 3 ? "👍 Good!" : "🌱 Keep going!"}
             </span>
           </>

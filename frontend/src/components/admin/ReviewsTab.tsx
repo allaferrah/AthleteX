@@ -62,7 +62,7 @@ export default function ReviewsTab({ searchQuery = "" }: { searchQuery?: string 
                   <tr><td colSpan={5} className="p-12 text-center text-slate-500">No results for &apos;{searchQuery}&apos;</td></tr>
                 ) : (
                   filtered.map((r) => (
-                    <tr key={r.id} className="border-b border-white/[0.03] hover:bg-white/[0.02] transition-colors">
+                    <tr key={r.id} className="border-b border-white/[0.03] hover:bg-white/5 transition-colors">
                       <td className="p-4 text-sm text-slate-300">{r.user?.profile?.fullName || r.user?.email || "—"}</td>
                       <td className="p-4 text-sm font-semibold text-white">{r.service?.title || "—"}</td>
                       <td className="p-4">

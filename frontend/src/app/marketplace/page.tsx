@@ -42,7 +42,7 @@ export default function MarketplaceLanding() {
       <div className="absolute bottom-0 right-1/4 w-80 h-80 bg-blue-500/5 rounded-full filter blur-3xl pointer-events-none" />
 
       {/* Header */}
-      <div className="text-center mb-16 animate-fade-up relative z-10">
+      <div className="glass p-8 sm:p-10 text-center mb-16 animate-fade-up relative z-10 rounded-2xl border border-white/5 max-w-3xl mx-auto">
         <div className="badge badge-emerald mb-4 border border-emerald-500/20 px-3 py-1">{t("marketplace.verifiedBadge")}</div>
         <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-white mb-4 tracking-tight leading-none">
           {t("marketplace.title")}{" "}
@@ -88,7 +88,7 @@ export default function MarketplaceLanding() {
                 {/* Features */}
                 <div className="flex flex-wrap gap-2 mb-8">
                   {cat.features.map((f) => (
-                    <span key={f} className="badge text-[11px] bg-white/5 text-slate-300 border border-white/10 font-sans">
+                    <span key={f} className="badge text-[11px] bg-white/10 text-slate-300 border border-white/80 font-sans">
                       {f}
                     </span>
                   ))}
@@ -109,7 +109,7 @@ export default function MarketplaceLanding() {
 
       {/* Stats */}
       <div className="mt-20 max-w-3xl mx-auto text-center animate-fade-up-d3 relative z-10">
-        <div className="glass-card-premium p-8 border border-white/10">
+        <div className="glass-card-premium p-8 border border-white/80">
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
             {[
               { value: "50+", label: t("marketplace.statExperts"), color: "text-amber-400" },

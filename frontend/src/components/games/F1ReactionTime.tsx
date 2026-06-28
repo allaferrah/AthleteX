@@ -105,10 +105,10 @@ export default function F1ReactionTime({ t }: { t: (k: string) => string }) {
 
   return (
     <div className="flex flex-col items-center gap-6">
-      <p className="text-gray-400 text-center max-w-md text-sm">{t("games.f1Instructions")}</p>
+      <p className="text-slate-500 text-center max-w-md text-sm">{t("games.f1Instructions")}</p>
 
       <div className="glass-sm p-6 sm:p-8 w-full max-w-sm flex flex-col items-center gap-5">
-        <div className="flex items-center gap-2 text-xs text-gray-500 uppercase tracking-widest">
+        <div className="flex items-center gap-2 text-xs text-slate-400 uppercase tracking-widest">
           <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
           {phase === "waiting" ? "GO!" : phase === "ready" ? "Countdown..." : phase === "tooEarly" ? "False Start" : phase === "result" ? "Result" : "Ready"}
           <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
@@ -160,7 +160,7 @@ export default function F1ReactionTime({ t }: { t: (k: string) => string }) {
 
       {attempts.length > 0 && !showSummary && (
         <div className="w-full max-w-sm">
-          <div className="flex justify-between text-xs text-gray-500 mb-2">
+          <div className="flex justify-between text-xs text-slate-400 mb-2">
             <span>Attempt {attempts.length}/5</span>
             <span>Avg: {avg}ms</span>
           </div>
@@ -181,19 +181,19 @@ export default function F1ReactionTime({ t }: { t: (k: string) => string }) {
 
       {showSummary && (
         <div className="glass-sm p-5 w-full max-w-sm animate-scale-in">
-          <h4 className="text-sm font-semibold text-gray-400 uppercase tracking-wider text-center mb-3">Session Summary</h4>
+          <h4 className="text-sm font-semibold text-slate-500 uppercase tracking-wider text-center mb-3">Session Summary</h4>
           <div className="grid grid-cols-3 gap-3 text-center">
             <div>
               <div className="text-2xl font-bold text-white">{avg}<span className="text-xs ml-0.5">ms</span></div>
-              <div className="text-xs text-gray-500">Average</div>
+              <div className="text-xs text-slate-400">Average</div>
             </div>
             <div>
               <div className="text-2xl font-bold text-emerald-400">{Math.min(...attempts.filter((a) => a < 999))}<span className="text-xs ml-0.5">ms</span></div>
-              <div className="text-xs text-gray-500">Best</div>
+              <div className="text-xs text-slate-400">Best</div>
             </div>
             <div>
               <div className="text-2xl font-bold text-red-400">{Math.max(...attempts.filter((a) => a < 999))}<span className="text-xs ml-0.5">ms</span></div>
-              <div className="text-xs text-gray-500">Worst</div>
+              <div className="text-xs text-slate-400">Worst</div>
             </div>
           </div>
           <div className="mt-3 text-center">
@@ -205,11 +205,11 @@ export default function F1ReactionTime({ t }: { t: (k: string) => string }) {
       )}
 
       <div className="flex items-center gap-3 text-sm">
-        <span className="text-gray-500">
+        <span className="text-slate-400">
           Best: <strong className="text-emerald-400">{best}ms</strong>
         </span>
         <span className="text-gray-600">•</span>
-        <span className="text-gray-500">
+        <span className="text-slate-400">
           {best > 0 && best < 200 ? getRating(best).emoji + " " + getRating(best).label : "Keep trying!"}
         </span>
       </div>

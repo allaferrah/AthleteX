@@ -15,7 +15,6 @@ import {
   createOffer, createAnswer, setRemoteDescription, addIceCandidate,
   fetchTurnCredentials, waitForDeviceRelease, cleanupAudioSink,
   ensureAudioSink, addLocalTracks, attemptIceRestart, resetIceRestartAttempts,
-  playMediaElement,
 } from "@/lib/webrtc";
 import type { CreatePcCallbacks } from "@/lib/webrtc";
 import { useCallSound } from "@/lib/useCallSound";
@@ -484,16 +483,20 @@ export default function MessagesPage() {
   };
 
   return (
-    <div>
+    <div className="min-h-screen bg-[#03030f] text-slate-100 relative overflow-x-hidden font-sans select-none selection:bg-purple-500 selection:text-white">
+      {/* Cosmic background effects */}
+      <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] rounded-full bg-indigo-900/10 blur-[120px] pointer-events-none" />
+      <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] rounded-full bg-purple-900/10 blur-[120px] pointer-events-none" />
+
       {/* ─── Video Call Overlay ──────────────────────────────────────── */}
       {socketError && (
-        <div className="fixed top-0 left-0 right-0 z-[200] bg-red-600/90 text-white px-4 py-3 text-sm text-center font-medium">
-          {socketError}
+        <div className="fixed top-0 left-0 right-0 z-[200] bg-rose-600/90 text-white px-4 py-3 text-sm text-center font-bold tracking-wider uppercase border-b border-rose-400 shadow-[0_4px_30px_rgba(244,63,94,0.3)] backdrop-blur-md">
+          ⚠️ {socketError}
         </div>
       )}
       {callError && (
-        <div className="fixed top-20 left-1/2 -translate-x-1/2 z-[110] bg-red-500/20 border border-red-500/30 text-red-400 px-6 py-3 rounded-xl text-sm font-medium animate-fade-in backdrop-blur-sm max-w-md text-center">
-          {callError}
+        <div className="fixed top-24 left-1/2 -translate-x-1/2 z-[110] bg-rose-950/80 border-2 border-rose-500 text-rose-300 px-6 py-4 rounded-2xl text-xs font-semibold animate-bounce shadow-[0_0_25px_rgba(244,63,94,0.4)] backdrop-blur-md max-w-md text-center">
+          ⚡ {callError}
         </div>
       )}
       {localStream && callState === "connected" && (
@@ -527,27 +530,30 @@ export default function MessagesPage() {
       )}
 
       {callState === "calling" && (
-        <div className="fixed inset-0 z-[100] bg-black/80 flex items-center justify-center">
-          <div className="text-center">
-            <div className="w-20 h-20 rounded-full bg-gray-700 mx-auto mb-4 flex items-center justify-center text-3xl animate-pulse">
-              📹
+        <div className="fixed inset-0 z-[100] bg-slate-950/95 backdrop-blur-xl flex items-center justify-center border-4 border-cyan-500/10">
+          <div className="text-center relative">
+            <div className="w-28 h-28 rounded-full bg-cyan-950/50 mx-auto mb-6 flex items-center justify-center text-4xl border-2 border-cyan-500 shadow-[0_0_40px_rgba(6,182,212,0.4)] animate-pulse relative">
+              <span className="relative z-10">📡</span>
+              <div className="absolute inset-0 rounded-full border border-cyan-400 animate-ping opacity-60" />
             </div>
-            <p className="text-white text-lg font-semibold">{t("call.calling")}</p>
-            <p className="text-gray-400 text-sm mt-1">{selectedPartnerEmail}</p>
-            <button onClick={handleEndCall} className="mt-6 btn-primary !bg-red-600 !px-8">
-              <span>{t("call.endCall")}</span>
-            </button>
+            <p className="text-cyan-400 text-2xl font-black tracking-widest uppercase mb-1">{t("call.calling")}</p>
+            <p className="text-purple-300 text-sm font-mono bg-purple-950/40 py-1 px-3 rounded-full border border-purple-500/20 inline-block mt-1">{selectedPartnerEmail}</p>
+            <div className="mt-8">
+              <button onClick={handleEndCall} className="py-3 px-8 rounded-full font-bold uppercase tracking-wider text-sm bg-gradient-to-r from-rose-600 to-pink-600 hover:from-rose-500 hover:to-pink-500 text-white shadow-[0_0_20px_rgba(244,63,94,0.4)] transition-all duration-300 hover:scale-105 active:scale-95">
+                {t("call.endCall")}
+              </button>
+            </div>
           </div>
         </div>
       )}
 
       {callState === "ended" && (
-        <div className="fixed inset-0 z-[100] bg-black/60 flex items-center justify-center pointer-events-none">
-          <div className="text-center animate-fade-in">
-            <div className="text-4xl mb-3">📞</div>
-            <p className="text-white text-lg">{t("call.callEnded")}</p>
+        <div className="fixed inset-0 z-[100] bg-slate-950/90 backdrop-blur-md flex items-center justify-center pointer-events-none">
+          <div className="text-center animate-scale-up">
+            <div className="text-6xl mb-4 filter drop-shadow-[0_0_15px_rgba(244,63,94,0.5)]">🛑</div>
+            <p className="text-rose-400 text-xl font-bold tracking-widest uppercase">{t("call.callEnded")}</p>
             {callDuration > 0 && (
-              <p className="text-gray-400 text-sm mt-1">
+              <p className="text-purple-300/60 font-mono text-sm mt-2">
                 {Math.floor(callDuration / 60)}:{String(callDuration % 60).padStart(2, "0")}
               </p>
             )}
@@ -565,51 +571,65 @@ export default function MessagesPage() {
       )}
 
       {/* ─── Page ────────────────────────────────────────────────────── */}
-      <div className="flex items-center gap-3 mb-6 animate-fade-up">
-        <Link href="/" className="text-sm text-slate-500 hover:text-emerald-400 transition-colors">{t("nav.home")}</Link>
-        <span className="text-slate-600">/</span>
-        <span className="text-sm text-white font-semibold">{t("nav.messages")}</span>
+      <div className="flex items-center gap-2 mb-6 animate-fade-in px-4 pt-4">
+        <Link href="/" className="text-xs tracking-wider uppercase font-bold text-slate-500 hover:text-cyan-400 transition-all">{t("nav.home")}</Link>
+        <span className="text-purple-500/50">/</span>
+        <span className="text-xs tracking-wider uppercase font-bold text-purple-400 bg-purple-950/40 border border-purple-500/20 py-1 px-3 rounded-full shadow-[0_0_10px_rgba(168,85,247,0.1)]">{t("nav.messages")}</span>
       </div>
 
-      <div className="glass border border-white/5 overflow-hidden animate-fade-up-d1" style={{ height: "calc(100vh - 220px)", minHeight: "500px" }}>
+      <div className="mx-4 border border-purple-500/10 rounded-2xl bg-slate-950/60 backdrop-blur-xl overflow-hidden shadow-[0_0_50px_rgba(139,92,246,0.05)]" style={{ height: "calc(100vh - 180px)", minHeight: "550px" }}>
         <div className="flex h-full">
           {/* Conversation List */}
-          <div className={`${selectedPartner ? "hidden lg:flex" : "flex"} w-full lg:w-72 lg:w-80 border-r border-white/5 flex-col flex-shrink-0`}>
-            <div className="p-4 border-b border-white/5">
-              <h3 className="text-sm font-bold text-white flex items-center gap-2"><span>💬</span> {t("chat.conversations")}</h3>
+          <div className={`${selectedPartner ? "hidden lg:flex" : "flex"} w-full lg:w-80 border-r border-purple-500/10 flex-col flex-shrink-0 bg-slate-950/40`}>
+            <div className="p-5 border-b border-purple-500/10 flex items-center justify-between">
+              <h3 className="text-xs uppercase tracking-widest font-black text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-400 flex items-center gap-2">
+                <span>🛰️</span> {t("chat.conversations")}
+              </h3>
             </div>
-            <div className="flex-1 overflow-y-auto">
+            <div className="flex-1 overflow-y-auto custom-scrollbar">
               {loadingConvos ? (
-                <div className="p-4 space-y-3">{[...Array(4)].map((_, i) => <div key={i} className="h-16 rounded-lg bg-slate-800/40 animate-pulse" />)}</div>
+                <div className="p-4 space-y-3">
+                  {[...Array(4)].map((_, i) => (
+                    <div key={i} className="h-16 rounded-xl bg-purple-950/10 border border-purple-500/5 animate-pulse" />
+                  ))}
+                </div>
               ) : conversations.length === 0 ? (
-                  <div className="p-6 text-center">
-                    <div className="text-4xl mb-3 opacity-60">📭</div>
-                    <p className="text-slate-500 text-sm">{t("chat.noConversations")}</p>
-                    <p className="text-slate-500 text-xs mt-1">{t("chat.noConversationsDesc")}</p>
-                    <Link href="/marketplace" className="btn-primary !py-1.5 !px-4 text-xs mt-4 inline-block"><span>{t("dashboard.browseServices")}</span></Link>
+                <div className="p-8 text-center">
+                  <div className="text-5xl mb-4 filter drop-shadow-[0_0_15px_rgba(168,85,247,0.3)]">🪐</div>
+                  <p className="text-slate-400 text-xs font-bold tracking-wide">{t("chat.noConversations")}</p>
+                  <p className="text-slate-500 text-[10px] mt-2 leading-relaxed">{t("chat.noConversationsDesc")}</p>
+                  <Link href="/marketplace" className="mt-6 py-2 px-4 rounded-full text-[10px] font-bold uppercase tracking-wider bg-gradient-to-r from-purple-600 to-cyan-500 text-white hover:opacity-90 inline-block shadow-[0_0_15px_rgba(168,85,247,0.3)]">
+                    {t("dashboard.browseServices")}
+                  </Link>
                 </div>
               ) : (
                 conversations.map((conv) => (
                   <button key={conv.partnerId} onClick={() => selectConversation(conv.partnerId, conv.partnerEmail)}
-                    className={`w-full p-4 text-left hover:bg-white/5 transition-colors border-b border-white/[0.03] flex items-center gap-3 ${selectedPartner === conv.partnerId ? "bg-emerald-500/10 border-l-2 border-l-emerald-500" : ""}`}
+                    className={`w-full p-4 text-left transition-all duration-300 border-b border-purple-500/5 flex items-center gap-3 relative ${selectedPartner === conv.partnerId ? "bg-gradient-to-r from-purple-950/30 to-cyan-950/10 border-l-4 border-l-cyan-400 shadow-[inset_0_0_15px_rgba(6,182,212,0.05)]" : "hover:bg-purple-950/10"}`}
                   >
-                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-emerald-500 to-cyan-500 flex items-center justify-center text-xs font-bold text-black flex-shrink-0">
-                      {conv.partnerEmail[0].toUpperCase()}
+                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-purple-600 via-indigo-600 to-cyan-500 p-[1px] flex-shrink-0 shadow-[0_0_10px_rgba(168,85,247,0.2)]">
+                      <div className="w-full h-full bg-slate-950 rounded-full flex items-center justify-center text-xs font-black text-cyan-400">
+                        {conv.partnerEmail[0].toUpperCase()}
+                      </div>
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center justify-between">
-                        <span className="text-sm font-semibold text-white truncate">{conv.partnerEmail}</span>
-                        <div className="flex items-center gap-1.5">
+                        <span className="text-xs font-bold text-slate-100 truncate">{conv.partnerEmail}</span>
+                        <div className="flex items-center gap-1.5 flex-shrink-0">
                           {missedCalls.has(conv.partnerId) && (
-                            <span className="text-[10px] text-red-400 font-semibold" title={t("call.missedCallLabel")}>
-                              🕐
+                            <span className="text-xs text-rose-500 animate-pulse" title={t("call.missedCallLabel")}>
+                              ⚠️
                             </span>
                           )}
-                          {conv.unreadCount > 0 && <span className="w-5 h-5 rounded-full bg-emerald-500 text-[10px] font-bold text-black flex items-center justify-center flex-shrink-0">{conv.unreadCount}</span>}
+                          {conv.unreadCount > 0 && (
+                            <span className="h-4 px-1.5 rounded-full bg-cyan-400 text-[9px] font-black text-slate-950 animate-bounce">
+                              {conv.unreadCount}
+                            </span>
+                          )}
                         </div>
                       </div>
-                      <p className="text-xs text-slate-500 truncate mt-0.5">{conv.lastMessage}</p>
-                      <p className="text-[10px] text-slate-600 mt-0.5">{new Date(conv.lastMessageAt).toLocaleDateString()}</p>
+                      <p className="text-[10px] text-slate-400 truncate mt-1 font-medium">{conv.lastMessage}</p>
+                      <p className="text-[9px] text-purple-400/40 font-mono mt-1">{new Date(conv.lastMessageAt).toLocaleDateString()}</p>
                     </div>
                   </button>
                 ))
@@ -618,47 +638,54 @@ export default function MessagesPage() {
           </div>
 
           {/* Chat Area */}
-          <div className={`${selectedPartner ? "flex" : "hidden lg:flex"} flex-1 flex-col min-w-0`}>
+          <div className={`${selectedPartner ? "flex" : "hidden lg:flex"} flex-1 flex-col min-w-0 bg-[#060614]/80`}>
             {!selectedPartner ? (
-              <div className="flex-1 flex items-center justify-center">
-                <div className="text-center p-8">
-                  <div className="text-6xl mb-4 opacity-30">💬</div>
-                  <h3 className="text-lg font-bold text-white mb-2">{t("chat.yourMessages")}</h3>
-                  <p className="text-slate-500 text-sm">{t("chat.selectConversation")}</p>
+              <div className="flex-1 flex items-center justify-center relative">
+                <div className="text-center p-8 z-10">
+                  <div className="text-7xl mb-4 animate-bounce filter drop-shadow-[0_0_20px_rgba(6,182,212,0.3)]">🛰️</div>
+                  <h3 className="text-sm uppercase tracking-widest font-black text-slate-300">{t("chat.yourMessages")}</h3>
+                  <p className="text-slate-500 text-xs mt-2">{t("chat.selectConversation")}</p>
                 </div>
               </div>
             ) : (
               <>
                 {/* Chat Header */}
-                <div className="px-5 py-4 border-b border-white/5 flex items-center gap-3">
-                  <button onClick={() => setSelectedPartner(null)} className="lg:hidden text-slate-400 hover:text-white mr-1">
-                    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
+                <div className="px-5 py-4 border-b border-purple-500/10 flex items-center gap-3 bg-slate-950/50">
+                  <button onClick={() => setSelectedPartner(null)} className="lg:hidden text-purple-400 hover:text-cyan-400 transition-colors mr-1">
+                    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M15 19l-7-7 7-7" /></svg>
                   </button>
                   {partnerPhoto ? (
-                    <Image src={normalizeUrl(partnerPhoto) || ""} alt="" width={36} height={36} className="w-9 h-9 rounded-full object-cover border border-emerald-500/30" />
+                    <div className="w-9 h-9 rounded-full bg-gradient-to-r from-purple-500 to-cyan-500 p-[1px] flex-shrink-0">
+                      <Image src={normalizeUrl(partnerPhoto) || ""} alt="" width={36} height={36} className="w-full h-full rounded-full object-cover" />
+                    </div>
                   ) : (
-                    <div className="w-9 h-9 rounded-full bg-gradient-to-br from-emerald-500 to-cyan-500 flex items-center justify-center text-xs font-bold text-black flex-shrink-0">
-                      {selectedPartnerEmail[0].toUpperCase()}
+                    <div className="w-9 h-9 rounded-full bg-gradient-to-br from-purple-600 to-cyan-500 p-[1px] flex-shrink-0">
+                      <div className="w-full h-full bg-slate-950 rounded-full flex items-center justify-center text-xs font-black text-cyan-400">
+                        {selectedPartnerEmail[0].toUpperCase()}
+                      </div>
                     </div>
                   )}
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-2">
-                      <p className="text-sm font-semibold text-white truncate">{selectedPartnerEmail}</p>
+                      <p className="text-xs font-bold text-slate-100 truncate">{selectedPartnerEmail}</p>
                       {missedCalls.has(selectedPartner) && (
-                        <span className="text-[10px] text-red-400 font-semibold">{t("call.missedCallLabel")} 🕐</span>
+                        <span className="text-[10px] bg-rose-950 border border-rose-500 text-rose-400 px-1.5 py-0.5 rounded-full font-bold uppercase tracking-wider">{t("call.missedCallLabel")} 🕐</span>
                       )}
                     </div>
-                    <p className={`text-[10px] ${partnerOnline ? "text-emerald-400" : "text-slate-500"}`}>
-                      {partnerOnline ? t("common.online") : t("common.offline")}
-                    </p>
+                    <div className="flex items-center gap-1.5 mt-0.5">
+                      <span className={`w-2 h-2 rounded-full ${partnerOnline ? "bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.6)] animate-pulse" : "bg-slate-600"}`} />
+                      <p className={`text-[9px] font-bold uppercase tracking-wider ${partnerOnline ? "text-emerald-400" : "text-slate-500"}`}>
+                        {partnerOnline ? t("common.online") : t("common.offline")}
+                      </p>
+                    </div>
                   </div>
                   <button
                     onClick={handleStartCall}
                     disabled={callState !== "idle"}
-                    className="btn-ghost !p-2.5 !rounded-full flex-shrink-0 disabled:opacity-30"
+                    className="p-3 bg-purple-950/50 hover:bg-cyan-950 border border-purple-500/20 hover:border-cyan-400 rounded-full text-cyan-400 transition-all duration-300 disabled:opacity-20 flex-shrink-0 shadow-[0_0_15px_rgba(6,182,212,0.15)]"
                     title={t("call.videoCall")}
                   >
-                    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                       <polygon points="23 7 16 12 23 17 23 7" />
                       <rect x="1" y="5" width="15" height="14" rx="2" ry="2" />
                     </svg>
@@ -667,15 +694,15 @@ export default function MessagesPage() {
 
                 {/* Order Payment Banner */}
                 {currentOrder && currentOrder.paymentStatus && (
-                  <div className={`px-5 py-3 border-b ${currentOrder.paymentStatus === "RELEASED" ? "border-emerald-500/20 bg-emerald-500/5" : currentOrder.paymentStatus === "HELD" ? "border-blue-500/20 bg-blue-500/5" : "border-white/5"}`}>
+                  <div className={`px-5 py-3 border-b ${currentOrder.paymentStatus === "RELEASED" ? "border-emerald-500/20 bg-emerald-950/20" : currentOrder.paymentStatus === "HELD" ? "border-cyan-500/20 bg-cyan-950/20" : "border-purple-500/10 bg-slate-950/40"}`}>
                     <div className="flex items-center justify-between gap-3 flex-wrap">
                       <div className="flex items-center gap-2 min-w-0">
-                        {currentOrder.paymentStatus === "HELD" && <span className="text-sm">🔒</span>}
-                        {currentOrder.paymentStatus === "RELEASED" && <span className="text-sm">✅</span>}
-                        {currentOrder.paymentStatus === "PENDING" && <span className="text-sm">⏳</span>}
-                        {currentOrder.paymentStatus === "REFUNDED" && <span className="text-sm">↩️</span>}
-                        <span className="text-sm text-slate-300">
-                          {currentOrder.service?.title && <span className="font-semibold text-white">{currentOrder.service.title}</span>}
+                        {currentOrder.paymentStatus === "HELD" && <span className="text-base">🔒</span>}
+                        {currentOrder.paymentStatus === "RELEASED" && <span className="text-base">✅</span>}
+                        {currentOrder.paymentStatus === "PENDING" && <span className="text-base">⏳</span>}
+                        {currentOrder.paymentStatus === "REFUNDED" && <span className="text-base">↩️</span>}
+                        <span className="text-[11px] text-slate-300 tracking-wide font-medium">
+                          {currentOrder.service?.title && <span className="font-bold text-slate-100 uppercase text-xs mr-1">{currentOrder.service.title}</span>}
                           {" — "}
                           {currentOrder.paymentStatus === "PENDING" && t("dashboard.awaitingPaymentAmount", { amount: fDZD(currentOrder.amount || currentOrder.service?.price || 0) })}
                           {currentOrder.paymentStatus === "HELD" && t("dashboard.paymentHeldDesc")}
@@ -686,22 +713,22 @@ export default function MessagesPage() {
                       <div className="flex gap-2 flex-shrink-0">
                         {currentOrder.paymentStatus === "PENDING" && (
                           <button onClick={() => handlePayAction("pay")} disabled={payActionLoading}
-                            className="btn-primary !py-1.5 !px-4 text-xs disabled:opacity-50 whitespace-nowrap"
+                            className="bg-gradient-to-r from-cyan-500 to-purple-500 hover:opacity-95 text-slate-950 text-[10px] font-black uppercase tracking-wider py-1.5 px-4 rounded-full transition-all duration-300 disabled:opacity-50 whitespace-nowrap"
                           >
-                            <span>{payActionLoading ? "..." : t("dashboard.payNowAmount", { amount: fDZD(currentOrder.amount || currentOrder.service?.price || 0) })}</span>
+                            {payActionLoading ? "..." : t("dashboard.payNowAmount", { amount: fDZD(currentOrder.amount || currentOrder.service?.price || 0) })}
                           </button>
                         )}
                         {currentOrder.paymentStatus === "HELD" && (
                           <button onClick={() => handlePayAction("release")} disabled={payActionLoading}
-                            className="btn-primary !py-1.5 !px-4 text-xs disabled:opacity-50 whitespace-nowrap"
+                            className="bg-gradient-to-r from-emerald-500 to-teal-500 hover:opacity-95 text-slate-950 text-[10px] font-black uppercase tracking-wider py-1.5 px-4 rounded-full transition-all duration-300 disabled:opacity-50 whitespace-nowrap"
                           >
-                            <span>{payActionLoading ? "..." : t("dashboard.confirmDelivery")}</span>
+                            {payActionLoading ? "..." : t("dashboard.confirmDelivery")}
                           </button>
                         )}
                       </div>
                     </div>
                     {payActionMsg && (
-                      <p className={`text-xs mt-2 ${payActionMsg.includes("successfully") || payActionMsg.includes("released") ? "text-emerald-400" : "text-red-400"}`}>
+                      <p className={`text-[10px] mt-2 font-bold uppercase tracking-wider ${payActionMsg.includes("successfully") || payActionMsg.includes("released") ? "text-emerald-400" : "text-rose-400"}`}>
                         {payActionMsg}
                       </p>
                     )}
@@ -709,14 +736,14 @@ export default function MessagesPage() {
                 )}
 
                 {/* Messages */}
-                <div ref={messagesContainerRef} className="flex-1 overflow-y-auto p-5 space-y-3 overscroll-contain">
+                <div ref={messagesContainerRef} className="flex-1 overflow-y-auto p-5 space-y-4 overscroll-contain custom-scrollbar">
                   {loadingMsgs ? (
-                    <div className="flex items-center justify-center h-full"><div className="text-slate-500 text-sm">{t("chat.loadingMessages")}</div></div>
+                    <div className="flex items-center justify-center h-full"><div className="text-purple-400/50 text-xs font-mono tracking-widest uppercase animate-pulse">{t("chat.loadingMessages")}</div></div>
                   ) : messages.length === 0 ? (
                     <div className="flex items-center justify-center h-full">
                       <div className="text-center">
-                        <div className="text-4xl mb-3 opacity-40">👋</div>
-                        <p className="text-slate-500 text-sm">{t("chat.startChat")}</p>
+                        <div className="text-5xl mb-3 opacity-30 filter drop-shadow-[0_0_10px_rgba(139,92,246,0.3)]">💬</div>
+                        <p className="text-slate-500 text-xs font-semibold uppercase tracking-wider">{t("chat.startChat")}</p>
                       </div>
                     </div>
                   ) : (
@@ -724,15 +751,17 @@ export default function MessagesPage() {
                       const isMe = msg.senderId === user?.id;
                       return (
                         <div key={msg.id} className={`flex ${isMe ? "justify-end" : "justify-start"}`}>
-                          <div className={`max-w-[75%] px-4 py-2.5 rounded-2xl text-sm ${isMe ? "bg-gradient-to-r from-emerald-600 to-cyan-600 text-white rounded-br-md" : "glass-sm text-slate-200 rounded-bl-md"}`}>
-                            {msg.content && <p className="leading-relaxed">{msg.content}</p>}
+                          <div className={`max-w-[75%] px-4 py-3 rounded-2xl text-xs relative ${isMe ? "bg-gradient-to-br from-purple-600 via-indigo-600 to-purple-800 text-white rounded-tr-none shadow-[0_4px_15px_rgba(147,51,234,0.15)] border-t border-purple-400/30" : "bg-slate-900/90 border border-purple-500/10 text-slate-100 rounded-tl-none shadow-[0_4px_15px_rgba(0,0,0,0.3)]"}`}>
+                            {msg.content && <p className="leading-relaxed whitespace-pre-wrap">{msg.content}</p>}
                             {msg.imageUrl && (
-                              <Image src={msg.imageUrl} alt="Shared image" width={0} height={0} sizes="100vw"
-                                className={`rounded-xl max-h-64 object-cover w-auto h-auto ${msg.content ? "mt-2" : ""} ${isMe ? "" : "border border-white/5"}`}
-                                onClick={() => window.open(msg.imageUrl!, "_blank")} style={{ cursor: "pointer" }}
-                              />
+                              <div className={`relative overflow-hidden rounded-xl ${msg.content ? "mt-2.5" : ""}`}>
+                                <Image src={msg.imageUrl} alt="Shared image" width={0} height={0} sizes="100vw"
+                                  className="max-h-64 object-cover w-auto h-auto cursor-pointer border border-purple-500/20 hover:scale-[1.02] transition-transform duration-300"
+                                  onClick={() => window.open(msg.imageUrl!, "_blank")}
+                                />
+                              </div>
                             )}
-                            <p className={`text-[10px] mt-1.5 ${isMe ? "text-emerald-200/60" : "text-slate-500"}`}>
+                            <p className={`text-[8px] font-mono mt-2 text-right ${isMe ? "text-purple-200/50" : "text-purple-400/50"}`}>
                               {new Date(msg.createdAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
                             </p>
                           </div>
@@ -744,16 +773,16 @@ export default function MessagesPage() {
                 </div>
 
                 {/* Input */}
-                <div className="p-4 border-t border-white/5">
+                <div className="p-4 border-t border-purple-500/10 bg-slate-950/40">
                   {uploadError && (
-                    <div className="mb-2 p-2 bg-red-500/10 border border-red-500/20 text-red-400 text-xs rounded-lg flex items-center gap-2">
+                    <div className="mb-3 p-3 bg-rose-950/40 border border-rose-500/30 text-rose-400 text-[10px] uppercase tracking-wider font-bold rounded-xl flex items-center gap-2">
                       <span>⚠️</span> {uploadError}
                     </div>
                   )}
                   <div className="flex gap-2 items-center">
-                    <button type="button" onClick={() => document.getElementById("chat-image-input")?.click()} className="btn-ghost !p-2.5 !rounded-full flex-shrink-0" title={t("chat.sendPhoto")}>
-                      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    <button type="button" onClick={() => document.getElementById("chat-image-input")?.click()} className="p-3 bg-purple-950/50 hover:bg-purple-900 border border-purple-500/20 text-purple-400 hover:text-cyan-400 rounded-full transition-all duration-300" title={t("chat.sendPhoto")}>
+                      <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                       </svg>
                     </button>
                     <input id="chat-image-input" type="file" accept="image/*" className="hidden"
@@ -775,10 +804,10 @@ export default function MessagesPage() {
                     />
                     <input id="chat-message" name="chatMessage" value={newMessage} onChange={(e) => setNewMessage(e.target.value)}
                       onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); handleSend(); }}}
-                      className="input-field flex-1 !rounded-full" placeholder={t("chat.typeMessage")} autoComplete="off"
+                      className="bg-slate-900/90 border border-purple-500/20 text-slate-100 text-xs px-4 py-3 rounded-xl flex-1 focus:outline-none focus:ring-1 focus:ring-cyan-400 focus:border-cyan-400" placeholder={t("chat.typeMessage")} autoComplete="off"
                     />
-                    <button onClick={handleSend} disabled={sending || !newMessage.trim()} className="btn-primary !py-2.5 !px-5 text-sm disabled:opacity-50">
-                      <span>{sending ? "..." : t("chat.send")}</span>
+                    <button onClick={handleSend} disabled={sending || !newMessage.trim()} className="py-3 px-6 rounded-xl bg-gradient-to-r from-purple-600 via-indigo-600 to-cyan-500 text-white font-bold text-xs uppercase tracking-wider transition-all duration-300 shadow-[0_0_15px_rgba(139,92,246,0.3)] hover:opacity-95 disabled:opacity-20 flex-shrink-0">
+                      {sending ? "..." : t("chat.send")}
                     </button>
                   </div>
                 </div>
@@ -790,53 +819,53 @@ export default function MessagesPage() {
 
       {/* REVIEW MODAL */}
       {reviewModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm">
-          <div className="glass max-w-lg w-full p-8 rounded-2xl shadow-2xl border border-slate-700/50">
+        <div className="fixed inset-0 z-[120] flex items-center justify-center p-4 bg-slate-950/90 backdrop-blur-md">
+          <div className="bg-[#09091a] max-w-md w-full p-8 rounded-3xl border border-purple-500/30 shadow-[0_0_50px_rgba(139,92,246,0.25)]">
             {modalView === "rate" && (
               <>
                 <div className="text-center mb-6">
-                  <div className="text-5xl mb-3">⭐</div>
-                  <h2 className="text-2xl font-bold text-white">{t("review.title")}</h2>
-                  <p className="text-slate-400 text-sm mt-1">{reviewModal.serviceTitle}</p>
-                  <p className="text-slate-500 text-xs">{t("dashboard.withExpert", { name: reviewModal.expertName })}</p>
+                  <div className="text-5xl mb-4 animate-bounce">⭐</div>
+                  <h2 className="text-xl font-black uppercase tracking-wider text-slate-100">{t("review.title")}</h2>
+                  <p className="text-purple-300 text-xs mt-1 font-semibold">{reviewModal.serviceTitle}</p>
+                  <p className="text-slate-500 text-[10px] uppercase font-bold mt-1">{t("dashboard.withExpert", { name: reviewModal.expertName })}</p>
                 </div>
                 <div className="mb-6 text-center">
-                  <p className="text-sm font-semibold text-slate-300 mb-3">{t("review.rating")}</p>
+                  <p className="text-[10px] uppercase tracking-widest font-black text-purple-400 mb-3">{t("review.rating")}</p>
                   <div className="flex justify-center gap-2">
                     {[1, 2, 3, 4, 5].map((star) => (
                       <button key={star} onClick={() => setModalRating(star)}
                         onMouseEnter={() => setModalHover(star)} onMouseLeave={() => setModalHover(0)}
-                        className="transition-all hover:scale-125 focus:outline-none"
+                        className="transition-transform hover:scale-125 focus:outline-none"
                       >
-                        <StarIcon size={36} className={star <= (modalHover || modalRating) ? "text-amber-400 drop-shadow-[0_0_8px_rgba(251,191,36,0.6)]" : "text-slate-600 hover:text-amber-300/50"} />
+                        <StarIcon size={32} className={star <= (modalHover || modalRating) ? "text-amber-400 drop-shadow-[0_0_8px_rgba(251,191,36,0.6)]" : "text-slate-700 hover:text-amber-300/40"} />
                       </button>
                     ))}
                   </div>
                 </div>
                 <div className="mb-6">
                   <textarea value={modalComment} onChange={(e) => setModalComment(e.target.value)}
-                    className="input-field w-full" rows={3} placeholder={t("review.commentPlaceholder")}
+                    className="bg-slate-900 border border-purple-500/15 text-slate-100 text-xs p-3 rounded-xl w-full focus:outline-none focus:ring-1 focus:ring-purple-400" rows={3} placeholder={t("review.commentPlaceholder")}
                   />
                 </div>
-                {modalError && <div className="p-3 bg-red-500/10 border border-red-500/20 text-red-400 text-sm rounded-lg mb-4">{modalError}</div>}
+                {modalError && <div className="p-3 bg-rose-950/40 border border-rose-500/20 text-rose-400 text-xs rounded-xl mb-4 font-mono">{modalError}</div>}
                 <div className="flex gap-3">
-                  <button onClick={handleModalReviewSubmit} disabled={modalSubmitting || modalRating === 0} className="btn-primary flex-1 disabled:opacity-50">{modalSubmitting ? t("review.submitting") : t("review.submit")}</button>
-                  <button onClick={closeModal} className="btn-ghost px-5">{t("common.cancel")}</button>
+                  <button onClick={handleModalReviewSubmit} disabled={modalSubmitting || modalRating === 0} className="py-3 bg-gradient-to-r from-purple-600 to-cyan-500 text-white font-bold text-xs uppercase tracking-wider rounded-xl flex-1 disabled:opacity-20 shadow-[0_0_15px_rgba(139,92,246,0.3)]">{modalSubmitting ? t("review.submitting") : t("review.submit")}</button>
+                  <button onClick={closeModal} className="py-3 border border-purple-500/10 hover:bg-slate-900 text-slate-400 font-bold text-xs uppercase tracking-wider rounded-xl px-5 transition-colors">{t("common.cancel")}</button>
                 </div>
-                <div className="mt-6 pt-4 border-t border-slate-700/30 text-center">
-                  <button onClick={() => setModalView("report")} className="text-xs text-red-400 hover:text-red-300 transition-colors font-medium">⚠️ {t("dashboard.reportCoach")}</button>
+                <div className="mt-6 pt-4 border-t border-purple-500/10 text-center">
+                  <button onClick={() => setModalView("report")} className="text-[10px] text-rose-400 hover:text-rose-300 font-bold uppercase tracking-wider">⚠️ {t("dashboard.reportCoach")}</button>
                 </div>
               </>
             )}
             {modalView === "report" && (
               <>
                 <div className="text-center mb-6">
-                  <div className="text-5xl mb-3">⚠️</div>
-                  <h2 className="text-2xl font-bold text-white">{t("report.title")}</h2>
-                  <p className="text-slate-400 text-sm mt-1">{reviewModal.serviceTitle}</p>
+                  <div className="text-5xl mb-4 animate-pulse">⚠️</div>
+                  <h2 className="text-xl font-black uppercase tracking-wider text-rose-400">{t("report.title")}</h2>
+                  <p className="text-slate-400 text-xs mt-1">{reviewModal.serviceTitle}</p>
                 </div>
                 <div className="mb-4">
-                  <select value={modalReportReason} onChange={(e) => setModalReportReason(e.target.value)} className="input-field w-full">
+                  <select value={modalReportReason} onChange={(e) => setModalReportReason(e.target.value)} className="bg-slate-900 border border-purple-500/15 text-slate-100 text-xs p-3 rounded-xl w-full focus:outline-none focus:ring-1 focus:ring-purple-400">
                     <option value="">{t("report.reasonSelect")}</option>
                     <option value="Scam or fraudulent">{t("report.reasonScam")}</option>
                     <option value="Harassment or abuse">{t("report.reasonHarassment")}</option>
@@ -846,25 +875,27 @@ export default function MessagesPage() {
                 </div>
                 <div className="mb-6">
                   <textarea value={modalReportDesc} onChange={(e) => setModalReportDesc(e.target.value)}
-                    className="input-field w-full" rows={3} placeholder={t("report.descriptionPlaceholder")}
+                    className="bg-slate-900 border border-purple-500/15 text-slate-100 text-xs p-3 rounded-xl w-full focus:outline-none focus:ring-1 focus:ring-purple-400" rows={3} placeholder={t("report.descriptionPlaceholder")}
                   />
                 </div>
                 {modalReportMsg && (
-                  <div className={`p-3 text-sm rounded-lg mb-4 ${modalReportMsg.includes("success") ? "bg-emerald-500/10 border border-emerald-500/20 text-emerald-400" : "bg-red-500/10 border border-red-500/20 text-red-400"}`}>
+                  <div className={`p-3 text-xs font-mono rounded-xl mb-4 ${modalReportMsg.includes("success") ? "bg-emerald-950/40 border border-emerald-500/20 text-emerald-400" : "bg-rose-950/40 border border-rose-500/20 text-rose-400"}`}>
                     {modalReportMsg}
                   </div>
                 )}
                 <div className="flex gap-3">
-                  <button onClick={handleModalReportSubmit} disabled={modalReportSubmitting || !modalReportReason} className="btn-primary flex-1 bg-gradient-to-r from-red-500 to-pink-500 disabled:opacity-50">{modalReportSubmitting ? "..." : t("report.submit")}</button>
-                  <button onClick={() => setModalView("rate")} className="btn-ghost px-5">{t("common.back")}</button>
+                  <button onClick={handleModalReportSubmit} disabled={modalReportSubmitting || !modalReportReason} className="py-3 bg-gradient-to-r from-rose-600 to-pink-600 text-white font-bold text-xs uppercase tracking-wider rounded-xl flex-1 disabled:opacity-20 shadow-[0_0_15px_rgba(244,63,94,0.3)]">{modalReportSubmitting ? "..." : t("report.submit")}</button>
+                  <button onClick={() => setModalView("rate")} className="py-3 border border-purple-500/10 hover:bg-slate-900 text-slate-400 font-bold text-xs uppercase tracking-wider rounded-xl px-5 transition-colors">{t("common.back")}</button>
                 </div>
               </>
             )}
             {modalView === "done" && (
               <div className="text-center py-8">
-                <div className="text-6xl mb-4">✅</div>
-                <h2 className="text-2xl font-bold text-white mb-2">{modalRating > 0 ? t("review.success") : t("report.success")}</h2>
-                <button onClick={closeModal} className="btn-primary mt-6 px-8"><span>{t("common.back")}</span></button>
+                <div className="text-6xl mb-4">👾</div>
+                <h2 className="text-xl font-black uppercase tracking-wider text-slate-100 mb-2">{modalRating > 0 ? t("review.success") : t("report.success")}</h2>
+                <button onClick={closeModal} className="mt-6 py-3 px-8 rounded-xl bg-gradient-to-r from-purple-600 to-cyan-500 text-white font-bold text-xs uppercase tracking-wider transition-all duration-300 shadow-[0_0_15px_rgba(139,92,246,0.3)]">
+                  {t("common.back")}
+                </button>
               </div>
             )}
           </div>

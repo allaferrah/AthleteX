@@ -281,6 +281,15 @@ const en: Translations = {
     noPlanScheduled: "No plan scheduled for today",
     completed: "Completed",
   },
+  slogan: {
+    badge: "Our Promise",
+    main: "Towards a Healthier Life",
+    sub: "Smart nutrition for a better life — balanced food, balanced living",
+    pillar1: "Better Health",
+    pillar2: "Certified Experts",
+    pillar3: "Integrated Fitness",
+    pillar4: "AI-Powered",
+  },
   home2: {
     testimonialsTitle: "What Our Users Say",
     testimonialsSubtitle: "Join thousands of satisfied users who transformed their health",

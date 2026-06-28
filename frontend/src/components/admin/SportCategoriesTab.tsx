@@ -128,10 +128,10 @@ export default function SportCategoriesTab({ searchQuery = "" }: { searchQuery?:
                   <tr><td colSpan={6} className="p-12 text-center text-slate-500">No results for &apos;{searchQuery}&apos;</td></tr>
                 ) : (
                   filtered.map((s) => (
-                    <tr key={s.id} className="border-b border-white/[0.03] hover:bg-white/[0.02] transition-colors">
+                    <tr key={s.id} className="border-b border-white/[0.03] hover:bg-white/5 transition-colors">
                       <td className="p-4">
                         {s.imageUrl
-                          ? <Image src={s.imageUrl} alt={s.name} width={40} height={40} className="w-10 h-10 rounded-lg object-cover border border-white/10" />
+                          ? <Image src={s.imageUrl} alt={s.name} width={40} height={40} className="w-10 h-10 rounded-lg object-cover border border-white/80" />
                           : <span className="text-2xl">{s.icon}</span>}
                       </td>
                       <td className="p-4 text-sm font-semibold text-white">{s.name}</td>

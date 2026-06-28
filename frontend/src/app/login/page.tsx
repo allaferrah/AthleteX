@@ -37,9 +37,9 @@ export default function Login() {
       <div className="absolute top-1/4 left-1/4 w-60 h-60 bg-emerald-500/5 rounded-full filter blur-3xl pointer-events-none" />
       <div className="absolute bottom-1/4 right-1/4 w-60 h-60 bg-cyan-500/5 rounded-full filter blur-3xl pointer-events-none" />
 
-      <div className="glass-card-premium p-6 sm:p-10 w-full max-w-md animate-fade-up border border-white/10 relative z-10">
+      <div className="glass-card-premium p-6 sm:p-10 w-full max-w-md animate-fade-up border border-white/80 relative z-10">
         <div className="text-center mb-8">
-          <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-emerald-400 to-cyan-500 mx-auto mb-4 flex items-center justify-center text-2xl font-black text-black shadow-lg shadow-emerald-500/10 transition-transform hover:scale-105 hover:rotate-3 duration-300">
+          <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-emerald-400 to-cyan-500 mx-auto mb-4 flex items-center justify-center text-2xl font-black text-black shadow-lg shadow-emerald-500/15 transition-transform hover:scale-105 hover:rotate-3 duration-300">
             A
           </div>
           <h1 className="text-3xl font-black text-white tracking-tight mb-2">{t("auth.loginTitle")}</h1>
@@ -97,7 +97,7 @@ export default function Login() {
 
         {/* Social Proof */}
         <div className="mt-6 pt-6 border-t border-white/5 text-center">
-          <p className="text-[10px] text-slate-600 font-bold uppercase tracking-widest">
+          <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">
             Join 10k+ athletes & fitness enthusiasts
           </p>
         </div>

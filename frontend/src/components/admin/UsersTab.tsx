@@ -92,12 +92,12 @@ export default function UsersTab({ searchQuery = "" }: { searchQuery?: string })
                   <tr><td colSpan={6} className="p-12 text-center text-slate-500">No results for &apos;{searchQuery}&apos;</td></tr>
                 ) : (
                   filtered.map((u: any) => (
-                    <tr key={u.id} className="border-b border-white/[0.03] hover:bg-white/[0.02] transition-colors">
+                    <tr key={u.id} className="border-b border-white/[0.03] hover:bg-white/5 transition-colors">
                       <td className="p-4">
                         <div className="flex items-center gap-3">
                           {u.profile?.photoUrl
                             ? <Image src={u.profile.photoUrl} alt="" width={32} height={32} className="w-8 h-8 rounded-full object-cover" />
-                            : <div className="w-8 h-8 rounded-full bg-gradient-to-br from-slate-600 to-slate-700 flex items-center justify-center text-xs font-bold text-white">{u.email[0].toUpperCase()}</div>}
+                            : <div className="w-8 h-8 rounded-full bg-gradient-to-br from-gray-200 to-gray-300 flex items-center justify-center text-xs font-bold text-slate-800">{u.email[0].toUpperCase()}</div>}
                           <div><p className="text-sm font-semibold text-white">{u.profile?.fullName || u.email}</p><p className="text-xs text-slate-500">{u.email}</p></div>
                         </div>
                       </td>
@@ -109,7 +109,7 @@ export default function UsersTab({ searchQuery = "" }: { searchQuery?: string })
                         <div className="flex gap-2">
                           {u.role !== "ADMIN" && (
                             <select value={u.role} onChange={(e) => handleRoleChange(u.id, e.target.value)}
-                              className="bg-slate-800 text-xs text-slate-300 border border-white/10 rounded-lg px-2 py-1 outline-none focus:border-emerald-500">
+                              className="bg-slate-800 text-xs text-slate-300 border border-white/80 rounded-lg px-2 py-1 outline-none focus:border-emerald-500">
                               <option value="USER">USER</option><option value="EXPERT">EXPERT</option>
                             </select>
                           )}

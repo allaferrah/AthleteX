@@ -15,7 +15,7 @@ export default function IncomingCallModal({
 }: Props) {
   return (
     <div className="fixed inset-0 z-[110] bg-black/70 flex items-end sm:items-center justify-center">
-      <div className="w-full max-w-sm bg-gray-900 border border-white/10 rounded-t-2xl sm:rounded-2xl p-8 animate-slide-in">
+      <div className="w-full max-w-sm bg-slate-900 border border-white/5 rounded-t-2xl sm:rounded-2xl p-8 animate-slide-in">
         <div className="flex flex-col items-center gap-4">
           {callerPhoto ? (
             <img
@@ -24,7 +24,7 @@ export default function IncomingCallModal({
               className="w-20 h-20 rounded-full object-cover ring-2 ring-emerald-500/50"
             />
           ) : (
-            <div className="w-20 h-20 rounded-full bg-gray-700 ring-2 ring-emerald-500/50 flex items-center justify-center text-3xl text-gray-400">
+            <div className="w-20 h-20 rounded-full bg-gray-700 ring-2 ring-emerald-500/50 flex items-center justify-center text-3xl text-slate-500">
               {callerName?.charAt(0)?.toUpperCase() || "?"}
             </div>
           )}
@@ -53,7 +53,7 @@ export default function IncomingCallModal({
             </button>
           </div>
 
-          <p className="text-xs text-gray-500">
+          <p className="text-xs text-slate-400">
             Accept with video and audio
           </p>
         </div>

@@ -177,7 +177,11 @@ GENERAL GUIDELINES:
 
 // ─── Main Controller ─────────────────────────────────────────────────────────
 
+let planReqCounter = 0;
+
 exports.generatePlan = async (req, res) => {
+  const reqId = ++planReqCounter;
+  console.log(`[GENERATE:${reqId}] ENTERED — userId: ${req.user?.userId}`);
   try {
     const {
       age,
@@ -485,15 +489,6 @@ STRICT RULES
         ? "\n💡 Conseils:\n" + workout.generalTips.map((t) => `  - ${t}`).join("\n")
         : "");
 
-    // ── Save to DB ────────────────────────────────────────────────────────────
-    savePlan({
-      userId: req.user?.userId || 1,
-      calories: nutrition.calories,
-      mealPlan: mealPlanText,
-      workoutPlan: workoutPlanText,
-      workoutPlace: location
-    });
-
     // ── Increment usage counter ───────────────────────────────────────────────
     try {
       await prisma.user.update({
@@ -503,6 +498,8 @@ STRICT RULES
     } catch (e) {
       console.warn("Failed to increment AI usage counter:", e.message);
     }
+
+    console.log(`[GENERATE:${reqId}] SUCCESS — returning plan data (id: null, no DB save)`);
 
     // ── Response ──────────────────────────────────────────────────────────────
     res.status(201).json({
@@ -537,14 +534,18 @@ STRICT RULES
     });
 
   } catch (err) {
-    console.error("Server error:", err);
+    console.error(`[GENERATE:${reqId}] ERROR:`, err.message);
     res.status(500).json({ error: err.message });
   }
 };
 
 // ─── Save Plan ─────────────────────────────────────────────────────────────────
 
+let saveReqCounter = 0;
+
 exports.savePlan = async (req, res) => {
+  const reqId = ++saveReqCounter;
+  console.log(`[SAVE:${reqId}] ENTERED — userId: ${req.user?.userId}, title: "${req.body?.title || "(empty)"}"`);
   try {
     const { title, calories, mealPlan, workoutPlan, workoutPlace, data } = req.body;
     const plan = await prisma.aIPlan.create({
@@ -558,9 +559,10 @@ exports.savePlan = async (req, res) => {
         data: data || undefined,
       }
     });
+    console.log(`[SAVE:${reqId}] SUCCESS — planId: ${plan.id}, title: "${plan.title}"`);
     res.status(201).json({ message: "Plan saved", plan });
   } catch (err) {
-    console.error("Save plan error:", err);
+    console.error(`[SAVE:${reqId}] ERROR:`, err.message);
     res.status(500).json({ error: err.message });
   }
 };

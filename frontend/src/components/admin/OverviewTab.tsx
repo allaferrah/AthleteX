@@ -42,7 +42,7 @@ export default function OverviewTab() {
               t("admin.fileUploads"),
               t("admin.aiService"),
             ].map((label, i) => (
-              <div key={i} className="flex items-center gap-3 px-4 py-3 rounded-xl bg-white/[0.02] border border-white/[0.04]">
+              <div key={i} className="flex items-center gap-3 px-4 py-3 rounded-xl bg-white/5 border border-white/[0.04]">
                 <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shadow-lg" style={{ boxShadow: "0 0 8px rgba(52,211,153,0.4)" }} />
                 <span className="text-sm text-slate-300">{label}</span>
                 <span className="ml-auto text-[0.6rem] font-bold tracking-wider uppercase text-emerald-400/60">Online</span>
@@ -64,11 +64,11 @@ export default function OverviewTab() {
               { href: "/ai", label: t("nav.aiAssistant") },
             ].map((link, i) => (
               <Link key={i} href={link.href}
-                className="flex items-center gap-3 px-4 py-3 rounded-xl bg-white/[0.02] border border-white/[0.04] text-sm text-slate-300 hover:text-white hover:bg-emerald-500/5 hover:border-emerald-500/10 transition-all group"
+                className="flex items-center gap-3 px-4 py-3 rounded-xl bg-white/5 border border-white/[0.04] text-sm text-slate-300 hover:text-white hover:bg-emerald-500/5 hover:border-emerald-500/10 transition-all group"
               >
                 <span className="w-1.5 h-1.5 rounded-full bg-slate-600 group-hover:bg-emerald-400 transition-colors" />
                 <span>{link.label}</span>
-                <svg className="ml-auto w-3.5 h-3.5 text-slate-600 group-hover:text-emerald-400 transition-colors" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><polyline points="9 18 15 12 9 6"/></svg>
+                <svg className="ml-auto w-3.5 h-3.5 text-slate-400 group-hover:text-emerald-400 transition-colors" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><polyline points="9 18 15 12 9 6"/></svg>
               </Link>
             ))}
           </div>

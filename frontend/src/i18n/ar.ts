@@ -281,6 +281,15 @@ const ar: Translations = {
     noPlanScheduled: "لا توجد خطة مجدولة لليوم",
     completed: "مكتمل",
   },
+  slogan: {
+    badge: "شعارنا",
+    main: "نحو حياة أكثر صحة",
+    sub: "التغذية الذكية لحياة أفضل — غذاء متوازن، حياة متوازنة",
+    pillar1: "صحة أفضل",
+    pillar2: "خبراء معتمدون",
+    pillar3: "لياقة متكاملة",
+    pillar4: "ذكاء اصطناعي",
+  },
   home2: {
     testimonialsTitle: "ماذا يقول مستخدمونا",
     testimonialsSubtitle: "انضم إلى آلاف المستخدمين الراضين الذين غيروا صحتهم",
