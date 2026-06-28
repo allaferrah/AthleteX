@@ -259,7 +259,6 @@ body::before {
 }
 
 .dashboard-main {
-  padding: 2rem 2.5rem;
   overflow-y: auto;
   position: relative;
 }
@@ -268,8 +267,6 @@ body::before {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 2rem;
-  padding-bottom: 1.5rem;
   border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 }
 
