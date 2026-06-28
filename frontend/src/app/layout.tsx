@@ -5,6 +5,7 @@ import NavbarWrapper from "@/components/NavbarWrapper";
 import ContentWrapper from "@/components/ContentWrapper";
 import FooterWrapper from "@/components/FooterWrapper";
 import { LocaleProvider } from "@/i18n/LocaleContext";
+import { CallProvider } from "@/contexts/CallContext";
 import { cookies } from "next/headers";
 
 const geistSans = Geist({
@@ -35,9 +36,11 @@ export default async function RootLayout({
       <body className="min-h-screen flex flex-col relative font-sans text-white bg-backdrop" suppressHydrationWarning>
 
         <LocaleProvider initialLocale={initialLocale}>
-          <NavbarWrapper />
-          <ContentWrapper>{children}</ContentWrapper>
-          <FooterWrapper />
+          <CallProvider>
+            <NavbarWrapper />
+            <ContentWrapper>{children}</ContentWrapper>
+            <FooterWrapper />
+          </CallProvider>
         </LocaleProvider>
       </body>
     </html>

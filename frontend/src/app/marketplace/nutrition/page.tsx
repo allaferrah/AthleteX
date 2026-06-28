@@ -110,7 +110,7 @@ export default function NutritionPage() {
       )}
 
       {!loading && filtered.length === 0 && (
-        <div className="glass p-16 text-center mt-8 animate-fade-up">
+        <div className="glass p-8 sm:p-16 text-center mt-8 animate-fade-up">
           <div className="text-6xl mb-4">🥗</div>
           <h2 className="text-2xl font-bold text-white mb-2">
             {search ? t("marketplace.noServicesSearch", { category: t("nav.nutrition") }) : t("marketplace.noServicesCategoryYet", { category: t("nav.nutrition") })}

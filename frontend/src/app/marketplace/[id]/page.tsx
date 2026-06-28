@@ -107,7 +107,7 @@ export default function ServiceDetails() {
   if (!service) {
     return (
       <div className="py-10 max-w-4xl mx-auto text-center">
-        <div className="glass p-16">
+        <div className="glass p-8 sm:p-16">
           <div className="text-6xl mb-4">🔍</div>
           <h2 className="text-2xl font-bold text-white mb-2">Service not found</h2>
           <p className="text-slate-400 mb-6">This service may have been removed or doesn&apos;t exist.</p>

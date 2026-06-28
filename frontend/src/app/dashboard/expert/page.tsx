@@ -18,6 +18,7 @@ import {
 import type { CreatePcCallbacks } from "@/lib/webrtc";
 import { useCallSound } from "@/lib/useCallSound";
 import { normalizeUrl } from "@/lib/url";
+import { useInCall } from "@/contexts/CallContext";
 import VideoCallOverlay from "@/components/video-call/VideoCallOverlay";
 import IncomingCallModal from "@/components/video-call/IncomingCallModal";
 
@@ -876,6 +877,8 @@ function ChatTab() {
   const isCallActiveRef = useRef(false);
   const callStateRef = useRef(callState);
   useEffect(() => { callStateRef.current = callState; }, [callState]);
+  const { setInCall } = useInCall();
+  useEffect(() => { setInCall(callState === "connected"); }, [callState, setInCall]);
   const pendingCandidatesRef = useRef<RTCIceCandidateInit[]>([]);
 
   const flushPendingCandidates = useCallback(async () => {

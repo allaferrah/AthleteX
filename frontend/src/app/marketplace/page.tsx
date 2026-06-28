@@ -36,13 +36,13 @@ export default function MarketplaceLanding() {
   ];
 
   return (
-    <div className="relative">
+    <div className="relative overflow-x-hidden">
       {/* Decorative background gradients */}
-      <div className="absolute top-0 left-1/4 w-80 h-80 bg-emerald-500/5 rounded-full filter blur-3xl pointer-events-none" />
-      <div className="absolute bottom-0 right-1/4 w-80 h-80 bg-blue-500/5 rounded-full filter blur-3xl pointer-events-none" />
+      <div className="absolute top-0 left-1/4 w-60 sm:w-80 h-60 sm:h-80 bg-emerald-500/5 rounded-full filter blur-3xl pointer-events-none" />
+      <div className="absolute bottom-0 right-1/4 w-60 sm:w-80 h-60 sm:h-80 bg-blue-500/5 rounded-full filter blur-3xl pointer-events-none" />
 
       {/* Header */}
-      <div className="glass p-8 sm:p-10 text-center mb-16 animate-fade-up relative z-10 rounded-2xl border border-white/5 max-w-3xl mx-auto">
+      <div className="glass p-6 sm:p-8 md:p-10 text-center mb-12 sm:mb-16 animate-fade-up relative z-10 rounded-2xl border border-white/5 max-w-3xl mx-auto">
         <div className="badge badge-emerald mb-4 border border-emerald-500/20 px-3 py-1">{t("marketplace.verifiedBadge")}</div>
         <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-white mb-4 tracking-tight leading-none">
           {t("marketplace.title")}{" "}
@@ -63,12 +63,12 @@ export default function MarketplaceLanding() {
             <Link
               key={cat.slug}
               href={`/marketplace/${cat.slug}`}
-              className={`glass-card-premium p-8 md:p-10 border border-white/5 ${cat.borderHover} ${cat.glow} group animate-fade-up-d${i + 1} flex flex-col justify-between`}
+              className={`glass-card-premium p-6 sm:p-8 md:p-10 border border-white/5 ${cat.borderHover} ${cat.glow} group animate-fade-up-d${i + 1} flex flex-col justify-between`}
               style={{ animationDelay: `${i * 150}ms` }}
             >
               <div>
                 {/* Icon */}
-                <div className={`w-20 h-20 rounded-2xl bg-gradient-to-br ${cat.gradient} flex items-center justify-center text-4xl mb-6 shadow-md border border-white/5 transform transition-all duration-500 group-hover:-translate-y-2 group-hover:scale-105`}>
+                <div className={`w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-gradient-to-br ${cat.gradient} flex items-center justify-center text-3xl sm:text-4xl mb-4 sm:mb-6 shadow-md border border-white/5 transform transition-all duration-500 group-hover:-translate-y-2 group-hover:scale-105`}>
                   {cat.icon}
                 </div>
 
@@ -108,8 +108,8 @@ export default function MarketplaceLanding() {
       </div>
 
       {/* Stats */}
-      <div className="mt-20 max-w-3xl mx-auto text-center animate-fade-up-d3 relative z-10">
-        <div className="glass-card-premium p-8 border border-white/80">
+      <div className="mt-12 sm:mt-20 max-w-3xl mx-auto text-center animate-fade-up-d3 relative z-10">
+        <div className="glass-card-premium p-6 sm:p-8 border border-white/80">
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
             {[
               { value: "50+", label: t("marketplace.statExperts"), color: "text-amber-400" },
