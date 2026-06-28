@@ -146,26 +146,16 @@ function AdminDashboardInner() {
                 <p className="text-xs text-slate-500">Dashboard overview &amp; management</p>
               </div>
             </div>
-            <div className="flex items-center gap-4">
-              <div className="search-bar max-md:hidden">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="rgba(148,163,184,0.5)" strokeWidth="2" strokeLinecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-                <input type="text" placeholder="Search..." value={search} onChange={(e) => setSearch(e.target.value)} />
-              </div>
-              <button onClick={handleLogout}
-                className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold text-red-400 hover:text-red-300 hover:bg-red-500/10 transition-all"
-              >
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
-                <span className="hidden sm:inline">Logout</span>
-              </button>
-            </div>
+            <button onClick={handleLogout}
+              className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold text-red-400 hover:text-red-300 hover:bg-red-500/10 transition-all"
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+              <span className="hidden sm:inline">Logout</span>
+            </button>
           </div>
-
-          {/* Mobile search — only shows below md */}
-          <div className="md:hidden mb-4">
-            <div className="search-bar w-full max-w-full">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="rgba(148,163,184,0.5)" strokeWidth="2" strokeLinecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-              <input type="text" placeholder="Search..." value={search} onChange={(e) => setSearch(e.target.value)} />
-            </div>
+          <div className="search-bar w-full max-w-xs sm:max-w-sm mb-4">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="rgba(148,163,184,0.5)" strokeWidth="2" strokeLinecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <input type="text" placeholder="Search..." value={search} onChange={(e) => setSearch(e.target.value)} />
           </div>
 
           {/* Tab Content — keep all tabs mounted, toggle visibility */}
