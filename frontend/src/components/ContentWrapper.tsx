@@ -11,7 +11,7 @@ export default function ContentWrapper({ children }: ContentWrapperProps) {
   const pathname = usePathname();
 
   // Determine if the current route needs a raw, unpadded layout (Home or Admin)
-  const isUnpaddedLayout = pathname === "/" || pathname.startsWith("/dashboard/admin");
+  const isUnpaddedLayout = pathname === "/" || pathname.startsWith("/dashboard/admin") || pathname.startsWith("/dashboard/user") || pathname.startsWith("/dashboard/expert");
 
   // Base classes applied to all wrapper states
   const baseClasses = "flex-1 relative z-10";
