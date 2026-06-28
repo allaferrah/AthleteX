@@ -486,7 +486,7 @@ export default function MessagesPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#03030f] text-slate-100 relative overflow-x-hidden font-sans select-none selection:bg-purple-500 selection:text-white">
+    <div className="bg-[#03030f] text-slate-100 relative overflow-x-hidden font-sans select-none selection:bg-purple-500 selection:text-white">
       {/* Cosmic background effects */}
       <div className="absolute top-[-10%] left-[-10%] w-[30%] sm:w-[50%] h-[30%] sm:h-[50%] rounded-full bg-indigo-900/10 blur-[120px] pointer-events-none" />
       <div className="absolute bottom-[-10%] right-[-10%] w-[30%] sm:w-[50%] h-[30%] sm:h-[50%] rounded-full bg-purple-900/10 blur-[120px] pointer-events-none" />
