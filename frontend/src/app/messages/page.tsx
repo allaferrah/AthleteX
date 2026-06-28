@@ -217,9 +217,12 @@ export default function MessagesPage() {
   }, []);
 
   useEffect(() => {
-    if (messages.length !== msgCountRef.current) {
-      const container = messagesContainerRef.current;
-      if (container) container.scrollTop = container.scrollHeight;
+    if (messages.length > 0 && messages.length !== msgCountRef.current) {
+      const timer = setTimeout(() => {
+        messagesEndRef.current?.scrollIntoView({ behavior: "auto" });
+      }, 50);
+      msgCountRef.current = messages.length;
+      return () => clearTimeout(timer);
     }
     msgCountRef.current = messages.length;
   }, [messages]);
@@ -250,6 +253,7 @@ export default function MessagesPage() {
     const order = myOrders.find((o: any) => o.service?.expert?.id === partnerId || o.service?.expertId === partnerId);
     setCurrentOrder(order || null);
 
+    msgCountRef.current = 0;
     try {
       const data = await messageAPI.getMessages(partnerId);
       setMessages(data);
