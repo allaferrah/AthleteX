@@ -580,7 +580,7 @@ export default function MessagesPage() {
         <span className="text-xs tracking-wider uppercase font-bold text-purple-400 bg-purple-950/40 border border-purple-500/20 py-1 px-3 rounded-full shadow-[0_0_10px_rgba(168,85,247,0.1)]">{t("nav.messages")}</span>
       </div>
 
-      <div className="mx-2 sm:mx-4 border border-purple-500/10 rounded-2xl bg-slate-950/60 backdrop-blur-xl overflow-hidden shadow-[0_0_50px_rgba(139,92,246,0.05)] min-h-[200px] md:min-h-[350px]" style={{ height: "calc(100dvh - 160px)" }}>
+      <div className="mx-2 sm:mx-4 border border-purple-500/10 rounded-2xl bg-slate-950/60 backdrop-blur-xl overflow-x-hidden shadow-[0_0_50px_rgba(139,92,246,0.05)]" style={{ height: "calc(100dvh - 220px)" }}>
         <div className="flex h-full">
           {/* Conversation List */}
           <div className={`${selectedPartner ? "hidden lg:flex" : "flex"} w-full lg:w-80 border-r border-purple-500/10 flex-col flex-shrink-0 bg-slate-950/40`}>
@@ -782,8 +782,8 @@ export default function MessagesPage() {
                       <span>⚠️</span> {uploadError}
                     </div>
                   )}
-                  <div className="flex gap-2 items-center">
-                    <button type="button" onClick={() => document.getElementById("chat-image-input")?.click()} className="p-3 bg-purple-950/50 hover:bg-purple-900 border border-purple-500/20 text-purple-400 hover:text-cyan-400 rounded-full transition-all duration-300" title={t("chat.sendPhoto")}>
+                  <div className="flex gap-1.5 sm:gap-2 items-center">
+                    <button type="button" onClick={() => document.getElementById("chat-image-input")?.click()} className="p-2 sm:p-3 bg-purple-950/50 hover:bg-purple-900 border border-purple-500/20 text-purple-400 hover:text-cyan-400 rounded-full transition-all duration-300 flex-shrink-0" title={t("chat.sendPhoto")}>
                       <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                       </svg>
@@ -807,9 +807,9 @@ export default function MessagesPage() {
                     />
                     <input id="chat-message" name="chatMessage" value={newMessage} onChange={(e) => setNewMessage(e.target.value)}
                       onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); handleSend(); }}}
-                      className="bg-slate-900/90 border border-purple-500/20 text-slate-100 text-xs px-4 py-3 rounded-xl flex-1 focus:outline-none focus:ring-1 focus:ring-cyan-400 focus:border-cyan-400" placeholder={t("chat.typeMessage")} autoComplete="off"
+                      className="bg-slate-900/90 border border-purple-500/20 text-slate-100 text-xs px-3 sm:px-4 py-2.5 sm:py-3 rounded-xl flex-1 min-w-0 focus:outline-none focus:ring-1 focus:ring-cyan-400 focus:border-cyan-400" placeholder={t("chat.typeMessage")} autoComplete="off"
                     />
-                    <button onClick={handleSend} disabled={sending || !newMessage.trim()} className="py-3 px-6 rounded-xl bg-gradient-to-r from-purple-600 via-indigo-600 to-cyan-500 text-white font-bold text-xs uppercase tracking-wider transition-all duration-300 shadow-[0_0_15px_rgba(139,92,246,0.3)] hover:opacity-95 disabled:opacity-20 flex-shrink-0">
+                    <button onClick={handleSend} disabled={sending || !newMessage.trim()} className="py-2.5 sm:py-3 px-3 sm:px-6 rounded-xl bg-gradient-to-r from-purple-600 via-indigo-600 to-cyan-500 text-white font-bold text-xs uppercase tracking-wider transition-all duration-300 shadow-[0_0_15px_rgba(139,92,246,0.3)] hover:opacity-95 disabled:opacity-20 flex-shrink-0">
                       {sending ? "..." : t("chat.send")}
                     </button>
                   </div>
