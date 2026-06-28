@@ -488,8 +488,8 @@ export default function MessagesPage() {
   return (
     <div className="min-h-screen bg-[#03030f] text-slate-100 relative overflow-x-hidden font-sans select-none selection:bg-purple-500 selection:text-white">
       {/* Cosmic background effects */}
-      <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] rounded-full bg-indigo-900/10 blur-[120px] pointer-events-none" />
-      <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] rounded-full bg-purple-900/10 blur-[120px] pointer-events-none" />
+      <div className="absolute top-[-10%] left-[-10%] w-[30%] sm:w-[50%] h-[30%] sm:h-[50%] rounded-full bg-indigo-900/10 blur-[120px] pointer-events-none" />
+      <div className="absolute bottom-[-10%] right-[-10%] w-[30%] sm:w-[50%] h-[30%] sm:h-[50%] rounded-full bg-purple-900/10 blur-[120px] pointer-events-none" />
 
       {/* ─── Video Call Overlay ──────────────────────────────────────── */}
       {socketError && (
@@ -580,7 +580,7 @@ export default function MessagesPage() {
         <span className="text-xs tracking-wider uppercase font-bold text-purple-400 bg-purple-950/40 border border-purple-500/20 py-1 px-3 rounded-full shadow-[0_0_10px_rgba(168,85,247,0.1)]">{t("nav.messages")}</span>
       </div>
 
-      <div className="mx-4 border border-purple-500/10 rounded-2xl bg-slate-950/60 backdrop-blur-xl overflow-hidden shadow-[0_0_50px_rgba(139,92,246,0.05)]" style={{ height: "calc(100vh - 180px)", minHeight: "350px" }}>
+      <div className="mx-2 sm:mx-4 border border-purple-500/10 rounded-2xl bg-slate-950/60 backdrop-blur-xl overflow-hidden shadow-[0_0_50px_rgba(139,92,246,0.05)] min-h-[200px] md:min-h-[350px]" style={{ height: "calc(100dvh - 160px)" }}>
         <div className="flex h-full">
           {/* Conversation List */}
           <div className={`${selectedPartner ? "hidden lg:flex" : "flex"} w-full lg:w-80 border-r border-purple-500/10 flex-col flex-shrink-0 bg-slate-950/40`}>
