@@ -84,10 +84,10 @@ function AdminDashboardInner() {
       <div className="orb orb-2" />
       <div className="orb orb-3" />
 
-      <div className={`sidebar-overlay ${sidebarOpen ? "open" : ""}`} onClick={() => setSidebarOpen(false)} />
+      <div className={`fixed inset-0 bg-black/30 backdrop-blur-sm z-40 ${sidebarOpen ? "block" : "hidden"}`} onClick={() => setSidebarOpen(false)} />
 
       <div className="dashboard-grid">
-        <aside className={`dashboard-sidebar ${sidebarOpen ? "open" : ""}`}>
+        <aside className={`dashboard-sidebar fixed lg:sticky top-0 left-0 z-50 h-screen overflow-y-auto w-[280px] max-w-[calc(100vw-2rem)] lg:w-auto lg:max-w-none shadow-xl lg:shadow-none ${sidebarOpen ? "block" : "hidden"} lg:block`}>
           <div className="sidebar-logo">
             <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-emerald-400 to-cyan-500 flex items-center justify-center shadow-lg shadow-emerald-500/20 overflow-hidden">
               <Image src="/logo.png" alt="AthletiX" width={28} height={28} className="object-contain" />
@@ -138,7 +138,7 @@ function AdminDashboardInner() {
         <main className="dashboard-main">
           <div className="dashboard-header">
             <div className="flex items-center gap-3">
-              <button className="mobile-menu-btn" onClick={() => setSidebarOpen(true)}>
+              <button className="lg:hidden flex items-center justify-center w-10 h-10 rounded-xl bg-slate-800/80 border border-white/10 text-white hover:bg-slate-700/80 transition-all" onClick={() => setSidebarOpen(true)}>
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
               </button>
               <div>
