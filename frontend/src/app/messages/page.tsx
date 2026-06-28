@@ -217,7 +217,7 @@ export default function MessagesPage() {
   }, []);
 
   useEffect(() => {
-    if (messages.length > msgCountRef.current) {
+    if (messages.length !== msgCountRef.current) {
       const container = messagesContainerRef.current;
       if (container) container.scrollTop = container.scrollHeight;
     }
