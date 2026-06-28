@@ -93,13 +93,13 @@ export default function ServicesTab({ searchQuery = "" }: { searchQuery?: string
             <table className="w-full text-left">
               <thead>
                 <tr className="border-b border-white/5 text-xs text-slate-500 uppercase tracking-wider">
-                  <th className="p-4">{t("admin.service")}</th>
-                  <th className="p-4">{t("admin.expert")}</th>
-                  <th className="p-4">{t("admin.category")}</th>
-                  <th className="p-4">{t("admin.price")}</th>
-                  <th className="p-4">{t("admin.ordersCount")}</th>
-                  <th className="p-4">{t("admin.created")}</th>
-                  <th className="p-4">{t("common.actions")}</th>
+                  <th className="p-3 sm:p-4">{t("admin.service")}</th>
+                  <th className="p-3 sm:p-4">{t("admin.expert")}</th>
+                  <th className="p-3 sm:p-4">{t("admin.category")}</th>
+                  <th className="p-3 sm:p-4">{t("admin.price")}</th>
+                  <th className="p-3 sm:p-4">{t("admin.ordersCount")}</th>
+                  <th className="p-3 sm:p-4">{t("admin.created")}</th>
+                  <th className="p-3 sm:p-4">{t("common.actions")}</th>
                 </tr>
               </thead>
               <tbody>
@@ -108,18 +108,18 @@ export default function ServicesTab({ searchQuery = "" }: { searchQuery?: string
                 ) : (
                   filtered.map((s: any) => (
                     <tr key={s.id} className="border-b border-white/[0.03] hover:bg-white/5 transition-colors">
-                      <td className="p-4">
+                      <td className="p-3 sm:p-4">
                         <div className="flex items-center gap-3">
-                          {s.imageUrl && <Image src={s.imageUrl} alt="" width={40} height={40} className="w-10 h-10 rounded-lg object-cover" />}
-                          <span className="text-sm font-semibold text-white">{s.title}</span>
+                          {s.imageUrl && <Image src={s.imageUrl} alt="" width={40} height={40} className="w-10 h-10 rounded-lg object-cover flex-shrink-0" />}
+                          <span className="text-sm font-semibold text-white truncate max-w-[100px] sm:max-w-[200px]">{s.title}</span>
                         </div>
                       </td>
-                      <td className="p-4 text-sm text-slate-300">{s.expert?.profile?.fullName || s.expert?.email}</td>
-                      <td className="p-4"><span className={`badge text-xs ${s.category === "SPORTS" ? "bg-amber-500/20 text-amber-400" : "bg-emerald-500/20 text-emerald-400"}`}>{s.category || "NUTRITION"}</span></td>
-                      <td className="p-4 text-sm font-bold text-emerald-400">{fDZD(s.price)}</td>
-                      <td className="p-4 text-sm text-slate-400">{s._count.orders}</td>
-                      <td className="p-4 text-sm text-slate-500">{new Date(s.createdAt).toLocaleDateString()}</td>
-                      <td className="p-4">
+                      <td className="p-3 sm:p-4 text-sm text-slate-300 truncate max-w-[100px] sm:max-w-[200px]">{s.expert?.profile?.fullName || s.expert?.email}</td>
+                      <td className="p-3 sm:p-4"><span className={`badge text-xs ${s.category === "SPORTS" ? "bg-amber-500/20 text-amber-400" : "bg-emerald-500/20 text-emerald-400"}`}>{s.category || "NUTRITION"}</span></td>
+                      <td className="p-3 sm:p-4 text-sm font-bold text-emerald-400">{fDZD(s.price)}</td>
+                      <td className="p-3 sm:p-4 text-sm text-slate-400">{s._count.orders}</td>
+                      <td className="p-3 sm:p-4 text-sm text-slate-500">{new Date(s.createdAt).toLocaleDateString()}</td>
+                      <td className="p-3 sm:p-4">
                         <div className="flex gap-2">
                           <button onClick={() => startEdit(s)}
                             className="text-xs bg-blue-500/20 text-blue-400 hover:bg-blue-500/30 px-3 py-1.5 rounded-lg font-semibold transition">{t("admin.edit")}</button>

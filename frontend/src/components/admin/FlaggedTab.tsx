@@ -56,12 +56,12 @@ export default function FlaggedTab({ searchQuery = "" }: { searchQuery?: string 
             <table className="w-full text-left">
               <thead>
                 <tr className="border-b border-white/5 text-xs text-slate-500 uppercase tracking-wider">
-                  <th className="p-4">{t("admin.expert")}</th>
-                  <th className="p-4">{t("admin.oneStarCount")}</th>
-                  <th className="p-4">{t("marketplace.rating")}</th>
-                  <th className="p-4">{t("admin.totalReviews")}</th>
-                  <th className="p-4">{t("admin.suspended")}</th>
-                  <th className="p-4">{t("common.actions")}</th>
+                  <th className="p-3 sm:p-4">{t("admin.expert")}</th>
+                  <th className="p-3 sm:p-4">{t("admin.oneStarCount")}</th>
+                  <th className="p-3 sm:p-4">{t("marketplace.rating")}</th>
+                  <th className="p-3 sm:p-4">{t("admin.totalReviews")}</th>
+                  <th className="p-3 sm:p-4">{t("admin.suspended")}</th>
+                  <th className="p-3 sm:p-4">{t("common.actions")}</th>
                 </tr>
               </thead>
               <tbody>
@@ -70,26 +70,26 @@ export default function FlaggedTab({ searchQuery = "" }: { searchQuery?: string 
                 ) : (
                   filtered.map((e) => (
                     <tr key={e.id} className="border-b border-white/[0.03] hover:bg-white/5 transition-colors">
-                      <td className="p-4">
+                      <td className="p-3 sm:p-4">
                         <div className="flex items-center gap-3">
                           {e.profile?.photoUrl
-                            ? <Image src={e.profile.photoUrl} alt="" width={32} height={32} className="w-8 h-8 rounded-full object-cover" />
-                            : <div className="w-8 h-8 rounded-full bg-gradient-to-br from-gray-200 to-gray-300 flex items-center justify-center text-xs font-bold text-slate-800">{e.email[0].toUpperCase()}</div>}
-                          <div>
-                            <p className="text-sm font-semibold text-white">{e.profile?.fullName || e.email}</p>
-                            {e.profile?.specialization && <p className="text-xs text-slate-500">{e.profile.specialization}</p>}
+                            ? <Image src={e.profile.photoUrl} alt="" width={32} height={32} className="w-8 h-8 rounded-full object-cover flex-shrink-0" />
+                            : <div className="w-8 h-8 rounded-full bg-gradient-to-br from-gray-200 to-gray-300 flex items-center justify-center text-xs font-bold text-slate-800 flex-shrink-0">{e.email[0].toUpperCase()}</div>}
+                          <div className="min-w-0">
+                            <p className="text-sm font-semibold text-white truncate max-w-[100px] sm:max-w-[200px]">{e.profile?.fullName || e.email}</p>
+                            {e.profile?.specialization && <p className="text-xs text-slate-500 truncate max-w-[100px] sm:max-w-[200px]">{e.profile.specialization}</p>}
                           </div>
                         </div>
                       </td>
-                      <td className="p-4"><span className="text-sm font-bold text-red-400">{e.oneStarCount}</span></td>
-                      <td className="p-4 text-sm text-slate-300">{e.averageRating.toFixed(1)} ★</td>
-                      <td className="p-4 text-sm text-slate-400">{e.totalReviews}</td>
-                      <td className="p-4">
+                      <td className="p-3 sm:p-4"><span className="text-sm font-bold text-red-400">{e.oneStarCount}</span></td>
+                      <td className="p-3 sm:p-4 text-sm text-slate-300">{e.averageRating.toFixed(1)} ★</td>
+                      <td className="p-3 sm:p-4 text-sm text-slate-400">{e.totalReviews}</td>
+                      <td className="p-3 sm:p-4">
                         {e.isSuspended
                           ? <span className="badge badge-red">{t("admin.suspended")}</span>
                           : <span className="badge badge-emerald">{t("common.online")}</span>}
                       </td>
-                      <td className="p-4">
+                      <td className="p-3 sm:p-4">
                         {e.isSuspended ? (
                           <button onClick={() => handleUnsuspend(e.id)}
                             className="text-xs bg-emerald-500/20 text-emerald-400 hover:bg-emerald-500/30 px-3 py-1.5 rounded-lg font-semibold transition">{t("admin.unsuspend")}</button>

@@ -60,14 +60,14 @@ export default function OrdersTab({ searchQuery = "" }: { searchQuery?: string }
             <table className="w-full text-left">
               <thead>
                 <tr className="border-b border-white/5 text-xs text-slate-500 uppercase tracking-wider">
-                  <th className="p-4">Service</th>
-                  <th className="p-4">Client</th>
-                  <th className="p-4">Expert</th>
-                  <th className="p-4">Amount</th>
-                  <th className="p-4">Status</th>
-                  <th className="p-4">Payment</th>
-                  <th className="p-4">Date</th>
-                  <th className="p-4">{t("common.actions")}</th>
+                  <th className="p-3 sm:p-4">Service</th>
+                  <th className="p-3 sm:p-4">Client</th>
+                  <th className="p-3 sm:p-4">Expert</th>
+                  <th className="p-3 sm:p-4">Amount</th>
+                  <th className="p-3 sm:p-4">Status</th>
+                  <th className="p-3 sm:p-4">Payment</th>
+                  <th className="p-3 sm:p-4">Date</th>
+                  <th className="p-3 sm:p-4">{t("common.actions")}</th>
                 </tr>
               </thead>
               <tbody>
@@ -76,14 +76,14 @@ export default function OrdersTab({ searchQuery = "" }: { searchQuery?: string }
                 ) : (
                   filtered.map((o) => (
                     <tr key={o.id} className="border-b border-white/[0.03] hover:bg-white/5 transition-colors">
-                      <td className="p-4 text-sm font-semibold text-white">{o.service?.title || "—"}</td>
-                      <td className="p-4 text-sm text-slate-300">{o.user?.profile?.fullName || o.user?.email || "—"}</td>
-                      <td className="p-4 text-sm text-slate-300">{o.service?.expert?.profile?.fullName || o.service?.expert?.email || "—"}</td>
-                      <td className="p-4 text-sm font-bold text-emerald-400">{fDZD(o.amount || o.service?.price || 0)}</td>
-                      <td className="p-4"><span className={`badge text-xs ${statusColor[o.status] || "badge-blue"}`}>{o.status}</span></td>
-                      <td className="p-4 text-sm text-slate-400">{o.paymentStatus || "—"}</td>
-                      <td className="p-4 text-sm text-slate-500">{new Date(o.createdAt).toLocaleDateString()}</td>
-                      <td className="p-4">
+                      <td className="p-3 sm:p-4 text-sm font-semibold text-white truncate max-w-[100px] sm:max-w-[200px]">{o.service?.title || "—"}</td>
+                      <td className="p-3 sm:p-4 text-sm text-slate-300 truncate max-w-[100px] sm:max-w-[200px]">{o.user?.profile?.fullName || o.user?.email || "—"}</td>
+                      <td className="p-3 sm:p-4 text-sm text-slate-300 truncate max-w-[100px] sm:max-w-[200px]">{o.service?.expert?.profile?.fullName || o.service?.expert?.email || "—"}</td>
+                      <td className="p-3 sm:p-4 text-sm font-bold text-emerald-400">{fDZD(o.amount || o.service?.price || 0)}</td>
+                      <td className="p-3 sm:p-4"><span className={`badge text-xs ${statusColor[o.status] || "badge-blue"}`}>{o.status}</span></td>
+                      <td className="p-3 sm:p-4 text-sm text-slate-400">{o.paymentStatus || "—"}</td>
+                      <td className="p-3 sm:p-4 text-sm text-slate-500">{new Date(o.createdAt).toLocaleDateString()}</td>
+                      <td className="p-3 sm:p-4">
                         <div className="flex gap-2">
                           <select value={o.status} onChange={(e) => handleStatusChange(o.id, e.target.value)}
                             className="bg-slate-800 text-xs text-slate-300 border border-white/80 rounded-lg px-2 py-1 outline-none focus:border-emerald-500">

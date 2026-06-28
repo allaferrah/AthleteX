@@ -29,7 +29,7 @@ export default function StatsCard({ label, value, color = "text-white", icon }: 
             {icon && <span className="text-lg opacity-60">{icon}</span>}
             <h3 className="text-[0.65rem] font-bold tracking-[0.12em] uppercase text-slate-500">{label}</h3>
           </div>
-          <p className={`text-3xl font-black tabular-nums tracking-tight ${color}`}>{value}</p>
+          <p className={`text-xl md:text-3xl font-black tabular-nums tracking-tight truncate ${color}`}>{value}</p>
         </div>
       </div>
       <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-emerald-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />

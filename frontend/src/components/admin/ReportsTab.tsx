@@ -56,12 +56,12 @@ export default function ReportsTab({ searchQuery = "" }: { searchQuery?: string 
             <table className="w-full text-left">
               <thead>
                 <tr className="border-b border-white/5 text-xs text-slate-500 uppercase tracking-wider">
-                  <th className="p-4">{t("admin.reportReason")}</th>
-                  <th className="p-4">{t("common.user")}</th>
-                  <th className="p-4">{t("admin.expert")}</th>
-                  <th className="p-4">{t("admin.reportStatus")}</th>
-                  <th className="p-4">{t("admin.joined")}</th>
-                  <th className="p-4">{t("common.actions")}</th>
+                  <th className="p-3 sm:p-4">{t("admin.reportReason")}</th>
+                  <th className="p-3 sm:p-4">{t("common.user")}</th>
+                  <th className="p-3 sm:p-4">{t("admin.expert")}</th>
+                  <th className="p-3 sm:p-4">{t("admin.reportStatus")}</th>
+                  <th className="p-3 sm:p-4">{t("admin.joined")}</th>
+                  <th className="p-3 sm:p-4">{t("common.actions")}</th>
                 </tr>
               </thead>
               <tbody>
@@ -70,15 +70,15 @@ export default function ReportsTab({ searchQuery = "" }: { searchQuery?: string 
                 ) : (
                   filtered.map((r) => (
                     <tr key={r.id} className="border-b border-white/[0.03] hover:bg-white/5 transition-colors">
-                      <td className="p-4">
-                        <p className="text-sm font-semibold text-white">{r.reason}</p>
-                        {r.description && <p className="text-xs text-slate-500 mt-0.5">{r.description}</p>}
+                      <td className="p-3 sm:p-4">
+                        <p className="text-sm font-semibold text-white truncate max-w-[120px] sm:max-w-[200px]">{r.reason}</p>
+                        {r.description && <p className="text-xs text-slate-500 mt-0.5 truncate max-w-[120px] sm:max-w-[200px]">{r.description}</p>}
                       </td>
-                      <td className="p-4 text-sm text-slate-300">{r.reporter.email}</td>
-                      <td className="p-4 text-sm text-slate-300">{r.reportedExpert.email}</td>
-                      <td className="p-4"><span className={`badge text-xs ${statusColor[r.status] || "badge-blue"}`}>{r.status}</span></td>
-                      <td className="p-4 text-sm text-slate-500">{new Date(r.createdAt).toLocaleDateString()}</td>
-                      <td className="p-4">
+                      <td className="p-3 sm:p-4 text-sm text-slate-300 truncate max-w-[100px] sm:max-w-[200px]">{r.reporter.email}</td>
+                      <td className="p-3 sm:p-4 text-sm text-slate-300 truncate max-w-[100px] sm:max-w-[200px]">{r.reportedExpert.email}</td>
+                      <td className="p-3 sm:p-4"><span className={`badge text-xs ${statusColor[r.status] || "badge-blue"}`}>{r.status}</span></td>
+                      <td className="p-3 sm:p-4 text-sm text-slate-500">{new Date(r.createdAt).toLocaleDateString()}</td>
+                      <td className="p-3 sm:p-4">
                         {r.status === "PENDING" && (
                           <div className="flex gap-2">
                             <button onClick={() => handleResolve(r.id)}

@@ -90,11 +90,11 @@ export default function AITab({ searchQuery = "" }: { searchQuery?: string }) {
             <table className="w-full text-left">
               <thead>
                 <tr className="border-b border-white/5 text-xs text-slate-500 uppercase tracking-wider">
-                  <th className="p-4">{t("admin.client")}</th>
-                  <th className="p-4">{t("admin.usedGenerations")}</th>
-                  <th className="p-4">{t("admin.freeGenerations")}</th>
-                  <th className="p-4">{t("admin.creditBalance")}</th>
-                  <th className="p-4">{t("admin.totalSpent")}</th>
+                  <th className="p-3 sm:p-4">{t("admin.client")}</th>
+                  <th className="p-3 sm:p-4">{t("admin.usedGenerations")}</th>
+                  <th className="p-3 sm:p-4">{t("admin.freeGenerations")}</th>
+                  <th className="p-3 sm:p-4">{t("admin.creditBalance")}</th>
+                  <th className="p-3 sm:p-4">{t("admin.totalSpent")}</th>
                 </tr>
               </thead>
               <tbody>
@@ -103,11 +103,11 @@ export default function AITab({ searchQuery = "" }: { searchQuery?: string }) {
                 ) : (
                   filteredUsers.map((u: any) => (
                     <tr key={u.id} className="border-b border-white/[0.03] hover:bg-white/5 transition-colors">
-                      <td className="p-4 text-sm text-slate-300">{u.fullName || u.email}</td>
-                      <td className="p-4 text-sm text-white">{u.aiGenerationsUsed ?? 0}</td>
-                      <td className="p-4 text-sm text-slate-400">{u.aiGenerationsLimit ?? config?.freeGenerations ?? 3}</td>
-                      <td className="p-4 text-sm font-semibold text-emerald-400">{u.aiCreditBalance ?? 0}</td>
-                      <td className="p-4 text-sm font-semibold text-amber-400">{fDZD(u.totalSpent ?? 0)}</td>
+                      <td className="p-3 sm:p-4 text-sm text-slate-300 truncate max-w-[120px] sm:max-w-[200px]">{u.fullName || u.email}</td>
+                      <td className="p-3 sm:p-4 text-sm text-white">{u.aiGenerationsUsed ?? 0}</td>
+                      <td className="p-3 sm:p-4 text-sm text-slate-400">{u.aiGenerationsLimit ?? config?.freeGenerations ?? 3}</td>
+                      <td className="p-3 sm:p-4 text-sm font-semibold text-emerald-400">{u.aiCreditBalance ?? 0}</td>
+                      <td className="p-3 sm:p-4 text-sm font-semibold text-amber-400">{fDZD(u.totalSpent ?? 0)}</td>
                     </tr>
                   ))
                 )}

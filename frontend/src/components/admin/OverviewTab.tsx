@@ -30,7 +30,7 @@ export default function OverviewTab() {
       </div>
 
       <div className="grid md:grid-cols-2 gap-6">
-        <div className="glass-card-premium p-8">
+        <div className="glass-card-premium p-4 sm:p-6 md:p-8">
           <div className="flex items-center gap-3 mb-6">
             <div className="w-8 h-8 rounded-lg bg-emerald-500/10 flex items-center justify-center text-emerald-400"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
             <h2 className="text-lg font-bold text-white">{t("admin.systemStatus")}</h2>
@@ -51,7 +51,7 @@ export default function OverviewTab() {
           </div>
         </div>
 
-        <div className="glass-card-premium p-8">
+        <div className="glass-card-premium p-4 sm:p-6 md:p-8">
           <div className="flex items-center gap-3 mb-6">
             <div className="w-8 h-8 rounded-lg bg-blue-500/10 flex items-center justify-center text-blue-400"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></div>
             <h2 className="text-lg font-bold text-white">{t("admin.quickLinks")}</h2>

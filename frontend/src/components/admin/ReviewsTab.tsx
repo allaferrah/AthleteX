@@ -50,11 +50,11 @@ export default function ReviewsTab({ searchQuery = "" }: { searchQuery?: string 
             <table className="w-full text-left">
               <thead>
                 <tr className="border-b border-white/5 text-xs text-slate-500 uppercase tracking-wider">
-                  <th className="p-4">User</th>
-                  <th className="p-4">Service</th>
-                  <th className="p-4">Rating</th>
-                  <th className="p-4">Comment</th>
-                  <th className="p-4">{t("common.actions")}</th>
+                  <th className="p-3 sm:p-4">User</th>
+                  <th className="p-3 sm:p-4">Service</th>
+                  <th className="p-3 sm:p-4">Rating</th>
+                  <th className="p-3 sm:p-4">Comment</th>
+                  <th className="p-3 sm:p-4">{t("common.actions")}</th>
                 </tr>
               </thead>
               <tbody>
@@ -63,13 +63,13 @@ export default function ReviewsTab({ searchQuery = "" }: { searchQuery?: string 
                 ) : (
                   filtered.map((r) => (
                     <tr key={r.id} className="border-b border-white/[0.03] hover:bg-white/5 transition-colors">
-                      <td className="p-4 text-sm text-slate-300">{r.user?.profile?.fullName || r.user?.email || "—"}</td>
-                      <td className="p-4 text-sm font-semibold text-white">{r.service?.title || "—"}</td>
-                      <td className="p-4">
+                      <td className="p-3 sm:p-4 text-sm text-slate-300 truncate max-w-[100px] sm:max-w-[200px]">{r.user?.profile?.fullName || r.user?.email || "—"}</td>
+                      <td className="p-3 sm:p-4 text-sm font-semibold text-white truncate max-w-[100px] sm:max-w-[200px]">{r.service?.title || "—"}</td>
+                      <td className="p-3 sm:p-4">
                         <span className="text-sm text-amber-400 font-bold">{r.rating} ★</span>
                       </td>
-                      <td className="p-4 text-sm text-slate-400 max-w-xs truncate">{r.comment || "—"}</td>
-                      <td className="p-4">
+                      <td className="p-3 sm:p-4 text-sm text-slate-400 truncate max-w-[100px] sm:max-w-xs">{r.comment || "—"}</td>
+                      <td className="p-3 sm:p-4">
                         <button onClick={() => handleDelete(r.id)}
                           className="text-xs bg-red-500/20 text-red-400 hover:bg-red-500/30 px-3 py-1.5 rounded-lg font-semibold transition">{t("admin.delete")}</button>
                       </td>

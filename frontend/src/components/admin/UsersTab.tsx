@@ -79,12 +79,12 @@ export default function UsersTab({ searchQuery = "" }: { searchQuery?: string })
             <table className="w-full text-left">
               <thead>
                 <tr className="border-b border-white/5 text-xs text-slate-500 uppercase tracking-wider">
-                  <th className="p-4">{t("admin.user")}</th>
-                  <th className="p-4">{t("admin.role")}</th>
-                  <th className="p-4">{t("admin.servicesCount")}</th>
-                  <th className="p-4">{t("admin.ordersCount")}</th>
-                  <th className="p-4">{t("admin.joined")}</th>
-                  <th className="p-4">{t("common.actions")}</th>
+                  <th className="p-3 sm:p-4">{t("admin.user")}</th>
+                  <th className="p-3 sm:p-4">{t("admin.role")}</th>
+                  <th className="p-3 sm:p-4">{t("admin.servicesCount")}</th>
+                  <th className="p-3 sm:p-4">{t("admin.ordersCount")}</th>
+                  <th className="p-3 sm:p-4">{t("admin.joined")}</th>
+                  <th className="p-3 sm:p-4">{t("common.actions")}</th>
                 </tr>
               </thead>
               <tbody>
@@ -93,19 +93,19 @@ export default function UsersTab({ searchQuery = "" }: { searchQuery?: string })
                 ) : (
                   filtered.map((u: any) => (
                     <tr key={u.id} className="border-b border-white/[0.03] hover:bg-white/5 transition-colors">
-                      <td className="p-4">
+                      <td className="p-3 sm:p-4">
                         <div className="flex items-center gap-3">
                           {u.profile?.photoUrl
-                            ? <Image src={u.profile.photoUrl} alt="" width={32} height={32} className="w-8 h-8 rounded-full object-cover" />
-                            : <div className="w-8 h-8 rounded-full bg-gradient-to-br from-gray-200 to-gray-300 flex items-center justify-center text-xs font-bold text-slate-800">{u.email[0].toUpperCase()}</div>}
-                          <div><p className="text-sm font-semibold text-white">{u.profile?.fullName || u.email}</p><p className="text-xs text-slate-500">{u.email}</p></div>
+                            ? <Image src={u.profile.photoUrl} alt="" width={32} height={32} className="w-8 h-8 rounded-full object-cover flex-shrink-0" />
+                            : <div className="w-8 h-8 rounded-full bg-gradient-to-br from-gray-200 to-gray-300 flex items-center justify-center text-xs font-bold text-slate-800 flex-shrink-0">{u.email[0].toUpperCase()}</div>}
+                          <div className="min-w-0"><p className="text-sm font-semibold text-white truncate max-w-[100px] sm:max-w-[200px]">{u.profile?.fullName || u.email}</p><p className="text-xs text-slate-500 truncate max-w-[100px] sm:max-w-[200px]">{u.email}</p></div>
                         </div>
                       </td>
-                      <td className="p-4"><span className={`badge text-xs ${roleColor(u.role)}`}>{u.role}</span></td>
-                      <td className="p-4 text-sm text-slate-400">{u._count.services}</td>
-                      <td className="p-4 text-sm text-slate-400">{u._count.orders}</td>
-                      <td className="p-4 text-sm text-slate-500">{new Date(u.createdAt).toLocaleDateString()}</td>
-                      <td className="p-4">
+                      <td className="p-3 sm:p-4"><span className={`badge text-xs ${roleColor(u.role)}`}>{u.role}</span></td>
+                      <td className="p-3 sm:p-4 text-sm text-slate-400">{u._count.services}</td>
+                      <td className="p-3 sm:p-4 text-sm text-slate-400">{u._count.orders}</td>
+                      <td className="p-3 sm:p-4 text-sm text-slate-500">{new Date(u.createdAt).toLocaleDateString()}</td>
+                      <td className="p-3 sm:p-4">
                         <div className="flex gap-2">
                           {u.role !== "ADMIN" && (
                             <select value={u.role} onChange={(e) => handleRoleChange(u.id, e.target.value)}

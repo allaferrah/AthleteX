@@ -115,12 +115,12 @@ export default function SportCategoriesTab({ searchQuery = "" }: { searchQuery?:
             <table className="w-full text-left">
               <thead>
                 <tr className="border-b border-white/5 text-xs text-slate-500 uppercase tracking-wider">
-                  <th className="p-4">{t("admin.sportImage")}</th>
-                  <th className="p-4">{t("admin.sport")}</th>
-                  <th className="p-4">{t("admin.sportNameAr")}</th>
-                  <th className="p-4">{t("admin.sortOrder")}</th>
-                  <th className="p-4">{t("admin.sportServicesCount")}</th>
-                  <th className="p-4">{t("common.actions")}</th>
+                  <th className="p-3 sm:p-4">{t("admin.sportImage")}</th>
+                  <th className="p-3 sm:p-4">{t("admin.sport")}</th>
+                  <th className="p-3 sm:p-4">{t("admin.sportNameAr")}</th>
+                  <th className="p-3 sm:p-4">{t("admin.sortOrder")}</th>
+                  <th className="p-3 sm:p-4">{t("admin.sportServicesCount")}</th>
+                  <th className="p-3 sm:p-4">{t("common.actions")}</th>
                 </tr>
               </thead>
               <tbody>
@@ -129,16 +129,16 @@ export default function SportCategoriesTab({ searchQuery = "" }: { searchQuery?:
                 ) : (
                   filtered.map((s) => (
                     <tr key={s.id} className="border-b border-white/[0.03] hover:bg-white/5 transition-colors">
-                      <td className="p-4">
+                      <td className="p-3 sm:p-4">
                         {s.imageUrl
-                          ? <Image src={s.imageUrl} alt={s.name} width={40} height={40} className="w-10 h-10 rounded-lg object-cover border border-white/80" />
+                          ? <Image src={s.imageUrl} alt={s.name} width={40} height={40} className="w-10 h-10 rounded-lg object-cover border border-white/80 flex-shrink-0" />
                           : <span className="text-2xl">{s.icon}</span>}
                       </td>
-                      <td className="p-4 text-sm font-semibold text-white">{s.name}</td>
-                      <td className="p-4 text-sm text-slate-300">{s.nameAr}</td>
-                      <td className="p-4 text-sm text-slate-400">{s.sortOrder}</td>
-                      <td className="p-4 text-sm text-slate-400">{s._count.services}</td>
-                      <td className="p-4">
+                      <td className="p-3 sm:p-4 text-sm font-semibold text-white truncate max-w-[100px] sm:max-w-[200px]">{s.name}</td>
+                      <td className="p-3 sm:p-4 text-sm text-slate-300 truncate max-w-[100px] sm:max-w-[200px]">{s.nameAr}</td>
+                      <td className="p-3 sm:p-4 text-sm text-slate-400">{s.sortOrder}</td>
+                      <td className="p-3 sm:p-4 text-sm text-slate-400">{s._count.services}</td>
+                      <td className="p-3 sm:p-4">
                         <div className="flex gap-2">
                           <button onClick={() => startEdit(s)} className="text-xs bg-blue-500/20 text-blue-400 hover:bg-blue-500/30 px-3 py-1.5 rounded-lg font-semibold transition">{t("admin.editSport")}</button>
                           <button onClick={() => handleDelete(s.id)} className="text-xs bg-red-500/20 text-red-400 hover:bg-red-500/30 px-3 py-1.5 rounded-lg font-semibold transition">{t("admin.deleteSport")}</button>

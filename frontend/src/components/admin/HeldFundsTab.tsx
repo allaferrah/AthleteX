@@ -61,12 +61,12 @@ export default function HeldFundsTab({ searchQuery = "" }: { searchQuery?: strin
             <table className="w-full text-left">
               <thead>
                 <tr className="border-b border-white/5 text-xs text-slate-500 uppercase tracking-wider">
-                  <th className="p-4">{t("admin.service")}</th>
-                  <th className="p-4">{t("admin.client")}</th>
-                  <th className="p-4">{t("admin.expert")}</th>
-                  <th className="p-4">{t("admin.amount")}</th>
-                  <th className="p-4">{t("admin.heldSince")}</th>
-                  <th className="p-4">{t("common.actions")}</th>
+                  <th className="p-3 sm:p-4">{t("admin.service")}</th>
+                  <th className="p-3 sm:p-4">{t("admin.client")}</th>
+                  <th className="p-3 sm:p-4">{t("admin.expert")}</th>
+                  <th className="p-3 sm:p-4">{t("admin.amount")}</th>
+                  <th className="p-3 sm:p-4">{t("admin.heldSince")}</th>
+                  <th className="p-3 sm:p-4">{t("common.actions")}</th>
                 </tr>
               </thead>
               <tbody>
@@ -75,12 +75,12 @@ export default function HeldFundsTab({ searchQuery = "" }: { searchQuery?: strin
                 ) : (
                   filtered.map((order) => (
                     <tr key={order.id} className="border-b border-white/[0.03] hover:bg-white/5 transition-colors">
-                      <td className="p-4"><span className="text-sm font-semibold text-white">{order.service?.title || "—"}</span></td>
-                      <td className="p-4 text-sm text-slate-300">{order.user?.profile?.fullName || order.user?.email || "—"}</td>
-                      <td className="p-4 text-sm text-slate-300">{order.service?.expert?.profile?.fullName || order.service?.expert?.email || "—"}</td>
-                      <td className="p-4 text-sm font-bold text-emerald-400">{fDZD(order.amount || order.service?.price || 0)}</td>
-                      <td className="p-4 text-sm text-slate-500">{new Date(order.createdAt).toLocaleDateString()}</td>
-                      <td className="p-4">
+                      <td className="p-3 sm:p-4"><span className="text-sm font-semibold text-white truncate max-w-[100px] sm:max-w-[200px]">{order.service?.title || "—"}</span></td>
+                      <td className="p-3 sm:p-4 text-sm text-slate-300 truncate max-w-[100px] sm:max-w-[200px]">{order.user?.profile?.fullName || order.user?.email || "—"}</td>
+                      <td className="p-3 sm:p-4 text-sm text-slate-300 truncate max-w-[100px] sm:max-w-[200px]">{order.service?.expert?.profile?.fullName || order.service?.expert?.email || "—"}</td>
+                      <td className="p-3 sm:p-4 text-sm font-bold text-emerald-400">{fDZD(order.amount || order.service?.price || 0)}</td>
+                      <td className="p-3 sm:p-4 text-sm text-slate-500">{new Date(order.createdAt).toLocaleDateString()}</td>
+                      <td className="p-3 sm:p-4">
                         <div className="flex gap-2">
                           <button onClick={() => handleRelease(order.id)}
                             className="text-xs bg-emerald-500/20 text-emerald-400 hover:bg-emerald-500/30 px-3 py-1.5 rounded-lg font-semibold transition">{t("admin.release")}</button>
