@@ -46,7 +46,7 @@ app.use("/upload", uploadRoutes);
 app.use("/admin", adminRoutes);
 
 app.get("/", (req, res) => {
-  res.send("AthletiX API running 🚀");
+  res.send("AthleteX API running 🚀");
 });
 
 const initSocket = require("./socket");

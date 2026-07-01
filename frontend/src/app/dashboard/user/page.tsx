@@ -354,7 +354,7 @@ export default function UserDashboard() {
               <div>
                 <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-[9px] font-black text-emerald-400 uppercase tracking-widest mb-3">
                   <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_10px_rgba(16,185,129,1)]" />
-                  AthletiX
+                  AthleteX
                 </div>
                 <h1 className="text-3xl lg:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-white to-slate-400 tracking-tighter uppercase">
                   Dashboard

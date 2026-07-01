@@ -86,13 +86,13 @@ export default function Navbar() {
       <Link href="/" className="flex items-center gap-2 group ml-1 sm:ml-0">
         <Image
           src="/logo.png"
-          alt="AthletiX"
+          alt="AthleteX"
           width={36}
           height={36}
           className="rounded-full transition-all duration-300 group-hover:scale-110 shadow-[0_0_15px_rgba(16,185,129,0.3)]"
         />
         <span className="text-xl font-bold gradient-text tracking-tight relative overflow-hidden hidden sm:block">
-          AthletiX
+          AthleteX
         </span>
       </Link>
 

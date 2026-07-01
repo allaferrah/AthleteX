@@ -15,7 +15,7 @@ const geistSans = Geist({
 
 
 export const metadata: Metadata = {
-  title: "AthletiX Market — AI Nutrition & Expert Marketplace",
+  title: "AthleteX Market — AI Nutrition & Expert Marketplace",
   description: "Get AI-powered meal plans and hire top nutritionists & fitness coaches. The future of health, powered by intelligence.",
   icons: {
     icon: "/logo.png",

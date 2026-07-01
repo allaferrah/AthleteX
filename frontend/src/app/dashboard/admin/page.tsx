@@ -93,7 +93,7 @@ function AdminDashboardInner() {
               <Image src="/logo.png" alt="AthletiX" width={28} height={28} className="object-contain" />
             </div>
             <div>
-              <p className="text-sm font-bold text-white tracking-tight">Athleti<span className="text-emerald-400">X</span></p>
+              <p className="text-sm font-bold text-white tracking-tight">Athlete<span className="text-emerald-400">X</span></p>
               <p className="text-[0.6rem] font-semibold text-slate-500 tracking-widest uppercase">Admin Panel</p>
             </div>
           </div>

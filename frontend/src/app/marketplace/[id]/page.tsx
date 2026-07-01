@@ -322,7 +322,7 @@ export default function ServiceDetails() {
                 {ordering ? "Processing..." : "Order Now"}
               </button>
               <p className="text-center text-slate-500 text-xs mt-3">
-                Secure payment via AthletiX
+                Secure payment via AthleteX
               </p>
 
               {/* Expert info mini card */}

@@ -79,7 +79,7 @@ export default function GamesPage() {
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
               <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
             </span>
-            AthletiX Arcade
+            AthleteX Arcade
           </div>
           <h1 className="text-5xl sm:text-6xl md:text-7xl font-black text-transparent bg-clip-text bg-gradient-to-b from-white to-white/50 tracking-tight mb-6 drop-shadow-lg">
             {t("games.title")}

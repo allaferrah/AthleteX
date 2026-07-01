@@ -18,13 +18,13 @@ export default function FooterSection() {
         {/* Brand Section */}
         <div className="md:col-span-4 flex flex-col gap-4">
           <Link href="/" className="flex items-center gap-2 group self-start">
-            <Image src="/logo.png" alt="AthletiX" width={32} height={32} className="rounded-lg transition-all duration-300 group-hover:scale-110" />
-            <span className="text-lg font-bold gradient-text tracking-tight">AthletiX</span>
+            <Image src="/logo.png" alt="AthleteX" width={32} height={32} className="rounded-lg transition-all duration-300 group-hover:scale-110" />
+            <span className="text-lg font-bold gradient-text tracking-tight">AthleteX</span>
           </Link>
           <p className="text-slate-400 text-xs leading-relaxed max-w-sm font-sans mt-2">
             {isAr 
-              ? "منصة AthletiX تدمج بين أقوى تقنيات الذكاء الاصطناعي لتصميم الأنظمة الغذائية والتمارين الرياضية وخبرات نخبة المدربين وأخصائيي التغذية المعتمدين." 
-              : "AthletiX seamlessly blends state-of-the-art AI-powered custom nutrition and workout plans with a marketplace of elite, verified fitness and dietary professionals."}
+              ? "منصة AthleteX تدمج بين أقوى تقنيات الذكاء الاصطناعي لتصميم الأنظمة الغذائية والتمارين الرياضية وخبرات نخبة المدربين وأخصائيي التغذية المعتمدين." 
+              : "AthleteX seamlessly blends state-of-the-art AI-powered custom nutrition and workout plans with a marketplace of elite, verified fitness and dietary professionals."}
           </p>
           
           {/* Social Icons */}
