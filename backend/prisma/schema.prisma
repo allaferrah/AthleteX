@@ -72,7 +72,7 @@ model Profile {
   height           Float?
   goal             String?
 
-  user User @relation(fields: [userId], references: [id])
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model SportCategory {
@@ -99,7 +99,7 @@ model Service {
   expertId    String
   createdAt   DateTime      @default(now())
 
-  expert  User            @relation("UserServices", fields: [expertId], references: [id])
+  expert  User            @relation("UserServices", fields: [expertId], references: [id], onDelete: Cascade)
   sport   SportCategory?  @relation(fields: [sportId], references: [id])
   orders  Order[]
   reviews Review[]
@@ -114,7 +114,7 @@ model Order {
   paymentStatus  String   @default("PENDING")
   createdAt      DateTime @default(now())
 
-  user    User    @relation("UserOrders", fields: [userId], references: [id])
+  user    User    @relation("UserOrders", fields: [userId], references: [id], onDelete: Cascade)
   service Service @relation(fields: [serviceId], references: [id])
   transactions Transaction[]
   reviews      Review[]
@@ -132,8 +132,8 @@ model Transaction {
   createdAt   DateTime @default(now())
 
   order Order?  @relation(fields: [orderId], references: [id])
-  from  User    @relation("FromUser", fields: [fromUserId], references: [id])
-  to    User    @relation("ToUser", fields: [toUserId], references: [id])
+  from  User    @relation("FromUser", fields: [fromUserId], references: [id], onDelete: Cascade)
+  to    User    @relation("ToUser", fields: [toUserId], references: [id], onDelete: Cascade)
 }
 
 model Review {
@@ -144,7 +144,7 @@ model Review {
   serviceId String
   orderId   String?
 
-  user    User    @relation("UserReviews", fields: [userId], references: [id])
+  user    User    @relation("UserReviews", fields: [userId], references: [id], onDelete: Cascade)
   service Service @relation(fields: [serviceId], references: [id])
   order   Order?  @relation(fields: [orderId], references: [id])
 }
@@ -158,8 +158,8 @@ model Message {
   read       Boolean  @default(false)
   createdAt  DateTime @default(now())
 
-  sender   User @relation("SentMessages", fields: [senderId], references: [id])
-  receiver User @relation("ReceivedMessages", fields: [receiverId], references: [id])
+  sender   User @relation("SentMessages", fields: [senderId], references: [id], onDelete: Cascade)
+  receiver User @relation("ReceivedMessages", fields: [receiverId], references: [id], onDelete: Cascade)
 }
 
 model AIPlan {
@@ -175,7 +175,7 @@ model AIPlan {
   isActive      Boolean   @default(false)
   createdAt     DateTime  @default(now())
 
-  user User @relation("UserAIPlans", fields: [userId], references: [id])
+  user User @relation("UserAIPlans", fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Report {
@@ -188,8 +188,8 @@ model Report {
   reporterId      String
   reportedExpertId String
 
-  reporter      User @relation("ReportedBy", fields: [reporterId], references: [id])
-  reportedExpert User @relation("ReportedExpert", fields: [reportedExpertId], references: [id])
+  reporter      User @relation("ReportedBy", fields: [reporterId], references: [id], onDelete: Cascade)
+  reportedExpert User @relation("ReportedExpert", fields: [reportedExpertId], references: [id], onDelete: Cascade)
 }
 
 model CallLog {
@@ -201,8 +201,8 @@ model CallLog {
   createdAt   DateTime   @default(now())
   answeredAt  DateTime?
 
-  caller  User @relation("CallerLogs", fields: [callerId], references: [id])
-  callee  User @relation("CalleeLogs", fields: [calleeId], references: [id])
+  caller  User @relation("CallerLogs", fields: [callerId], references: [id], onDelete: Cascade)
+  callee  User @relation("CalleeLogs", fields: [calleeId], references: [id], onDelete: Cascade)
 }
 
 model AIConfig {
